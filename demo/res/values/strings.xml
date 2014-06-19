@@ -2,6 +2,8 @@
 
 <resources>
  <string name="app_name">TweetNACL - Demo</string>
- <string name="keypair">Generate Key Pair</string>
  <string name="settings">Settings</string>
+
+ <string name="crypto_box">crypto_box</string>
+ <string name="crypto_box_keypair">crypto_box_keypair</string>
 </resources>

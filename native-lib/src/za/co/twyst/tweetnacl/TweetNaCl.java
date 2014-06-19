@@ -12,9 +12,24 @@ public class TweetNaCl {
     
     // NATIVE METHODS
     
+    private native long jniCryptoBox       (byte[] ciphertext);
     private native long jniCryptoBoxKeyPair();
 
     // PUBLIC API
+    
+    /** Releases any resources acquired by the native library.
+     * 
+     */
+    public void release() {
+    }
+    
+    public byte[] cryptoBox() {
+        byte[] ciphertext = new byte[163];
+        
+        jniCryptoBox(ciphertext);
+        
+        return ciphertext;
+    }
     
     public String crytoBoxKeyPair() {
         long rc = jniCryptoBoxKeyPair();
