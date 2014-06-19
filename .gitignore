@@ -1,0 +1,12 @@
+.DS_Store
+bin
+gen
+obj
+native-lib/.settings/org.eclipse.jdt.ui.prefs
+native-lib/.settings/org.eclipse.jdt.core.prefs
+native-lib/libs/armeabi-v7a/libtweetnacl.so
+native-lib/libs/armeabi/libtweetnacl.so
+native-lib/libs/mips/libtweetnacl.so
+native-lib/libs/x86/libtweetnacl.so
+demo/.settings/org.eclipse.jdt.core.prefs
+demo/.settings/org.eclipse.jdt.ui.prefs

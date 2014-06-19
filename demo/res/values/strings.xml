@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+ <string name="app_name">TweetNACL - Demo</string>
+ <string name="keypair">Generate Key Pair</string>
+ <string name="settings">Settings</string>
+</resources>

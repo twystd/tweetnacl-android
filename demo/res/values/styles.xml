@@ -1,0 +1,17 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+ <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+ </style>
+
+ <style name="AppTheme" parent="AppBaseTheme">
+ </style>
+
+ <!-- BUTTONS -->
+ 
+ <style name="ButtonBase">
+  <item name="android:textSize">13sp</item>    
+ </style>
+ 
+ <style name="Button" parent="ButtonBase" />
+ 
+</resources>
