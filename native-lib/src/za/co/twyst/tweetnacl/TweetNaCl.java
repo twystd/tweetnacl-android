@@ -12,7 +12,7 @@ public class TweetNaCl {
     
     // NATIVE METHODS
     
-    private native long jniCryptoBox       (byte[] ciphertext);
+    private native long jniCryptoBox       (byte[] ciphertext,byte[] message,byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native long jniCryptoBoxKeyPair();
 
     // PUBLIC API
@@ -23,10 +23,30 @@ public class TweetNaCl {
     public void release() {
     }
     
-    public byte[] cryptoBox() {
-        byte[] ciphertext = new byte[163];
+    public byte[] cryptoBox(final byte[] message,final byte[] nonce,byte[] publicKey,byte[] secretKey) {
+        // ... validate
         
-        jniCryptoBox(ciphertext);
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message' - may not be null");
+        }
+        
+        if ((nonce == null) || (nonce.length != 24)) {
+            throw new IllegalArgumentException("Invalid 'nonce' - must be 24 bytes");
+        }
+
+        if ((publicKey == null) || (publicKey.length != 32)) {
+            throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
+        }
+
+        if ((secretKey == null) || (secretKey.length != 32)) {
+            throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
+        }
+        
+        // ... encrypt
+        
+        byte[] ciphertext = new byte[message.length];
+        
+        jniCryptoBox(ciphertext,message,nonce,publicKey,secretKey);
         
         return ciphertext;
     }

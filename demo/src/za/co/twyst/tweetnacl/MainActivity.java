@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity
 	     // HANDLERS
          
          public void onCryptoBox(View view) 
-                { tweetNaCl.cryptoBox();
+                { // tweetNaCl.cryptoBox();
                 }
 	     
 	     public void onCryptoBoxKeyPair(View view) 
