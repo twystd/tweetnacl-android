@@ -12,8 +12,8 @@ public class TweetNaCl {
     
     // NATIVE METHODS
     
-    private native long jniCryptoBox       (byte[] ciphertext,byte[] message,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native long jniCryptoBoxKeyPair();
+    private native long jniCryptoBox    (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native long jniCryptoBoxOpen(byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
 
     // PUBLIC API
     
@@ -51,9 +51,32 @@ public class TweetNaCl {
         return ciphertext;
     }
     
-    public String crytoBoxKeyPair() {
-        long rc = jniCryptoBoxKeyPair();
+    public byte[] cryptoBoxOpen(final byte[] ciphertext,final byte[] nonce,byte[] publicKey,byte[] secretKey) {
+        // ... validate
         
-        return null;
+        if (ciphertext == null) {
+            throw new IllegalArgumentException("Invalid 'ciphertext' - may not be null");
+        }
+        
+        if ((nonce == null) || (nonce.length != 24)) {
+            throw new IllegalArgumentException("Invalid 'nonce' - must be 24 bytes");
+        }
+
+
+        if ((publicKey == null) || (publicKey.length != 32)) {
+            throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
+        }
+
+        if ((secretKey == null) || (secretKey.length != 32)) {
+            throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
+        }
+        
+        // ... encrypt
+        
+        byte[] message = new byte[ciphertext.length];
+        
+        jniCryptoBoxOpen(message,ciphertext,nonce,publicKey,secretKey);
+        
+        return message;
     }
 }

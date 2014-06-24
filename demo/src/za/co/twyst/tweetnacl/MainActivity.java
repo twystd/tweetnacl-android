@@ -55,14 +55,6 @@ public class MainActivity extends ActionBarActivity
 
 	     // HANDLERS
          
-         public void onCryptoBox(View view) 
-                { // tweetNaCl.cryptoBox();
-                }
-	     
-	     public void onCryptoBoxKeyPair(View view) 
-	            { tweetNaCl.crytoBoxKeyPair();
-	            }
-	     
 	     // INNER CLASSES
 
 	     public static class PlaceholderFragment extends Fragment 

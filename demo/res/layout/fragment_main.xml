@@ -5,7 +5,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin">
-
+<!-- 
  <Button style="@style/Button"
          android:id="@+id/crypto_box"
          android:layout_width="wrap_content"
@@ -23,5 +23,5 @@
          android:layout_centerHorizontal="true"
          android:onClick="onCryptoBoxKeyPair"
          android:text="@string/crypto_box_keypair" />
- 
+ --> 
 </RelativeLayout>
