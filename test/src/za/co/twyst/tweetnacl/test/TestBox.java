@@ -1,5 +1,8 @@
 package za.co.twyst.tweetnacl.test;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import android.test.AndroidTestCase;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
@@ -103,7 +106,10 @@ public class TestBox extends AndroidTestCase
 
          // UNIT TESTS
 
-         public void testCryptoBox() throws Exception
+         /** box.c
+          * 
+          */
+         public void testBox() throws Exception
                 { byte[] ciphertext = tweetnacl.cryptoBox(MESSAGE,NONCE,BOBPK,ALICESK);
                 
                   for (int i=16; i<CIPHERTEXT.length; i++)
@@ -111,11 +117,39 @@ public class TestBox extends AndroidTestCase
                       }
                 }
 
-         public void testCryptoBoxOpen() throws Exception
+         /** box2.c
+          * 
+          */
+         public void testBox2() throws Exception
                 { byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXT,NONCE,ALICEPK,BOBSK);
                 
                   for (int i=32; i<MESSAGE.length; i++)
                       { assertEquals("Invalid byte " + i,(int) (MESSAGE[i] & 0x00ff),(int) (message[i] & 0x00ff));
+                      }
+                }
+
+         /** box7.c
+          * 
+          */
+         public void testBox7() throws Exception
+                { Random random = new Random();
+
+                  for (int mlen=0; mlen<1000; ++mlen) 
+                      { TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
+                        TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
+                        byte[]            message = new byte[mlen + TweetNaCl.ZEROBYTES];
+                        byte[]            nonce   = new byte[TweetNaCl.NONCEBYTES];
+                        byte[]            ciphertext;
+                        byte[]            plaintext;
+                      
+                        random.nextBytes(nonce);
+                        random.nextBytes(message);
+                        Arrays.fill     (message,0,TweetNaCl.ZEROBYTES,(byte) 0);
+                        
+                        ciphertext = tweetnacl.cryptoBox    (message,nonce,bob.publicKey,alice.secretKey);
+                        plaintext  = tweetnacl.cryptoBoxOpen(ciphertext,nonce,alice.publicKey,bob.secretKey); 
+                    
+                        assertTrue("Bad decryption",Arrays.equals(message,plaintext));
                       }
                 }
        }
