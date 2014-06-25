@@ -3,11 +3,10 @@ package za.co.twyst.tweetnacl.test;
 import java.util.Arrays;
 import java.util.Random;
 
-import android.test.AndroidTestCase;
-
 import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.exceptions.DecryptException;
 
-public class TestBox extends AndroidTestCase 
+public class TestCryptoBox extends TweetNaClTest 
        { // CONSTANTS
 	
          @SuppressWarnings("unused")
@@ -88,28 +87,27 @@ public class TestBox extends AndroidTestCase
         								       (byte) 0x1c,(byte) 0x2f,(byte) 0x8b,(byte) 0x27,(byte) 0xff,(byte) 0x88,(byte) 0xe0,(byte) 0xeb,
         			                         };
 
+         private static final int    ROUNDS = 10; // TODO change to 10000 a la box7.c and box8.c
+         private static final byte[] KEY    = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte) 0x64, 
+        	                                    (byte) 0x73, (byte) 0xe9, (byte) 0x85, (byte) 0xd4,
+        	                                    (byte) 0x62, (byte) 0xcd, (byte) 0x51, (byte) 0x19,
+        	                                    (byte) 0x7a, (byte) 0x9a, (byte) 0x46, (byte) 0xc7,
+        	                                    (byte) 0x60, (byte) 0x09, (byte) 0x54, (byte) 0x9e,
+        	                                    (byte) 0xac, (byte) 0x64, (byte) 0x74, (byte) 0xf2,
+        	                                    (byte) 0x06, (byte) 0xc4, (byte) 0xee, (byte) 0x08,
+        	                                    (byte) 0x44, (byte) 0xf6, (byte) 0x83, (byte) 0x89
+                                              };
+         
          // TEST VARIABLES
     
-         private TweetNaCl tweetnacl;
-
          // SETUP/TEARDOWN
-
-         @Override
-         protected void setUp() throws Exception 
-                   { tweetnacl = new TweetNaCl();
-                   }
-
-         @Override
-         protected void tearDown() throws Exception 
-                   { tweetnacl.release();
-                   }
 
          // UNIT TESTS
 
-         /** box.c
+         /** crypto_box (adapted from tests/box.c)
           * 
           */
-         public void testBox() throws Exception
+         public void testCryptoBox() throws Exception
                 { byte[] ciphertext = tweetnacl.cryptoBox(MESSAGE,NONCE,BOBPK,ALICESK);
                 
                   for (int i=16; i<CIPHERTEXT.length; i++)
@@ -117,10 +115,10 @@ public class TestBox extends AndroidTestCase
                       }
                 }
 
-         /** box2.c
+         /** crypto_box_open (adapted from tests/box2.c)
           * 
           */
-         public void testBox2() throws Exception
+         public void testCryptoBoxOpen() throws Exception
                 { byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXT,NONCE,ALICEPK,BOBSK);
                 
                   for (int i=32; i<MESSAGE.length; i++)
@@ -128,13 +126,46 @@ public class TestBox extends AndroidTestCase
                       }
                 }
 
-         /** box7.c
+         /** crypto_box_beforenm
+          * 
+          */
+         public void testCryptoBoxBeforeNM() throws Exception
+                { byte[] key = tweetnacl.cryptoBoxBeforeNM(BOBPK,ALICESK);
+
+                  assertTrue("Invalid message key",Arrays.equals(KEY,key));
+                }
+
+         /** crypto_box_afternm
+          * 
+          */
+         public void testCryptoBoxAfterNM() throws Exception
+                { byte[] key        = tweetnacl.cryptoBoxBeforeNM(BOBPK,ALICESK);
+                  byte[] ciphertext = tweetnacl.cryptoBoxAfterNM (MESSAGE,NONCE,key);
+                
+                  for (int i=16; i<CIPHERTEXT.length; i++)
+                      { assertEquals("Invalid byte " + i,(int) (CIPHERTEXT[i] & 0x00ff),(int) (ciphertext[i] & 0x00ff));
+                      }
+                }
+
+         /** crypto_box_open_afternm
+          * 
+          */
+         public void testCryptoBoxOpenAfterNM() throws Exception
+                { byte[] key     = tweetnacl.cryptoBoxBeforeNM   (ALICEPK,BOBSK);
+                  byte[] message = tweetnacl.cryptoBoxOpenAfterNM(CIPHERTEXT,NONCE,key);
+                
+                  for (int i=32; i<MESSAGE.length; i++)
+                      { assertEquals("Invalid byte " + i,(int) (MESSAGE[i] & 0x00ff),(int) (message[i] & 0x00ff));
+                      }
+                }
+         
+         /** Loop test (adapted from tests/box7.c).
           * 
           */
          public void testBox7() throws Exception
                 { Random random = new Random();
 
-                  for (int mlen=0; mlen<1000; ++mlen) 
+                  for (int mlen=0; mlen<ROUNDS; ++mlen) 
                       { TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
                         TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
                         byte[]            message = new byte[mlen + TweetNaCl.ZEROBYTES];
@@ -152,4 +183,45 @@ public class TestBox extends AndroidTestCase
                         assertTrue("Bad decryption",Arrays.equals(message,plaintext));
                       }
                 }
+         
+         /** Corrupted ciphertext test (adapted from tests/box8.c)
+           * 
+           */
+         public void testBox8() throws Exception
+                { Random random = new Random();
+
+                  for (int mlen=0; mlen<ROUNDS; ++mlen) 
+                      { TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
+                        TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
+                        byte[]            message = new byte[mlen + TweetNaCl.ZEROBYTES];
+                        byte[]            nonce   = new byte[TweetNaCl.NONCEBYTES];
+                        byte[]            ciphertext;
+                        byte[]            plaintext;
+                        int               caught = 0;
+                   
+                        random.nextBytes(nonce);
+                        random.nextBytes(message);
+                        Arrays.fill     (message,0,TweetNaCl.ZEROBYTES,(byte) 0);
+       
+                        ciphertext = tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
+
+                        while (caught < 10)
+                              { int ix = random.nextInt(ciphertext.length);
+                                byte b = (byte) (random.nextInt() % 0x00ff);
+                        	    
+                                try
+                                   { ciphertext[ix] = b;
+                                     plaintext      = tweetnacl.cryptoBoxOpen(ciphertext,nonce,alice.publicKey,bob.secretKey); 
+
+                                     if (!Arrays.equals(message,plaintext))
+                                        { fail("Forgery !!!");
+                                        }
+                                   }
+                                catch(DecryptException x)
+                                   { ++caught;
+                                   }
+                              }
+                      }
+                }
        }
+

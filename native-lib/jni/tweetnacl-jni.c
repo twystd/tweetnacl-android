@@ -8,21 +8,32 @@ typedef unsigned long long u64;
 typedef long long i64;
 typedef i64 gf[16];
 
-extern void randombytes(u8 *,u64);
-
-/** randombytes
+/** jniRandomBytes
  *
- *  Fills a byte array using SecureRandom.
  */
-void randombytes(u8 *buffer,u64 N) {
-	u64 i;
+void Java_za_co_twyst_tweetnacl_TweetNaCl_jniRandomBytes(JNIEnv *env,jobject object,jbyteArray bytes) {
+     int           N  = (*env)->GetArrayLength(env,bytes);
+ 	 unsigned char b[N];
+ 	 int           i;
 
-	__android_log_print(ANDROID_LOG_INFO,"TweetNaCl","randomBytes");
+	 randombytes(b,N);
 
+     (*env)->SetByteArrayRegion(env,bytes,0,N,b);
+}
 
-	for (i=0; i<N; i++) {
-		buffer[i] = i % 256;
-	}
+/** jniCryptoBoxKeyPair
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobject object,jbyteArray publicKey,jbyteArray secretKey) {
+	unsigned char pk[crypto_box_PUBLICKEYBYTES];
+	unsigned char sk[crypto_box_SECRETKEYBYTES];
+
+	int rc = crypto_box_keypair(pk,sk);
+
+    (*env)->SetByteArrayRegion(env,publicKey,0,crypto_box_PUBLICKEYBYTES,pk);
+    (*env)->SetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
+
+    return (jint) rc;
 }
 
 /** jniCryptoBox
@@ -71,17 +82,62 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
     return (jint) rc;
 }
 
-/** jniCryptoBoxKeyPair
+/** jniCryptoBoxBeforeNM
  *
  */
-jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobject object,jbyteArray publicKey,jbyteArray secretKey) {
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobject object,jbyteArray key,jbyteArray publicKey,jbyteArray secretKey) {
+	unsigned char k[crypto_box_BEFORENMBYTES];
 	unsigned char pk[crypto_box_PUBLICKEYBYTES];
 	unsigned char sk[crypto_box_SECRETKEYBYTES];
 
-	int rc = crypto_box_keypair(pk,sk);
+    (*env)->GetByteArrayRegion(env,publicKey,0,crypto_box_PUBLICKEYBYTES,pk);
+    (*env)->GetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
 
-    (*env)->SetByteArrayRegion(env,publicKey,0,crypto_box_PUBLICKEYBYTES,pk);
-    (*env)->SetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
+	int rc = crypto_box_beforenm(k,pk,sk);
+
+    (*env)->SetByteArrayRegion(env,key,0,crypto_box_BEFORENMBYTES,k);
+
+    return (jint) rc;
+}
+
+/** jniCryptoBoxAfterNM
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,message);
+	unsigned char c[N];
+	unsigned char m[N];
+	unsigned char n[crypto_box_NONCEBYTES];
+	unsigned char k[crypto_box_BEFORENMBYTES];
+
+    (*env)->GetByteArrayRegion(env,message,0,N,                       m);
+    (*env)->GetByteArrayRegion(env,nonce,  0,crypto_box_NONCEBYTES,   n);
+    (*env)->GetByteArrayRegion(env,key,    0,crypto_box_BEFORENMBYTES,k);
+
+	int rc = crypto_box_afternm(c,m,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+
+    return (jint) rc;
+}
+
+/** jniCryptoBoxOpenAfterNM
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,ciphertext);
+	unsigned char c[N];
+	unsigned char m[N];
+	unsigned char n[crypto_box_NONCEBYTES];
+	unsigned char k[crypto_box_BEFORENMBYTES];
+
+    (*env)->GetByteArrayRegion(env,ciphertext,0, N,c);
+    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
+    (*env)->GetByteArrayRegion(env,key,       0,crypto_box_BEFORENMBYTES,k);
+
+	int rc = crypto_box_open_afternm(m,c,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,message,0,N,m);
 
     return (jint) rc;
 }
