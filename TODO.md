@@ -5,4 +5,5 @@
 3. Remove the pre-padding in ciphertext and message (?)
 4. Hmmm - check keypair implemtation: slides say it should be pk = crypto_box_keypair(&sk)
    (Ref. http://cryptojedi.org/peter/data/tenerife-20130121.pdf)
-5. Revert license to public domain (github ?)
+5. Revert license to public domain (github 
+6. Add disclaimer for side-channel attacks etc
