@@ -15,10 +15,7 @@ public class TestOther extends TweetNaClTest
            *  a quick check to make sure it vaguely works i.e. doesn't crash.
            */
          public void testRandomBytes() throws Exception
-                { fail("Crashes horribly if run after box8 test");
-                  // SOMETHING TO DO WITH LOADING/UNLOADING tweetnacl MAYBE ?
-                
-        	      byte[] bytes  = new byte[256];
+                { byte[] bytes  = new byte[256];
                 
                   tweetnacl.randomBytes(bytes);
                     

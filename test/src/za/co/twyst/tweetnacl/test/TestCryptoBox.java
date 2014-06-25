@@ -87,7 +87,7 @@ public class TestCryptoBox extends TweetNaClTest
         								       (byte) 0x1c,(byte) 0x2f,(byte) 0x8b,(byte) 0x27,(byte) 0xff,(byte) 0x88,(byte) 0xe0,(byte) 0xeb,
         			                         };
 
-         private static final int    ROUNDS = 10; // TODO change to 10000 a la box7.c and box8.c
+         private static final int    ROUNDS = 100; // TODO change to 10000 a la box7.c and box8.c
          private static final byte[] KEY    = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte) 0x64, 
         	                                    (byte) 0x73, (byte) 0xe9, (byte) 0x85, (byte) 0xd4,
         	                                    (byte) 0x62, (byte) 0xcd, (byte) 0x51, (byte) 0x19,

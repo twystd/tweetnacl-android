@@ -12,11 +12,12 @@ typedef i64 gf[16];
  *
  */
 void Java_za_co_twyst_tweetnacl_TweetNaCl_jniRandomBytes(JNIEnv *env,jobject object,jbyteArray bytes) {
-     int           N  = (*env)->GetArrayLength(env,bytes);
- 	 unsigned char b[N];
- 	 int           i;
+     int                N = (*env)->GetArrayLength(env,bytes);
+ 	 unsigned long long l = (unsigned long long) N;
+ 	 unsigned char      b[N];
+ 	 int                i;
 
-	 randombytes(b,N);
+	 randombytes(b,l);
 
      (*env)->SetByteArrayRegion(env,bytes,0,N,b);
 }
