@@ -142,3 +142,23 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jo
 
     return (jint) rc;
 }
+
+/** jniCryptoCoreHSalsa20
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobject object,jbyteArray out,jbyteArray in,jbyteArray key,jbyteArray constant) {
+	unsigned char o[crypto_core_hsalsa20_OUTPUTBYTES];
+	unsigned char i[crypto_core_hsalsa20_INPUTBYTES];
+	unsigned char k[crypto_core_hsalsa20_KEYBYTES];
+	unsigned char c[crypto_core_hsalsa20_CONSTBYTES];
+
+    (*env)->GetByteArrayRegion(env,in,      0,crypto_core_hsalsa20_INPUTBYTES,i);
+    (*env)->GetByteArrayRegion(env,key,     0,crypto_core_hsalsa20_KEYBYTES,  k);
+    (*env)->GetByteArrayRegion(env,constant,0,crypto_core_hsalsa20_CONSTBYTES,c);
+
+	int rc = crypto_core_hsalsa20(o,i,k,c)
+
+     (*env)->SetByteArrayRegion(env,out,0,crypto_core_hsalsa20_OUTPUTBYTES,o);
+
+    return (jint) rc;
+}

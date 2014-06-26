@@ -9,9 +9,6 @@ import za.co.twyst.tweetnacl.exceptions.DecryptException;
 public class TestCryptoBox extends TweetNaClTest 
        { // CONSTANTS
 	
-         @SuppressWarnings("unused")
-	     private static final String TAG = "TweetNaCl";
-         
          private static final byte[] CIPHERTEXT =  { (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
         	                                         (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
         	 	 	                                 (byte) 0xf3,(byte) 0xff,(byte) 0xc7,(byte) 0x70,(byte) 0x3f,(byte) 0x94,(byte) 0x00,(byte) 0xe5,

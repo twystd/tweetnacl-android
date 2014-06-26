@@ -12,7 +12,12 @@ public class TweetNaCl {
     public static final int NONCEBYTES     = 24;
     public static final int ZEROBYTES      = 32;
     public static final int BOXZEROBYTES   = 16;
-
+    
+    public static final int HSALSA20_OUTPUTBYTES = 32;
+    public static final int HSALSA20_INPUTBYTES  = 16;
+    public static final int HSALSA20_KEYBYTES    = 32;
+    public static final int HSALSA20_CONSTBYTES  = 16;
+    
     // NATIVE METHODS
     
     private native int jniRandomBytes         (byte[] bytes);
@@ -244,7 +249,45 @@ public class TweetNaCl {
         
         return message;
     }
-    
+
+
+    /** Wrapper function for crypto_core_hsalsa20.
+     * 
+     * @param in
+     * @param key
+     * @param constant
+     * 
+     * @return out
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoCoresHSalsa20(final byte[] in,final byte[] key,byte[] constant) throws EncryptException {
+        // ... validate
+        
+        if ((in == null) || (in.length != HSALSA20_INPUTBYTES)) {
+            throw new IllegalArgumentException("Invalid 'in' - must be " + Integer.toString(HSALSA20_INPUTBYTES) + " bytes");
+        }
+
+        if ((key == null) || (key.length != HSALSA20_KEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'key' - must be " + Integer.toString(HSALSA20_KEYBYTES) + " bytes");
+        }
+
+        if ((constant == null) || (constant.length != HSALSA20_CONSTBYTES)) {
+            throw new IllegalArgumentException("Invalid 'constant' - must be " + Integer.toString(HSALSA20_CONSTBYTES) + " bytes");
+        }
+        
+        // ... invoke
+        
+        byte[] out = new byte[HSALSA20_OUTPUTBYTES];
+        int    rc;
+
+//        if ((rc = jniCryptoBoxAfterNM(ciphertext,message,nonce,key)) != 0) {
+//            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+//        }
+        
+        return key;
+    }    
+
     // INNER CLASSES
     
     public static final class KeyPair {

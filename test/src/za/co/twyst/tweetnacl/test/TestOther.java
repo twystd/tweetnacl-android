@@ -5,8 +5,6 @@ import android.util.Log;
 public class TestOther extends TweetNaClTest 
        { // CONSTANTS
 	
-	     private static final String TAG = "TweetNaCl";
-         
          // UNIT TESTS
 
          /** 'Eyeball' test for the <code>randombytes</code> implementation.
