@@ -27,6 +27,7 @@ public class TweetNaCl {
     private native int jniCryptoBoxBeforeNM   (byte[] key,       byte[] publicKey, byte[] secretKey);
     private native int jniCryptoBoxAfterNM    (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
     private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+    private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
 
     // CLASS METHODS
     
@@ -261,7 +262,7 @@ public class TweetNaCl {
      * 
      * @throws Exception
      */
-    public byte[] cryptoCoresHSalsa20(final byte[] in,final byte[] key,byte[] constant) throws EncryptException {
+    public byte[] cryptoCoreHSalsa20(final byte[] in,final byte[] key,byte[] constant) throws EncryptException {
         // ... validate
         
         if ((in == null) || (in.length != HSALSA20_INPUTBYTES)) {
@@ -281,11 +282,11 @@ public class TweetNaCl {
         byte[] out = new byte[HSALSA20_OUTPUTBYTES];
         int    rc;
 
-//        if ((rc = jniCryptoBoxAfterNM(ciphertext,message,nonce,key)) != 0) {
-//            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
-//        }
+        if ((rc = jniCryptoCoreHSalsa20(out,in,key,constant)) != 0) {
+            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+        }
         
-        return key;
+        return out;
     }    
 
     // INNER CLASSES

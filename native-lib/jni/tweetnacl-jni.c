@@ -8,6 +8,8 @@ typedef unsigned long long u64;
 typedef long long i64;
 typedef i64 gf[16];
 
+// __android_log_print(ANDROID_LOG_INFO,"TBXML","ATTRIBUTE: %s::%s",name,value);
+
 /** jniRandomBytes
  *
  */
@@ -156,7 +158,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobj
     (*env)->GetByteArrayRegion(env,key,     0,crypto_core_hsalsa20_KEYBYTES,  k);
     (*env)->GetByteArrayRegion(env,constant,0,crypto_core_hsalsa20_CONSTBYTES,c);
 
-	int rc = crypto_core_hsalsa20(o,i,k,c)
+	int rc = crypto_core_hsalsa20(o,i,k,c);
 
      (*env)->SetByteArrayRegion(env,out,0,crypto_core_hsalsa20_OUTPUTBYTES,o);
 

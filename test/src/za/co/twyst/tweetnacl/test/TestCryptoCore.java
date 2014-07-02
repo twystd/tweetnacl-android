@@ -1,5 +1,9 @@
 package za.co.twyst.tweetnacl.test;
 
+import java.util.Arrays;
+
+import android.util.Log;
+
 public class TestCryptoCore extends TweetNaClTest 
        { // CONSTANTS
 	
@@ -37,13 +41,13 @@ public class TestCryptoCore extends TweetNaClTest
 
          // UNIT TESTS
 
-         /** crypto_box (adapted from tests/box.c)
+         /** crypto_box (adapted from tests/core1.c)
           * 
           */
-         public void testCryptoCoreSalsa20() throws Exception
-                { byte[] out = tweetnacl.cryptoCoreHSalsa20(ZERO,SHARED,C);
+         public void testCryptoCoreHSalsa20() throws Exception
+                { byte[] out = tweetnacl.cryptoCoreHSalsa20(Arrays.copyOf(ZERO,16),SHARED,C);
                 
-                  assertEquals("Invalid out",OUT,out);
+                  assertTrue("Invalid out",Arrays.equals(OUT,out));
                 }
        }
 
