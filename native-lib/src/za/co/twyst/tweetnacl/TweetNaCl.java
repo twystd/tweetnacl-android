@@ -18,6 +18,12 @@ public class TweetNaCl {
     public static final int HSALSA20_KEYBYTES    = 32;
     public static final int HSALSA20_CONSTBYTES  = 16;
     
+    public static final int SALSA20_OUTPUTBYTES = 64;
+    public static final int SALSA20_INPUTBYTES  = 16;
+    public static final int SALSA20_KEYBYTES    = 32;
+    public static final int SALSA20_CONSTBYTES  = 16;
+
+    
     // NATIVE METHODS
     
     private native int jniRandomBytes         (byte[] bytes);
@@ -28,6 +34,7 @@ public class TweetNaCl {
     private native int jniCryptoBoxAfterNM    (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
     private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
     private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+    private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
 
     // CLASS METHODS
     
@@ -63,7 +70,6 @@ public class TweetNaCl {
         
         jniRandomBytes(bytes);
     }    
-    
 
     /** Wrapper function for crypto_box_keypair.
      * 
@@ -251,7 +257,6 @@ public class TweetNaCl {
         return message;
     }
 
-
     /** Wrapper function for crypto_core_hsalsa20.
      * 
      * @param in
@@ -283,6 +288,43 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoCoreHSalsa20(out,in,key,constant)) != 0) {
+            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+        }
+        
+        return out;
+    }    
+
+    /** Wrapper function for crypto_core_salsa20.
+     * 
+     * @param in
+     * @param key
+     * @param constant
+     * 
+     * @return out
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoCoreSalsa20(final byte[] in,final byte[] key,byte[] constant) throws EncryptException {
+        // ... validate
+        
+        if ((in == null) || (in.length != SALSA20_INPUTBYTES)) {
+            throw new IllegalArgumentException("Invalid 'in' - must be " + Integer.toString(SALSA20_INPUTBYTES) + " bytes");
+        }
+
+        if ((key == null) || (key.length != SALSA20_KEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'key' - must be " + Integer.toString(SALSA20_KEYBYTES) + " bytes");
+        }
+
+        if ((constant == null) || (constant.length != SALSA20_CONSTBYTES)) {
+            throw new IllegalArgumentException("Invalid 'constant' - must be " + Integer.toString(SALSA20_CONSTBYTES) + " bytes");
+        }
+        
+        // ... invoke
+        
+        byte[] out = new byte[SALSA20_OUTPUTBYTES];
+        int    rc;
+
+        if ((rc = jniCryptoCoreSalsa20(out,in,key,constant)) != 0) {
             throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
         }
         
