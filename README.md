@@ -18,11 +18,11 @@ Implemented
 4. crypto_box_beforenm
 5. crypto_box_afternm
 6. crypto_box_open_afternm
+7. crypto_core_salsa20
+8. crypto_core_hsalsa20
 
 Pending
 -------
-7.  crypto_core_salsa20
-8.  crypto_core_hsalsa20
 9.  crypto_hashblocks
 10. crypto_hash
 11. crypto_onetimeauth
