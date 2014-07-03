@@ -104,7 +104,7 @@ public class TestCryptoBox extends TweetNaClTest
          /** crypto_box (adapted from tests/box.c)
           * 
           */
-         public void testCryptoBox() throws Exception
+         public void testBox() throws Exception
                 { byte[] ciphertext = tweetnacl.cryptoBox(MESSAGE,NONCE,BOBPK,ALICESK);
                 
                   for (int i=16; i<CIPHERTEXT.length; i++)
@@ -115,7 +115,7 @@ public class TestCryptoBox extends TweetNaClTest
          /** crypto_box_open (adapted from tests/box2.c)
           * 
           */
-         public void testCryptoBoxOpen() throws Exception
+         public void testBox2() throws Exception
                 { byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXT,NONCE,ALICEPK,BOBSK);
                 
                   for (int i=32; i<MESSAGE.length; i++)
