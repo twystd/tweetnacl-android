@@ -23,8 +23,10 @@ public class TweetNaCl {
     public static final int SALSA20_KEYBYTES    = 32;
     public static final int SALSA20_CONSTBYTES  = 16;
 
-    public static final int HASH_BYTES        = 64;
-    public static final int HASH_SHA512_BYTES = 64;
+    public static final int HASH_BYTES            = 64;
+    public static final int HASHBLOCKS_STATEBYTES = 32;
+    public static final int HASHBLOCKS_BLOCKBYTES = 64;
+
     
     // NATIVE METHODS
     
@@ -38,7 +40,7 @@ public class TweetNaCl {
     private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoHash          (byte[] hash,      byte[] message);
-    private native int jniCryptoHashSha512    (byte[] hash,      byte[] message);
+    private native int jniCryptoHashBlocks    (byte[] hash,      byte[] m);
 
     // CLASS METHODS
     
@@ -361,32 +363,31 @@ public class TweetNaCl {
         return hash;
     }    
     
-    /** Wrapper function for crypto_hash_sha512.
-     * 
-     * @param  message
-     * @return hash
-     * 
-     * @throws Exception
-     */
-    public byte[] cryptoHashSHA512(final byte[] message) throws EncryptException {
+    /** Wrapper function for crypto_hashblocks.
+      * 
+      * @param  message
+      * @return hash
+      * 
+      * @throws Exception
+      */
+    public byte[] cryptoHashBlocks(final byte[] message) throws EncryptException {
         // ... validate
         
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message'");
+        if ((message == null) || (message.length != HASHBLOCKS_BLOCKBYTES)) {
+            throw new IllegalArgumentException("Invalid 'message' - must be " + Integer.toString(HASHBLOCKS_BLOCKBYTES) + " bytes");
         }
         
         // ... invoke
         
-        byte[] hash = new byte[HASH_SHA512_BYTES];
+        byte[] hash = new byte[HASHBLOCKS_STATEBYTES];
         int    rc;
 
-        if ((rc = jniCryptoHashSha512(hash,message)) != 0) {
-            throw new EncryptException("Error calculating SHA512 message hash [" + Integer.toString(rc) + "]");
+        if ((rc = jniCryptoHashBlocks(hash,message)) != 0) {
+            throw new EncryptException("Error calculating block hash [" + Integer.toString(rc) + "]");
         }
         
         return hash;
     }    
-
 
     // INNER CLASSES
     
