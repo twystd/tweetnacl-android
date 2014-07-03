@@ -89,7 +89,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobject object,jbyteArray key,jbyteArray publicKey,jbyteArray secretKey) {
-	unsigned char k[crypto_box_BEFORENMBYTES];
+	unsigned char k [crypto_box_BEFORENMBYTES];
 	unsigned char pk[crypto_box_PUBLICKEYBYTES];
 	unsigned char sk[crypto_box_SECRETKEYBYTES];
 
@@ -165,7 +165,6 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobj
     return (jint) rc;
 }
 
-
 /** jniCryptoCoreSSalsa20
  *
  */
@@ -182,6 +181,23 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
 	int rc = crypto_core_salsa20(o,i,k,c);
 
      (*env)->SetByteArrayRegion(env,out,0,crypto_core_salsa20_OUTPUTBYTES,o);
+
+    return (jint) rc;
+}
+
+/** jniCryptoHash
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
+	int      N  = (*env)->GetArrayLength(env,message);
+	unsigned char m[N];
+	unsigned char h[crypto_hash_BYTES];
+
+    (*env)->GetByteArrayRegion(env,message,0,N,m);
+
+	int rc = crypto_hash(h,m,(u64) N);
+
+    (*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
 
     return (jint) rc;
 }

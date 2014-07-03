@@ -23,6 +23,7 @@ public class TweetNaCl {
     public static final int SALSA20_KEYBYTES    = 32;
     public static final int SALSA20_CONSTBYTES  = 16;
 
+    public static final int HASH_BYTES = 64;
     
     // NATIVE METHODS
     
@@ -35,6 +36,7 @@ public class TweetNaCl {
     private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
     private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+    private native int jniCryptoHash          (byte[] hash,      byte[] message);
 
     // CLASS METHODS
     
@@ -329,7 +331,34 @@ public class TweetNaCl {
         }
         
         return out;
+    }
+    
+    /** Wrapper function for crypto_hash.
+     * 
+     * @param  message
+     * @return hash
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoHash(final byte[] message) throws EncryptException {
+        // ... validate
+        
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message'");
+        }
+        
+        // ... invoke
+        
+        byte[] hash = new byte[HASH_BYTES];
+        int    rc;
+
+        if ((rc = jniCryptoHash(hash,message)) != 0) {
+            throw new EncryptException("Error hashing message [" + Integer.toString(rc) + "]");
+        }
+        
+        return hash;
     }    
+
 
     // INNER CLASSES
     
