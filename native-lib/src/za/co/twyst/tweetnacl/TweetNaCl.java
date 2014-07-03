@@ -23,7 +23,8 @@ public class TweetNaCl {
     public static final int SALSA20_KEYBYTES    = 32;
     public static final int SALSA20_CONSTBYTES  = 16;
 
-    public static final int HASH_BYTES = 64;
+    public static final int HASH_BYTES        = 64;
+    public static final int HASH_SHA512_BYTES = 64;
     
     // NATIVE METHODS
     
@@ -37,6 +38,7 @@ public class TweetNaCl {
     private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoHash          (byte[] hash,      byte[] message);
+    private native int jniCryptoHashSha512    (byte[] hash,      byte[] message);
 
     // CLASS METHODS
     
@@ -353,7 +355,33 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoHash(hash,message)) != 0) {
-            throw new EncryptException("Error hashing message [" + Integer.toString(rc) + "]");
+            throw new EncryptException("Error calculating message hash [" + Integer.toString(rc) + "]");
+        }
+        
+        return hash;
+    }    
+    
+    /** Wrapper function for crypto_hash_sha512.
+     * 
+     * @param  message
+     * @return hash
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoHashSHA512(final byte[] message) throws EncryptException {
+        // ... validate
+        
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message'");
+        }
+        
+        // ... invoke
+        
+        byte[] hash = new byte[HASH_SHA512_BYTES];
+        int    rc;
+
+        if ((rc = jniCryptoHashSha512(hash,message)) != 0) {
+            throw new EncryptException("Error calculating SHA512 message hash [" + Integer.toString(rc) + "]");
         }
         
         return hash;

@@ -201,3 +201,20 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
 
     return (jint) rc;
 }
+
+/** jniCryptoHashSha512
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashSha512(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
+	int      N  = (*env)->GetArrayLength(env,message);
+	unsigned char m[N];
+	unsigned char h[crypto_hash_BYTES];
+
+    (*env)->GetByteArrayRegion(env,message,0,N,m);
+
+	int rc = crypto_hash_sha512(h,m,(u64) N);
+
+    (*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+
+    return (jint) rc;
+}
