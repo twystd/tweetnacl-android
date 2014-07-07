@@ -24,8 +24,8 @@ public class TweetNaCl {
     public static final int SALSA20_CONSTBYTES  = 16;
 
     public static final int HASH_BYTES            = 64;
-    public static final int HASHBLOCKS_STATEBYTES = 32;
-    public static final int HASHBLOCKS_BLOCKBYTES = 64;
+    public static final int HASHBLOCKS_STATEBYTES = 64;
+    public static final int HASHBLOCKS_BLOCKBYTES = 128;
 
     
     // NATIVE METHODS
@@ -370,23 +370,27 @@ public class TweetNaCl {
       * 
       * @throws Exception
       */
-    public byte[] cryptoHashBlocks(final byte[] message) throws EncryptException {
+    public byte[] cryptoHashBlocks(final byte[] x,final byte[] m) throws EncryptException {
         // ... validate
         
-        if ((message == null) || (message.length != HASHBLOCKS_BLOCKBYTES)) {
-            throw new IllegalArgumentException("Invalid 'message' - must be " + Integer.toString(HASHBLOCKS_BLOCKBYTES) + " bytes");
+        if ((x == null) || (x.length != HASHBLOCKS_STATEBYTES)) {
+            throw new IllegalArgumentException("Invalid 'x' - must be " + Integer.toString(HASHBLOCKS_BLOCKBYTES) + " bytes");
+        }
+        
+        if ((m == null) || ((m.length % HASHBLOCKS_BLOCKBYTES) != 0)) {
+            throw new IllegalArgumentException("Invalid 'm' - must be a multiple of " + Integer.toString(HASHBLOCKS_BLOCKBYTES) + " bytes");
         }
         
         // ... invoke
         
-        byte[] hash = new byte[HASHBLOCKS_STATEBYTES];
+        byte[] h = x.clone();
         int    rc;
 
-        if ((rc = jniCryptoHashBlocks(hash,message)) != 0) {
+        if ((rc = jniCryptoHashBlocks(h,m)) != 0) {
             throw new EncryptException("Error calculating block hash [" + Integer.toString(rc) + "]");
         }
         
-        return hash;
+        return h;
     }    
 
     // INNER CLASSES

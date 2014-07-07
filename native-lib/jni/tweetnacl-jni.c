@@ -211,8 +211,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 	unsigned char h[crypto_hashblocks_STATEBYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
+    (*env)->GetByteArrayRegion(env,hash,   0,crypto_hashblocks_STATEBYTES,m);
 
-	int rc = -999; // crypto_hash(h,m,(u64) N);
+	int rc = crypto_hashblocks(h,m,N);
 
     (*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
 
