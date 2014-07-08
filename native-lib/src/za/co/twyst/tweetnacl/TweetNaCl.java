@@ -384,11 +384,8 @@ public class TweetNaCl {
         // ... invoke
         
         byte[] h = x.clone();
-        int    rc;
 
-        if ((rc = jniCryptoHashBlocks(h,m)) != 0) {
-            throw new EncryptException("Error calculating block hash [" + Integer.toString(rc) + "]");
-        }
+        jniCryptoHashBlocks(h,m);
         
         return h;
     }    

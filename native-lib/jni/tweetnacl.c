@@ -1,4 +1,5 @@
 #include "tweetnacl.h"
+
 #define FOR(i,n) for (i = 0;i < n;++i)
 #define sv static void
 
@@ -567,6 +568,7 @@ int crypto_hash(u8 *out,const u8 *m,u64 n)
   FOR(i,64) h[i] = iv[i];
 
   crypto_hashblocks(h,m,n);
+
   m += n;
   n &= 127;
   m -= n;

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <jni.h>
 #include <android/log.h>
 #include "tweetnacl.h"
@@ -8,7 +9,23 @@ typedef unsigned long long u64;
 typedef long long i64;
 typedef i64 gf[16];
 
-// __android_log_print(ANDROID_LOG_INFO,"TBXML","ATTRIBUTE: %s::%s",name,value);
+// __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
+
+const char HEX[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+
+char *tohex(const u8 *b,u64 n,char *string) {
+	int ix = 0;
+	int i;
+
+	memset(string,0,n*2 + 1);
+
+	for (i=0; i<n; i++) {
+        string[ix++] = HEX[(b[i] >> 4) & 0x000f];
+        string[ix++] = HEX[(b[i] >> 0) & 0x000f];
+	}
+
+	return string;
+}
 
 /** jniRandomBytes
  *
@@ -211,11 +228,12 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 	unsigned char h[crypto_hashblocks_STATEBYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
-    (*env)->GetByteArrayRegion(env,hash,   0,crypto_hashblocks_STATEBYTES,m);
+    (*env)->GetByteArrayRegion(env,hash,   0,crypto_hashblocks_STATEBYTES,h);
 
 	int rc = crypto_hashblocks(h,m,N);
 
-    (*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+    (*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
+
 
     return (jint) rc;
 }

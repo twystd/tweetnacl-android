@@ -7,7 +7,7 @@ the Android NDK.
 
 Status
 ------
-Just started .....
+Coming along slowly .....
 
 Implemented
 -----------
@@ -20,14 +20,13 @@ Implemented
 6.  crypto_box_open_afternm
 7.  crypto_core_salsa20
 8.  crypto_core_hsalsa20
-
+9.  crypto_hashblocks
 10. crypto_hash
 
 
 Pending
 -------
 
-9.  crypto_hashblocks
 11. crypto_onetimeauth
 12. crypto_onetimeauth_verify
 13. crypto_scalarmult
