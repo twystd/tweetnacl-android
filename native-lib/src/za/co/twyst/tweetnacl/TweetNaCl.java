@@ -27,6 +27,8 @@ public class TweetNaCl {
     public static final int HASHBLOCKS_STATEBYTES = 64;
     public static final int HASHBLOCKS_BLOCKBYTES = 128;
 
+    public static final int ONETIMEAUTH_BYTES    = 16;
+    public static final int ONETIMEAUTH_KEYBYTES = 32;
     
     // NATIVE METHODS
     
@@ -40,7 +42,8 @@ public class TweetNaCl {
     private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
     private native int jniCryptoHash          (byte[] hash,      byte[] message);
-    private native int jniCryptoHashBlocks    (byte[] hash,      byte[] m);
+    private native int jniCryptoHashBlocks    (byte[] state,     byte[] message);
+    private native int jniCryptoOneTimeAuth   (byte[] signature, byte[] message,   byte[] key);
 
     // CLASS METHODS
     
@@ -388,6 +391,34 @@ public class TweetNaCl {
         jniCryptoHashBlocks(h,m);
         
         return h;
+    }    
+    
+    /** Wrapper function for crypto_onetimeauth.
+      * 
+      * @param  message
+      * @param  key
+      * @return hash
+      * 
+      * @throws Exception
+      */
+    public byte[] cryptoOneTimeAuth(final byte[] message,final byte[] key) throws EncryptException {
+        // ... validate
+        
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message'");
+        }
+        
+        if ((key == null) || (key.length  != ONETIMEAUTH_KEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
+        }
+        
+        // ... invoke
+        
+        byte[] signature = new byte[ONETIMEAUTH_BYTES];
+
+        jniCryptoOneTimeAuth(signature,message,key);
+        
+        return signature;
     }    
 
     // INNER CLASSES

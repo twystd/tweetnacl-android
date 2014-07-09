@@ -234,7 +234,26 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 
     (*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
 
+    return (jint) rc;
+}
+
+/** jniCryptoOneTimeAuth
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobject object,jbyteArray signature,jbyteArray message,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,message);
+	unsigned char m[N];
+	unsigned char k[crypto_onetimeauth_KEYBYTES];
+	unsigned char a[crypto_onetimeauth_BYTES];
+
+    (*env)->GetByteArrayRegion(env,message,0,N,m);
+    (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
+
+	int rc = crypto_onetimeauth(a,m,N,k);
+
+    (*env)->SetByteArrayRegion(env,signature,0,crypto_onetimeauth_BYTES,a);
 
     return (jint) rc;
 }
+
 
