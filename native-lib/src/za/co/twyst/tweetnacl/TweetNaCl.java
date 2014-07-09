@@ -32,18 +32,19 @@ public class TweetNaCl {
     
     // NATIVE METHODS
     
-    private native int jniRandomBytes         (byte[] bytes);
-    private native int jniCryptoBoxKeyPair    (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox           (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen       (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM   (byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM    (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
-    private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
-    private native int jniCryptoCoreHSalsa20  (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
-    private native int jniCryptoCoreSalsa20   (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
-    private native int jniCryptoHash          (byte[] hash,      byte[] message);
-    private native int jniCryptoHashBlocks    (byte[] state,     byte[] message);
-    private native int jniCryptoOneTimeAuth   (byte[] signature, byte[] message,   byte[] key);
+    private native int jniRandomBytes            (byte[] bytes);
+    private native int jniCryptoBoxKeyPair       (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox              (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+    private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+    private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+    private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+    private native int jniCryptoHash             (byte[] hash,      byte[] message);
+    private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
+    private native int jniCryptoOneTimeAuth      (byte[] signature, byte[] message,   byte[] key);
+    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
 
     // CLASS METHODS
     
@@ -414,13 +415,43 @@ public class TweetNaCl {
         
         // ... invoke
         
-        byte[] signature = new byte[ONETIMEAUTH_BYTES];
+        byte[] authorisation = new byte[ONETIMEAUTH_BYTES];
 
-        jniCryptoOneTimeAuth(signature,message,key);
+        jniCryptoOneTimeAuth(authorisation,message,key);
         
-        return signature;
+        return authorisation;
     }    
 
+    
+    /** Wrapper function for crypto_onetimeauth_verify.
+      * 
+      * @param  authorisation
+      * @param  message
+      * @param  key
+      * @return verified
+      * 
+      * @throws Exception
+      */
+    public boolean cryptoOneTimeAuthVerify(final byte[] authorisation,final byte[] message,final byte[] key) throws EncryptException {
+        // ... validate
+        
+        if ((authorisation == null) || (authorisation.length  != ONETIMEAUTH_BYTES)) {
+            throw new IllegalArgumentException("Invalid 'authorisation' - length must be " + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
+        }
+        
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message'");
+        }
+        
+        if ((key == null) || (key.length  != ONETIMEAUTH_KEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
+        }
+        
+        // ... invoke
+
+        return jniCryptoOneTimeAuthVerify(authorisation,message,key) == 0;
+    }    
+    
     // INNER CLASSES
     
     public static final class KeyPair {

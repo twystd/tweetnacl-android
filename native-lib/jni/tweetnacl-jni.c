@@ -240,7 +240,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 /** jniCryptoOneTimeAuth
  *
  */
-jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobject object,jbyteArray signature,jbyteArray message,jbyteArray key) {
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
 	int      N  = (*env)->GetArrayLength(env,message);
 	unsigned char m[N];
 	unsigned char k[crypto_onetimeauth_KEYBYTES];
@@ -251,9 +251,24 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
 
 	int rc = crypto_onetimeauth(a,m,N,k);
 
-    (*env)->SetByteArrayRegion(env,signature,0,crypto_onetimeauth_BYTES,a);
+    (*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
 
     return (jint) rc;
 }
 
+/** jniCryptoOneTimeAuthVerify
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,message);
+	unsigned char m[N];
+	unsigned char k[crypto_onetimeauth_KEYBYTES];
+	unsigned char a[crypto_onetimeauth_BYTES];
+
+    (*env)->GetByteArrayRegion(env,auth,   0,crypto_onetimeauth_BYTES,a);
+    (*env)->GetByteArrayRegion(env,message,0,N,m);
+    (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
+
+	return (jint) crypto_onetimeauth_verify(a,m,N,k);
+}
 
