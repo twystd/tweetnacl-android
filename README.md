@@ -22,12 +22,12 @@ Implemented
 8.  crypto_core_hsalsa20
 9.  crypto_hashblocks
 10. crypto_hash
+11. crypto_onetimeauth
 
 
 Pending
 -------
 
-11. crypto_onetimeauth
 12. crypto_onetimeauth_verify
 13. crypto_scalarmult
 14. crypto_scalarmult_base
