@@ -465,13 +465,13 @@ public class TweetNaCl {
    public byte[] cryptoScalarMultBase(final byte[] n) throws EncryptException {
        // ... validate
        
-       if ((n == null) || (n.length  != SCALARMULT_BYTES)) {
-           throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_BYTES) + " bytes");
+       if ((n == null) || (n.length  != SCALARMULT_SCALARBYTES)) {
+           throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_SCALARBYTES) + " bytes");
        }
        
        // ... invoke
 
-       byte[] q = new byte[SCALARMULT_SCALARBYTES];
+       byte[] q = new byte[SCALARMULT_BYTES];
        int    rc;
 
        if ((rc = jniCryptoScalarMultBase(q,n)) != 0) {
@@ -493,8 +493,8 @@ public class TweetNaCl {
   public byte[] cryptoScalarMult(final byte[] n,final byte[] p) throws EncryptException {
       // ... validate
       
-      if ((n == null) || (n.length  != SCALARMULT_BYTES)) {
-          throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_BYTES) + " bytes");
+      if ((n == null) || (n.length  != SCALARMULT_SCALARBYTES)) {
+          throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_SCALARBYTES) + " bytes");
       }
       
       if ((p == null) || (p.length  != SCALARMULT_BYTES)) {
@@ -503,7 +503,7 @@ public class TweetNaCl {
       
       // ... invoke
 
-      byte[] q = new byte[SCALARMULT_SCALARBYTES];
+      byte[] q = new byte[SCALARMULT_BYTES];
       int    rc;
 
       if ((rc = jniCryptoScalarMult(q,n,p)) != 0) {
