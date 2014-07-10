@@ -6,29 +6,31 @@ import za.co.twyst.tweetnacl.exceptions.EncryptException;
 public class TweetNaCl {
     // CONSTANTS
 
-    public static final int PUBLICKEYBYTES = 32;
-    public static final int SECRETKEYBYTES = 32;
-    public static final int BEFORENMBYTES  = 32;
-    public static final int NONCEBYTES     = 24;
-    public static final int ZEROBYTES      = 32;
-    public static final int BOXZEROBYTES   = 16;
+    public static final int BOX_PUBLICKEYBYTES     = 32;
+    public static final int BOX_SECRETKEYBYTES     = 32;
+    public static final int BOX_BEFORENMBYTES      = 32;
+    public static final int BOX_NONCEBYTES         = 24;
+    public static final int BOX_ZEROBYTES          = 32;
     
-    public static final int HSALSA20_OUTPUTBYTES = 32;
-    public static final int HSALSA20_INPUTBYTES  = 16;
-    public static final int HSALSA20_KEYBYTES    = 32;
-    public static final int HSALSA20_CONSTBYTES  = 16;
+    public static final int HSALSA20_OUTPUTBYTES   = 32;
+    public static final int HSALSA20_INPUTBYTES    = 16;
+    public static final int HSALSA20_KEYBYTES      = 32;
+    public static final int HSALSA20_CONSTBYTES    = 16;
     
-    public static final int SALSA20_OUTPUTBYTES = 64;
-    public static final int SALSA20_INPUTBYTES  = 16;
-    public static final int SALSA20_KEYBYTES    = 32;
-    public static final int SALSA20_CONSTBYTES  = 16;
+    public static final int SALSA20_OUTPUTBYTES    = 64;
+    public static final int SALSA20_INPUTBYTES     = 16;
+    public static final int SALSA20_KEYBYTES       = 32;
+    public static final int SALSA20_CONSTBYTES     = 16;
 
-    public static final int HASH_BYTES            = 64;
-    public static final int HASHBLOCKS_STATEBYTES = 64;
-    public static final int HASHBLOCKS_BLOCKBYTES = 128;
+    public static final int HASH_BYTES             = 64;
+    public static final int HASHBLOCKS_STATEBYTES  = 64;
+    public static final int HASHBLOCKS_BLOCKBYTES  = 128;
 
-    public static final int ONETIMEAUTH_BYTES    = 16;
-    public static final int ONETIMEAUTH_KEYBYTES = 32;
+    public static final int ONETIMEAUTH_BYTES      = 16;
+    public static final int ONETIMEAUTH_KEYBYTES   = 32;
+    
+    public static final int SCALARMULT_BYTES       = 32;
+    public static final int SCALARMULT_SCALARBYTES = 32;
     
     // NATIVE METHODS
     
@@ -45,6 +47,8 @@ public class TweetNaCl {
     private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
     private native int jniCryptoOneTimeAuth      (byte[] signature, byte[] message,   byte[] key);
     private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
+    private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
+    private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
 
     // CLASS METHODS
     
@@ -90,8 +94,8 @@ public class TweetNaCl {
         
         // ... get key pair
         
-        byte[] publicKey = new byte[PUBLICKEYBYTES];
-        byte[] secretKey = new byte[SECRETKEYBYTES];
+        byte[] publicKey = new byte[BOX_PUBLICKEYBYTES];
+        byte[] secretKey = new byte[BOX_SECRETKEYBYTES];
         
         jniCryptoBoxKeyPair(publicKey,secretKey);
         
@@ -116,15 +120,15 @@ public class TweetNaCl {
             throw new IllegalArgumentException("Invalid 'message' - may not be null");
         }
         
-        if ((nonce == null) || (nonce.length != NONCEBYTES)) {
+        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
             throw new IllegalArgumentException("Invalid 'nonce' - must be 24 bytes");
         }
 
-        if ((publicKey == null) || (publicKey.length != PUBLICKEYBYTES)) {
+        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
         }
 
-        if ((secretKey == null) || (secretKey.length != SECRETKEYBYTES)) {
+        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
         }
         
@@ -147,15 +151,15 @@ public class TweetNaCl {
             throw new IllegalArgumentException("Invalid 'ciphertext' - may not be null");
         }
         
-        if ((nonce == null) || (nonce.length != NONCEBYTES)) {
+        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
             throw new IllegalArgumentException("Invalid 'nonce' - must be 24 bytes");
         }
 
-        if ((publicKey == null) || (publicKey.length != PUBLICKEYBYTES)) {
+        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
         }
 
-        if ((secretKey == null) || (secretKey.length != SECRETKEYBYTES)) {
+        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
         }
         
@@ -183,17 +187,17 @@ public class TweetNaCl {
     public byte[] cryptoBoxBeforeNM(byte[] publicKey,byte[] secretKey) throws Exception {
         // ... validate
         
-        if ((publicKey == null) || (publicKey.length != PUBLICKEYBYTES)) {
+        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
         }
 
-        if ((secretKey == null) || (secretKey.length != SECRETKEYBYTES)) {
+        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
             throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
         }
         
         // ... encrypt
         
-        byte[] key = new byte[BEFORENMBYTES];
+        byte[] key = new byte[BOX_BEFORENMBYTES];
         int    rc;
 
         if ((rc = jniCryptoBoxBeforeNM(key,publicKey,secretKey)) != 0) {
@@ -220,12 +224,12 @@ public class TweetNaCl {
             throw new IllegalArgumentException("Invalid 'message' - may not be null");
         }
         
-        if ((nonce == null) || (nonce.length != NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(NONCEBYTES) + " bytes");
+        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
+            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(BOX_NONCEBYTES) + " bytes");
         }
 
-        if ((key == null) || (key.length != BEFORENMBYTES)) {
-            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BEFORENMBYTES) + " bytes");
+        if ((key == null) || (key.length != BOX_BEFORENMBYTES)) {
+            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BOX_BEFORENMBYTES) + " bytes");
         }
         
         // ... encrypt
@@ -247,12 +251,12 @@ public class TweetNaCl {
             throw new IllegalArgumentException("Invalid 'ciphertext' - may not be null");
         }
         
-        if ((nonce == null) || (nonce.length != NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(NONCEBYTES) + " bytes");
+        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
+            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(BOX_NONCEBYTES) + " bytes");
         }
 
-        if ((key == null) || (key.length != BEFORENMBYTES)) {
-            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BEFORENMBYTES) + " bytes");
+        if ((key == null) || (key.length != BOX_BEFORENMBYTES)) {
+            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BOX_BEFORENMBYTES) + " bytes");
         }
 
         // ... encrypt
@@ -422,7 +426,6 @@ public class TweetNaCl {
         return authorisation;
     }    
 
-    
     /** Wrapper function for crypto_onetimeauth_verify.
       * 
       * @param  authorisation
@@ -452,15 +455,72 @@ public class TweetNaCl {
         return jniCryptoOneTimeAuthVerify(authorisation,message,key) == 0;
     }    
     
+    /** Wrapper function for crypto_scalarmult_base.
+     * 
+     * @param  n
+     * @return q
+     * 
+     * @throws Exception
+     */
+   public byte[] cryptoScalarMultBase(final byte[] n) throws EncryptException {
+       // ... validate
+       
+       if ((n == null) || (n.length  != SCALARMULT_BYTES)) {
+           throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_BYTES) + " bytes");
+       }
+       
+       // ... invoke
+
+       byte[] q = new byte[SCALARMULT_SCALARBYTES];
+       int    rc;
+
+       if ((rc = jniCryptoScalarMultBase(q,n)) != 0) {
+           throw new EncryptException("Error calculating scalarmult_base [" + Integer.toString(rc) + "]");
+       }
+       
+       return q;
+   }    
+    
+   
+   /** Wrapper function for crypto_scalarmult.
+    * 
+    * @param  n
+    * @param  p
+    * @return q
+    * 
+    * @throws Exception
+    */
+  public byte[] cryptoScalarMult(final byte[] n,final byte[] p) throws EncryptException {
+      // ... validate
+      
+      if ((n == null) || (n.length  != SCALARMULT_BYTES)) {
+          throw new IllegalArgumentException("Invalid 'n' - length must be " + Integer.toString(SCALARMULT_BYTES) + " bytes");
+      }
+      
+      if ((p == null) || (p.length  != SCALARMULT_BYTES)) {
+          throw new IllegalArgumentException("Invalid 'p' - length must be " + Integer.toString(SCALARMULT_BYTES) + " bytes");
+      }
+      
+      // ... invoke
+
+      byte[] q = new byte[SCALARMULT_SCALARBYTES];
+      int    rc;
+
+      if ((rc = jniCryptoScalarMult(q,n,p)) != 0) {
+          throw new EncryptException("Error calculating scalarmult [" + Integer.toString(rc) + "]");
+      }
+      
+      return q;
+  }    
     // INNER CLASSES
     
     public static final class KeyPair {
-        public final byte[] publicKey = new byte[PUBLICKEYBYTES];
-        public final byte[] secretKey = new byte[SECRETKEYBYTES];
+        public final byte[] publicKey = new byte[BOX_PUBLICKEYBYTES];
+        public final byte[] secretKey = new byte[BOX_SECRETKEYBYTES];
         
         private KeyPair(byte[] publicKey,byte[] secretKey) {
-            System.arraycopy(publicKey,0,this.publicKey,0,PUBLICKEYBYTES);
-            System.arraycopy(secretKey,0,this.secretKey,0,SECRETKEYBYTES);
+            System.arraycopy(publicKey,0,this.publicKey,0,BOX_PUBLICKEYBYTES);
+            System.arraycopy(secretKey,0,this.secretKey,0,BOX_SECRETKEYBYTES);
         }
     }
 }

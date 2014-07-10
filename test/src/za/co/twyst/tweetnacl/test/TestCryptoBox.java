@@ -164,14 +164,14 @@ public class TestCryptoBox extends TweetNaClTest
                   for (int mlen=0; mlen<ROUNDS; ++mlen) 
                       { TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
                         TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
-                        byte[]            message = new byte[mlen + TweetNaCl.ZEROBYTES];
-                        byte[]            nonce   = new byte[TweetNaCl.NONCEBYTES];
+                        byte[]            message = new byte[mlen + TweetNaCl.BOX_ZEROBYTES];
+                        byte[]            nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
                         byte[]            ciphertext;
                         byte[]            plaintext;
                       
                         random.nextBytes(nonce);
                         random.nextBytes(message);
-                        Arrays.fill     (message,0,TweetNaCl.ZEROBYTES,(byte) 0);
+                        Arrays.fill     (message,0,TweetNaCl.BOX_ZEROBYTES,(byte) 0);
                         
                         ciphertext = tweetnacl.cryptoBox    (message,nonce,bob.publicKey,alice.secretKey);
                         plaintext  = tweetnacl.cryptoBoxOpen(ciphertext,nonce,alice.publicKey,bob.secretKey); 
@@ -189,15 +189,15 @@ public class TestCryptoBox extends TweetNaClTest
                   for (int mlen=0; mlen<ROUNDS; ++mlen) 
                       { TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
                         TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
-                        byte[]            message = new byte[mlen + TweetNaCl.ZEROBYTES];
-                        byte[]            nonce   = new byte[TweetNaCl.NONCEBYTES];
+                        byte[]            message = new byte[mlen + TweetNaCl.BOX_ZEROBYTES];
+                        byte[]            nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
                         byte[]            ciphertext;
                         byte[]            plaintext;
                         int               caught = 0;
                    
                         random.nextBytes(nonce);
                         random.nextBytes(message);
-                        Arrays.fill     (message,0,TweetNaCl.ZEROBYTES,(byte) 0);
+                        Arrays.fill     (message,0,TweetNaCl.BOX_ZEROBYTES,(byte) 0);
        
                         ciphertext = tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
 

@@ -7,3 +7,5 @@
    (Ref. http://cryptojedi.org/peter/data/tenerife-20130121.pdf)
 5. Revert license to public domain (github ?)
 6. Add disclaimer for side-channel attacks etc
+7. javadoc
+8. Benchmark app

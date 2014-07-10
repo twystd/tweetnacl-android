@@ -272,3 +272,36 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env
 	return (jint) crypto_onetimeauth_verify(a,m,N,k);
 }
 
+/** jniCryptoScalarMultBase
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMultBase(JNIEnv *env,jobject object,jbyteArray Q,jbyteArray N) {
+	unsigned char n[crypto_scalarmult_BYTES];
+	unsigned char q[crypto_scalarmult_SCALARBYTES];
+
+    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_BYTES,n);
+
+	int rc = crypto_scalarmult_base(q,n);
+
+	(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+
+    return (jint) rc;
+}
+
+/** jniCryptoScalarMult
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMult(JNIEnv *env,jobject object,jbyteArray Q,jbyteArray N,jbyteArray P) {
+	unsigned char n[crypto_scalarmult_BYTES];
+	unsigned char p[crypto_scalarmult_BYTES];
+	unsigned char q[crypto_scalarmult_SCALARBYTES];
+
+    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_BYTES,n);
+    (*env)->GetByteArrayRegion(env,P,0,crypto_scalarmult_BYTES,p);
+
+	int rc = crypto_scalarmult(q,n,p);
+
+	(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+
+    return (jint) rc;
+}
