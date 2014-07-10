@@ -3,76 +3,82 @@ package za.co.twyst.tweetnacl;
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 
-public class TweetNaCl {
-    // CONSTANTS
+public class TweetNaCl 
+       { // CONSTANTS
 
-    public static final int BOX_PUBLICKEYBYTES     = 32;
-    public static final int BOX_SECRETKEYBYTES     = 32;
-    public static final int BOX_BEFORENMBYTES      = 32;
-    public static final int BOX_NONCEBYTES         = 24;
-    public static final int BOX_ZEROBYTES          = 32;
-    
-    public static final int HSALSA20_OUTPUTBYTES   = 32;
-    public static final int HSALSA20_INPUTBYTES    = 16;
-    public static final int HSALSA20_KEYBYTES      = 32;
-    public static final int HSALSA20_CONSTBYTES    = 16;
-    
-    public static final int SALSA20_OUTPUTBYTES    = 64;
-    public static final int SALSA20_INPUTBYTES     = 16;
-    public static final int SALSA20_KEYBYTES       = 32;
-    public static final int SALSA20_CONSTBYTES     = 16;
+         public static final int BOX_PUBLICKEYBYTES     = 32;
+         public static final int BOX_SECRETKEYBYTES     = 32;
+         public static final int BOX_BEFORENMBYTES      = 32;
+         public static final int BOX_NONCEBYTES         = 24;
+         public static final int BOX_ZEROBYTES          = 32;
 
-    public static final int HASH_BYTES             = 64;
-    public static final int HASHBLOCKS_STATEBYTES  = 64;
-    public static final int HASHBLOCKS_BLOCKBYTES  = 128;
+         public static final int HSALSA20_OUTPUTBYTES   = 32;
+         public static final int HSALSA20_INPUTBYTES    = 16;
+         public static final int HSALSA20_KEYBYTES      = 32;
+         public static final int HSALSA20_CONSTBYTES    = 16;
 
-    public static final int ONETIMEAUTH_BYTES      = 16;
-    public static final int ONETIMEAUTH_KEYBYTES   = 32;
-    
-    public static final int SCALARMULT_BYTES       = 32;
-    public static final int SCALARMULT_SCALARBYTES = 32;
-    
-    // NATIVE METHODS
-    
-    private native int jniRandomBytes            (byte[] bytes);
-    private native int jniCryptoBoxKeyPair       (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox              (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
-    private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
-    private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
-    private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
-    private native int jniCryptoHash             (byte[] hash,      byte[] message);
-    private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
-    private native int jniCryptoOneTimeAuth      (byte[] signature, byte[] message,   byte[] key);
-    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
-    private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
-    private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
+         public static final int SALSA20_OUTPUTBYTES    = 64;
+         public static final int SALSA20_INPUTBYTES     = 16;
+         public static final int SALSA20_KEYBYTES       = 32;
+         public static final int SALSA20_CONSTBYTES     = 16;
 
-    // CLASS METHODS
+         public static final int HASH_BYTES             = 64;
+         public static final int HASHBLOCKS_STATEBYTES  = 64;
+         public static final int HASHBLOCKS_BLOCKBYTES  = 128;
+
+         public static final int ONETIMEAUTH_BYTES      = 16;
+         public static final int ONETIMEAUTH_KEYBYTES   = 32;
+
+         public static final int SCALARMULT_BYTES       = 32;
+         public static final int SCALARMULT_SCALARBYTES = 32;
+         
+         public static final int SECRETBOX_KEYBYTES     = 32;
+         public static final int SECRETBOX_NONCEBYTES   = 24;
+         public static final int SECRETBOX_ZEROBYTES    = 32;
+         public static final int SECRETBOX_BOXZEROBYTES = 16;
+
+         // NATIVE METHODS
+
+         private native int jniRandomBytes            (byte[] bytes);
+         private native int jniCryptoBoxKeyPair       (byte[] publicKey, byte[] secretKey);
+         private native int jniCryptoBox              (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+         private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+         private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey, byte[] secretKey);
+         private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+         private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+         private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+         private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,        byte[] key,  byte[] constant);
+         private native int jniCryptoHash             (byte[] hash,      byte[] message);
+         private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
+         private native int jniCryptoOneTimeAuth      (byte[] signature, byte[] message,   byte[] key);
+         private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
+         private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
+         private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
+         private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+
+         // CLASS METHODS
+
+         static { System.loadLibrary("tweetnacl");
+                }
     
-    static 
-        { System.loadLibrary("tweetnacl");
-        }
+         // PUBLIC API
     
-    // PUBLIC API
+         /** Releases any resources acquired by the native library.
+           * 
+           */
+         public void release() 
+                {
+                }
     
-    /** Releases any resources acquired by the native library.
-     * 
-     */
-    public void release() {
-    }
-    
-    /** Wrapper function for <code>randombytes<code>.
-     *  <p>
-     *  The <code>randombytes</code> function is not part of the TweetNaCl API but
-     *  is exposed here for test purposes. 
-     * 
-     * @param bytes
-     * 
-     * @throws Exception
-     */
+         /** Wrapper function for <code>randombytes<code>.
+           * <p>
+           * The <code>randombytes</code> function is not part of the TweetNaCl API but
+           * is exposed here for test purposes. 
+           * 
+           * @param bytes
+           * 
+           * @throws Exception
+           */
     public void randomBytes(final byte[] bytes) {
         // ... validate
         
@@ -480,7 +486,6 @@ public class TweetNaCl {
        
        return q;
    }    
-    
    
    /** Wrapper function for crypto_scalarmult.
     * 
@@ -512,6 +517,43 @@ public class TweetNaCl {
       
       return q;
   }    
+
+  /** Wrapper function for crypto_secretbox.
+   * 
+   * @param  message
+   * @param  key
+   * @param  nonce
+   * @return ciphertext
+   * 
+   * @throws Exception
+   */
+ public byte[] cryptoSecretBox(final byte[] message,final byte[] nonce,final byte[] key) throws EncryptException {
+     // ... validate
+     
+     if (message == null) {
+         throw new IllegalArgumentException("Invalid 'message'");
+     }
+     
+     if ((nonce == null) || (nonce.length  != SECRETBOX_NONCEBYTES)) {
+         throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(SECRETBOX_NONCEBYTES) + " bytes");
+     }
+     
+     if ((key == null) || (key.length  != SECRETBOX_KEYBYTES)) {
+         throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(SECRETBOX_KEYBYTES) + " bytes");
+     }
+     
+     // ... invoke
+
+     byte[] ciphertext = new byte[message.length];
+     int    rc;
+
+     if ((rc = jniCryptoSecretBox(ciphertext,message,nonce,key)) != 0) {
+         throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+     }
+     
+     return ciphertext;
+ }    
+
     // INNER CLASSES
     
     public static final class KeyPair {

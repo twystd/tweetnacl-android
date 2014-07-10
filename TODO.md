@@ -9,3 +9,4 @@
 6. Add disclaimer for side-channel attacks etc
 7. javadoc
 8. Benchmark app
+9. Do the zero padding inside TweetNaCl
