@@ -54,7 +54,8 @@ public class TweetNaCl
          private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
          private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
          private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
-         private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] key);
+         private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
+         private native int jniCryptoSecretBoxOpen    (byte[] plaintext, byte[] ciphertext, byte[] nonce,byte[] key);
 
          // CLASS METHODS
 
@@ -520,18 +521,18 @@ public class TweetNaCl
 
   /** Wrapper function for crypto_secretbox.
    * 
-   * @param  message
+   * @param  plaintext
    * @param  key
    * @param  nonce
    * @return ciphertext
    * 
    * @throws Exception
    */
- public byte[] cryptoSecretBox(final byte[] message,final byte[] nonce,final byte[] key) throws EncryptException {
+ public byte[] cryptoSecretBox(final byte[] plaintext,final byte[] nonce,final byte[] key) throws EncryptException {
      // ... validate
      
-     if (message == null) {
-         throw new IllegalArgumentException("Invalid 'message'");
+     if (plaintext == null) {
+         throw new IllegalArgumentException("Invalid 'plaintext'");
      }
      
      if ((nonce == null) || (nonce.length  != SECRETBOX_NONCEBYTES)) {
@@ -544,16 +545,51 @@ public class TweetNaCl
      
      // ... invoke
 
-     byte[] ciphertext = new byte[message.length];
+     byte[] ciphertext = new byte[plaintext.length];
      int    rc;
 
-     if ((rc = jniCryptoSecretBox(ciphertext,message,nonce,key)) != 0) {
+     if ((rc = jniCryptoSecretBox(ciphertext,plaintext,nonce,key)) != 0) {
          throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
      }
      
      return ciphertext;
  }    
 
+ /** Wrapper function for crypto_secretbox_open.
+  * 
+  * @param  ciphertext
+  * @param  key
+  * @param  nonce
+  * @return plainttext
+  * 
+  * @throws Exception
+  */
+public byte[] cryptoSecretBoxOpen(final byte[] crypttext,final byte[] nonce,final byte[] key) throws EncryptException {
+    // ... validate
+    
+    if (crypttext == null) {
+        throw new IllegalArgumentException("Invalid 'crypttext'");
+    }
+    
+    if ((nonce == null) || (nonce.length  != SECRETBOX_NONCEBYTES)) {
+        throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(SECRETBOX_NONCEBYTES) + " bytes");
+    }
+    
+    if ((key == null) || (key.length  != SECRETBOX_KEYBYTES)) {
+        throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(SECRETBOX_KEYBYTES) + " bytes");
+    }
+    
+    // ... invoke
+
+    byte[] plaintext = new byte[crypttext.length];
+    int    rc;
+
+    if ((rc = jniCryptoSecretBoxOpen(plaintext,crypttext,nonce,key)) != 0) {
+        throw new EncryptException("Error decrypting message [" + Integer.toString(rc) + "]");
+    }
+    
+    return plaintext;
+}    
     // INNER CLASSES
     
     public static final class KeyPair {

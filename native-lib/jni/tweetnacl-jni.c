@@ -326,3 +326,24 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject
 
     return (jint) rc;
 }
+
+/** jniCryptoSecretBoxOpen
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,jobject object,jbyteArray plaintext,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,ciphertext);
+	unsigned char c[N];
+	unsigned char m[N];
+	unsigned char n[crypto_secretbox_NONCEBYTES];
+	unsigned char k[crypto_secretbox_KEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,ciphertext,0,N,c);
+    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_secretbox_NONCEBYTES,n);
+    (*env)->GetByteArrayRegion(env,key,       0,crypto_secretbox_KEYBYTES,  k);
+
+	int rc = crypto_secretbox_open(m,c,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,plaintext,0,N,m);
+
+    return (jint) rc;
+}
