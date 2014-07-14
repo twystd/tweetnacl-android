@@ -1,6 +1,10 @@
 package za.co.twyst.tweetnacl.test;
 
 import java.util.Arrays;
+import java.util.Random;
+
+import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.exceptions.DecryptException;
 
 public class TestCryptoSecretBox extends TweetNaClTest 
        { // CONSTANTS
@@ -138,5 +142,71 @@ public class TestCryptoSecretBox extends TweetNaClTest
                   
                   assertTrue("Invalid plaintext",Arrays.equals(plaintext,tweetnacl.cryptoSecretBoxOpen(ciphertext,nonce,key)));
                 }
+         
+         /** Loop test (adapted from tests/secretbox7.c).
+          * 
+          */
+         public void testSecretBox7() throws Exception
+                { Random random = new Random();
+
+                  for (int mlen=0; mlen<ROUNDS; ++mlen) 
+                      { byte[] key     = new byte[TweetNaCl.SECRETBOX_KEYBYTES];
+                        byte[] nonce   = new byte[TweetNaCl.SECRETBOX_NONCEBYTES];
+                        byte[] message = new byte[mlen + TweetNaCl.SECRETBOX_ZEROBYTES];
+                        byte[] ciphertext;
+                        byte[] plaintext;
+                      
+                        random.nextBytes(key);
+                        random.nextBytes(nonce);
+                        random.nextBytes(message);
+                        Arrays.fill     (message,0,TweetNaCl.SECRETBOX_ZEROBYTES,(byte) 0);
+                        
+                        ciphertext = tweetnacl.cryptoSecretBox    (message,nonce,key);
+                        plaintext  = tweetnacl.cryptoSecretBoxOpen(ciphertext,nonce,key); 
+                    
+                        assertTrue("Bad decryption",Arrays.equals(message,plaintext));
+                      }
+                }
+         
+         /** Corrupted ciphertext test (adapted from tests/secretbox8.c)
+           * 
+           */
+         public void testSecretBox8() throws Exception
+                { Random random = new Random();
+
+                  for (int mlen=0; mlen<ROUNDS; ++mlen) 
+                      { byte[] key     = new byte[TweetNaCl.SECRETBOX_KEYBYTES];
+                        byte[] nonce   = new byte[TweetNaCl.SECRETBOX_NONCEBYTES];
+                        byte[] message = new byte[mlen + TweetNaCl.SECRETBOX_ZEROBYTES];
+                        byte[] ciphertext;
+                        byte[] plaintext;
+                        int    caught = 0;
+                   
+                        random.nextBytes(key);
+                        random.nextBytes(nonce);
+                        random.nextBytes(message);
+                        Arrays.fill     (message,0,TweetNaCl.BOX_ZEROBYTES,(byte) 0);
+       
+                        ciphertext = tweetnacl.cryptoSecretBox(message,nonce,key);
+
+                        while (caught < 10)
+                              { int ix = random.nextInt(ciphertext.length);
+                                byte b = (byte) (random.nextInt() % 0x00ff);
+                        	    
+                                try
+                                   { ciphertext[ix] = b;
+                                     plaintext      = tweetnacl.cryptoSecretBoxOpen(ciphertext,nonce,key); 
+
+                                     if (!Arrays.equals(message,plaintext))
+                                        { fail("Forgery !!!");
+                                        }
+                                   }
+                                catch(DecryptException x)
+                                   { ++caught;
+                                   }
+                              }
+                      }
+                }
+
        }
 

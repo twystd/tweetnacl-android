@@ -560,11 +560,11 @@ public class TweetNaCl
   * @param  ciphertext
   * @param  key
   * @param  nonce
-  * @return plainttext
+  * @return plaintext
   * 
   * @throws Exception
   */
-public byte[] cryptoSecretBoxOpen(final byte[] crypttext,final byte[] nonce,final byte[] key) throws EncryptException {
+public byte[] cryptoSecretBoxOpen(final byte[] crypttext,final byte[] nonce,final byte[] key) throws DecryptException {
     // ... validate
     
     if (crypttext == null) {
@@ -585,7 +585,7 @@ public byte[] cryptoSecretBoxOpen(final byte[] crypttext,final byte[] nonce,fina
     int    rc;
 
     if ((rc = jniCryptoSecretBoxOpen(plaintext,crypttext,nonce,key)) != 0) {
-        throw new EncryptException("Error decrypting message [" + Integer.toString(rc) + "]");
+        throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
     }
     
     return plaintext;

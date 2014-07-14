@@ -26,12 +26,12 @@ Implemented
 12. crypto_onetimeauth_verify
 13. crypto_scalarmult
 14. crypto_scalarmult_base
+15. crypto_secretbox
+16. crypto_secretbox_open
 
 Pending
 -------
 
-15. crypto_secretbox
-16. crypto_secretbox_open
 17. crypto_sign
 18. crypto_sign_open
 19. crypto_sign_keypair
@@ -47,7 +47,9 @@ References
 ----------
 
 1. [TweetNaCl][tweetnacl]
-2. [TWEETNACL: HOW CR.YP.TO’S DEVELOPERS GOT CARRIED AWAY BY THE CARRY BIT ][carrybitbug]
+2. [TWEETNACL: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
+3. [NaCl: Cryptography for the Internet][slides]
 
-[tweetnacl]: http://tweetnacl.cr.yp.to
+[tweetnacl]:   http://tweetnacl.cr.yp.to
 [carrybitbug]: http://blog.skylable.com/2014/05/tweetnacl-carrybit-bug
+[slides]:      http://cryptojedi.org/peter/data/tenerife-20130121.pdf
