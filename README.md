@@ -47,7 +47,7 @@ References
 ----------
 
 1. [TweetNaCl][tweetnacl]
-2. [TWEETNACL: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
+2. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
 3. [NaCl: Cryptography for the Internet][slides]
 
 [tweetnacl]:   http://tweetnacl.cr.yp.to
