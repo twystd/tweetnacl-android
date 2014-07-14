@@ -37,6 +37,12 @@ public class TweetNaCl
          public static final int SECRETBOX_ZEROBYTES    = 32;
          public static final int SECRETBOX_BOXZEROBYTES = 16;
 
+         public static final int STREAM_KEYBYTES     = 32;
+         public static final int STREAM_NONCEBYTES   = 24;
+
+         // #define crypto_stream_salsa20_tweet_KEYBYTES 32
+         //#define crypto_stream_salsa20_tweet_NONCEBYTES 8
+
          // NATIVE METHODS
 
          private native int jniRandomBytes            (byte[] bytes);
@@ -80,22 +86,22 @@ public class TweetNaCl
            * 
            * @throws Exception
            */
-    public void randomBytes(final byte[] bytes) {
-        // ... validate
+         public void randomBytes(final byte[] bytes) 
+                { // ... validate
         
-        if (bytes == null) {
-            throw new IllegalArgumentException("Invalid 'bytes' - may not be null");
-        }
+                  if (bytes == null) 
+                     { throw new IllegalArgumentException("Invalid 'bytes' - may not be null");
+                     }
         
-        // ... fill with random bytes
+                  // ... fill with random bytes
         
-        jniRandomBytes(bytes);
-    }    
+                  jniRandomBytes(bytes);
+                }    
 
-    /** Wrapper function for crypto_box_keypair.
-     * 
-     * @return Initialised KeyPair.
-     */
+         /** Wrapper function for crypto_box_keypair.
+           * 
+           * @return Initialised KeyPair.
+           */
     public KeyPair cryptoBoxKeyPair() {
         // ... validate
         
@@ -590,6 +596,39 @@ public byte[] cryptoSecretBoxOpen(final byte[] crypttext,final byte[] nonce,fina
     
     return plaintext;
 }    
+
+
+         /** Wrapper function for crypto_stream.
+           * 
+           * @param  plaintext
+           * @param  key
+           * @return cipherttext
+           * 
+           * @throws Exception
+           */
+         public byte[] cryptoStream(final byte[] plaintext,final byte[] key) throws EncryptException 
+                { // ... validate
+   
+                  if (plaintext == null) 
+                     { throw new IllegalArgumentException("Invalid 'crypttext'");
+                     }
+   
+                  if ((key == null) || (key.length  != STREAM_KEYBYTES)) 
+                     { throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(STREAM_KEYBYTES) + " bytes");
+                     }
+   
+                  // ... invoke
+
+                  byte[] ciphertext = new byte[plaintext.length];
+                  int    rc;
+
+//                  if ((rc = jniCryptoSecretBoxOpen(plaintext,crypttext,nonce,key)) != 0) 
+//                     { throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
+//                     }
+   
+                  return ciphertext;
+                }    
+
     // INNER CLASSES
     
     public static final class KeyPair {
