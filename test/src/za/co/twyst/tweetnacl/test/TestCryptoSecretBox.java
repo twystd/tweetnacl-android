@@ -51,8 +51,6 @@ public class TestCryptoSecretBox extends TweetNaClTest
                   
                   final byte[] ref = { (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
 		                               (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
-		                               (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
-		                               (byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,
 		                               
 		                               (byte) 0xf3,(byte) 0xff,(byte) 0xc7,(byte) 0x70,(byte) 0x3f,(byte) 0x94,(byte) 0x00,(byte) 0xe5,
                 		  	           (byte) 0x2a,(byte) 0x7d,(byte) 0xfb,(byte) 0x4b,(byte) 0x3d,(byte) 0x33,(byte) 0x05,(byte) 0xd9,
@@ -75,9 +73,7 @@ public class TestCryptoSecretBox extends TweetNaClTest
                 		  	           (byte) 0xe3,(byte) 0x55,(byte) 0xa5
                                      };
 
-                  byte[] crypttext = tweetnacl.cryptoSecretBox(message,nonce,key);
-
-                  assertTrue("Invalid crypttext",Arrays.equals(ref,crypttext));
+                  assertTrue("Invalid crypttext",Arrays.equals(ref,tweetnacl.cryptoSecretBox(message,nonce,key)));
                 }
        }
 
