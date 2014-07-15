@@ -9,4 +9,4 @@
 7.  javadoc
 8.  Benchmark app
 9.  Reformat test cases
-10. Double check .cpp tests for useful test cases
+10. Mine .cpp tests for useful test cases

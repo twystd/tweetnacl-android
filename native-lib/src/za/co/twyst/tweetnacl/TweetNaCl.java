@@ -64,6 +64,7 @@ public class TweetNaCl {
     private native int jniCryptoStream           (byte[] ciphertext,byte[] nonce,     byte[] key);
     private native int jniCryptoStreamXor        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
     private native int jniCryptoStreamSalsa20    (byte[] ciphertext,byte[] nonce,     byte[] key);
+    private native int jniCryptoStreamSalsa20Xor (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
 
     // CLASS METHODS
 
@@ -679,7 +680,6 @@ public class TweetNaCl {
         return ciphertext;
     }    
 
-
     /** Wrapper function for crypto_stream_salsa20.
      * 
      * @param  length
@@ -710,6 +710,43 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoStreamSalsa20(ciphertext,nonce,key)) != 0) { 
+            throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
+        }
+   
+        return ciphertext;
+    }    
+
+    /** Wrapper function for crypto_stream_salsa20_xor.
+     * 
+     * @param  plaintext
+     * @param  nonce
+     * @param  key
+     * 
+     * @return ciphertext
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoStreamSalsa20Xor(final byte[] plaintext,final byte[] nonce,final byte[] key) throws EncryptException { 
+        // ... validate
+   
+        if (plaintext == null) { 
+            throw new IllegalArgumentException("Invalid 'crypttext'");
+        }
+   
+        if ((nonce == null) || (nonce.length  != STREAM_SALSA20_NONCEBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(STREAM_SALSA20_NONCEBYTES) + " bytes");
+        }
+
+        if ((key == null) || (key.length  != STREAM_SALSA20_KEYBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(STREAM_SALSA20_KEYBYTES) + " bytes");
+        }
+   
+        // ... invoke
+
+        byte[] ciphertext = new byte[plaintext.length];
+        int    rc;
+
+        if ((rc = jniCryptoStreamSalsa20Xor(ciphertext,plaintext,nonce,key)) != 0) { 
             throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
         }
    

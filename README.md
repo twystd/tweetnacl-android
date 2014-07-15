@@ -30,6 +30,8 @@ Implemented
 16. crypto_secretbox_open
 20. crypto_stream
 21. crypto_stream_xor
+22. crypto_stream_salsa20
+23. crypto_stream_salsa20_xor
 
 Pending
 -------
@@ -37,8 +39,6 @@ Pending
 17. crypto_sign
 18. crypto_sign_open
 19. crypto_sign_keypair
-22. crypto_stream_salsa20
-23. crypto_stream_salsa20_xor
 24. crypto_verify_16
 25. crypto_verify_32
 
@@ -47,11 +47,13 @@ References
 ----------
 
 1. [TweetNaCl][tweetnacl]
-2. [Cryptography in NaCl] [nacl]
-3. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
-4. [NaCl: Cryptography for the Internet][slides]
+2. [TweetNaCl: A crypto library in 100 tweets] [tweetnacl-pdf]
+3. [Cryptography in NaCl] [nacl-pdf]
+4. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
+5. [NaCl: Cryptography for the Internet][slides]
 
-[tweetnacl]:   http://tweetnacl.cr.yp.to
-[nacl]:        http://cr.yp.to/highspeed/naclcrypto-20090310.pdf
-[carrybitbug]: http://blog.skylable.com/2014/05/tweetnacl-carrybit-bug
-[slides]:      http://cryptojedi.org/peter/data/tenerife-20130121.pdf
+[tweetnacl]:     http://tweetnacl.cr.yp.to
+[tweetnacl-pdf]: http://tweetnacl.cr.yp.to/tweetnacl-20131229.pdf
+[nacl-pdf]:      http://cr.yp.to/highspeed/naclcrypto-20090310.pdf
+[carrybitbug]:   http://blog.skylable.com/2014/05/tweetnacl-carrybit-bug
+[slides]:        http://cryptojedi.org/peter/data/tenerife-20130121.pdf
