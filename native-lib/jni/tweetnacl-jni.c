@@ -347,3 +347,22 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
 
     return (jint) rc;
 }
+
+/** jniCryptoStream
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject object,jbyteArray stream,jbyteArray nonce,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,stream);
+	unsigned char c[N];
+	unsigned char n[crypto_stream_NONCEBYTES];
+	unsigned char k[crypto_stream_KEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_NONCEBYTES,n);
+    (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_KEYBYTES,  k);
+
+	int rc = crypto_stream(c,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,stream,0,N,c);
+
+    return (jint) rc;
+}
