@@ -366,3 +366,24 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject ob
 
     return (jint) rc;
 }
+
+/** jniCryptoStreamXor
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject object,jbyteArray crypttext,jbyteArray plaintext,jbyteArray nonce,jbyteArray key) {
+	int      N  = (*env)->GetArrayLength(env,plaintext);
+	unsigned char m[N];
+	unsigned char c[N];
+	unsigned char n[crypto_stream_NONCEBYTES];
+	unsigned char k[crypto_stream_KEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,plaintext,0,N,m);
+    (*env)->GetByteArrayRegion(env,nonce,    0,crypto_stream_NONCEBYTES,n);
+    (*env)->GetByteArrayRegion(env,key,      0,crypto_stream_KEYBYTES,  k);
+
+	int rc = crypto_stream_xor(c,m,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+
+    return (jint) rc;
+}

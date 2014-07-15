@@ -10,4 +10,5 @@ native-lib/libs/mips/libtweetnacl.so
 native-lib/libs/x86/libtweetnacl.so
 demo/.settings/org.eclipse.jdt.core.prefs
 demo/.settings/org.eclipse.jdt.ui.prefs
-TweetNaCl - TestTest/.settings/org.eclipse.jdt.core.prefs
+test/.settings/org.eclipse.jdt.ui.prefs
+test/.settings/org.eclipse.jdt.core.prefs

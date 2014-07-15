@@ -29,14 +29,15 @@ Implemented
 15. crypto_secretbox
 16. crypto_secretbox_open
 
+20. crypto_stream
+21. crypto_stream_xor
+
 Pending
 -------
 
 17. crypto_sign
 18. crypto_sign_open
 19. crypto_sign_keypair
-20. crypto_stream
-21. crypto_stream_xor
 22. crypto_stream_salsa20
 23. crypto_stream_salsa20_xor
 24. crypto_verify_16

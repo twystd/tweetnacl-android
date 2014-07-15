@@ -60,6 +60,7 @@ public class TweetNaCl {
     private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
     private native int jniCryptoSecretBoxOpen    (byte[] plaintext, byte[] ciphertext,byte[] nonce,byte[] key);
     private native int jniCryptoStream           (byte[] ciphertext,byte[] nonce,     byte[] key);
+    private native int jniCryptoStreamXor        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
 
     // CLASS METHODS
 
@@ -604,17 +605,22 @@ public class TweetNaCl {
 
     /** Wrapper function for crypto_stream.
      * 
-     * @param  plaintext
+     * @param  length
+     * @param  nonce
      * @param  key
      * @return ciphertext
      * 
      * @throws Exception
      */
-    public byte[] cryptoStream(final int length,final byte[] plaintext,final byte[] key) throws EncryptException { 
+    public byte[] cryptoStream(final int length,final byte[] nonce,final byte[] key) throws EncryptException { 
         // ... validate
+
+        if (length < 0) { 
+            throw new IllegalArgumentException("Invalid 'length' - may not be negative");
+        }
    
-        if (plaintext == null) { 
-            throw new IllegalArgumentException("Invalid 'crypttext'");
+        if ((nonce == null) || (nonce.length  != STREAM_NONCEBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(STREAM_NONCEBYTES) + " bytes");
         }
    
         if ((key == null) || (key.length  != STREAM_KEYBYTES)) { 
@@ -626,7 +632,44 @@ public class TweetNaCl {
         byte[] ciphertext = new byte[length];
         int    rc;
 
-        if ((rc = jniCryptoStream(ciphertext,plaintext,key)) != 0) { 
+        if ((rc = jniCryptoStream(ciphertext,nonce,key)) != 0) { 
+            throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
+        }
+   
+        return ciphertext;
+    }    
+
+    /** Wrapper function for crypto_stream_xor.
+     * 
+     * @param  plaintext
+     * @param  nonce
+     * @param  key
+     * 
+     * @return ciphertext
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoStreamXor(final byte[] plaintext,final byte[] nonce,final byte[] key) throws EncryptException { 
+        // ... validate
+   
+        if (plaintext == null) { 
+            throw new IllegalArgumentException("Invalid 'crypttext'");
+        }
+   
+        if ((nonce == null) || (nonce.length  != STREAM_NONCEBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(STREAM_NONCEBYTES) + " bytes");
+        }
+
+        if ((key == null) || (key.length  != STREAM_KEYBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(STREAM_KEYBYTES) + " bytes");
+        }
+   
+        // ... invoke
+
+        byte[] ciphertext = new byte[plaintext.length];
+        int    rc;
+
+        if ((rc = jniCryptoStreamXor(ciphertext,plaintext,nonce,key)) != 0) { 
             throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
         }
    
