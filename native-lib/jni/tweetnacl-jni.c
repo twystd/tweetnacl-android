@@ -387,3 +387,25 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject
 
     return (jint) rc;
 }
+
+
+/** jniCryptoStreamSalsa20
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,jobject object,jbyteArray stream,jbyteArray nonce,jbyteArray key) {
+	int            N = (*env)->GetArrayLength(env,stream);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char n[crypto_stream_salsa20_NONCEBYTES];
+	unsigned char k[crypto_stream_salsa20_KEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_salsa20_NONCEBYTES,n);
+    (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_salsa20_KEYBYTES,  k);
+
+	int rc = crypto_stream_salsa20(c,N,n,k);
+
+    (*env)->SetByteArrayRegion(env,stream,0,N,c);
+
+    free(c);
+
+    return (jint) rc;
+}

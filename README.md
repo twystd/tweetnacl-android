@@ -28,7 +28,6 @@ Implemented
 14. crypto_scalarmult_base
 15. crypto_secretbox
 16. crypto_secretbox_open
-
 20. crypto_stream
 21. crypto_stream_xor
 
@@ -48,9 +47,11 @@ References
 ----------
 
 1. [TweetNaCl][tweetnacl]
-2. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
-3. [NaCl: Cryptography for the Internet][slides]
+2. [Cryptography in NaCl] [nacl]
+3. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
+4. [NaCl: Cryptography for the Internet][slides]
 
 [tweetnacl]:   http://tweetnacl.cr.yp.to
+[nacl]:        http://cr.yp.to/highspeed/naclcrypto-20090310.pdf
 [carrybitbug]: http://blog.skylable.com/2014/05/tweetnacl-carrybit-bug
 [slides]:      http://cryptojedi.org/peter/data/tenerife-20130121.pdf

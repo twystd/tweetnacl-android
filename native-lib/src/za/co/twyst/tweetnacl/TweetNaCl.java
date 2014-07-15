@@ -37,8 +37,10 @@ public class TweetNaCl {
     public static final int SECRETBOX_ZEROBYTES    = 32;
     public static final int SECRETBOX_BOXZEROBYTES = 16;
 
-    public static final int STREAM_KEYBYTES     = 32;
-    public static final int STREAM_NONCEBYTES   = 24;
+    public static final int STREAM_KEYBYTES           = 32;
+    public static final int STREAM_NONCEBYTES         = 24;
+    public static final int STREAM_SALSA20_KEYBYTES   = 32;
+    public static final int STREAM_SALSA20_NONCEBYTES = 8;
 
     // NATIVE METHODS
 
@@ -61,6 +63,7 @@ public class TweetNaCl {
     private native int jniCryptoSecretBoxOpen    (byte[] plaintext, byte[] ciphertext,byte[] nonce,byte[] key);
     private native int jniCryptoStream           (byte[] ciphertext,byte[] nonce,     byte[] key);
     private native int jniCryptoStreamXor        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
+    private native int jniCryptoStreamSalsa20    (byte[] ciphertext,byte[] nonce,     byte[] key);
 
     // CLASS METHODS
 
@@ -676,6 +679,43 @@ public class TweetNaCl {
         return ciphertext;
     }    
 
+
+    /** Wrapper function for crypto_stream_salsa20.
+     * 
+     * @param  length
+     * @param  nonce
+     * @param  key
+     * @return ciphertext
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoStreamSalsa20(final int length,final byte[] nonce,final byte[] key) throws EncryptException { 
+        // ... validate
+
+        if (length < 0) { 
+            throw new IllegalArgumentException("Invalid 'length' - may not be negative");
+        }
+   
+        if ((nonce == null) || (nonce.length  != STREAM_SALSA20_NONCEBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'nonce' - length must be " + Integer.toString(STREAM_SALSA20_NONCEBYTES) + " bytes");
+        }
+   
+        if ((key == null) || (key.length  != STREAM_SALSA20_KEYBYTES)) { 
+            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(STREAM_SALSA20_KEYBYTES) + " bytes");
+        }
+   
+        // ... invoke
+
+        byte[] ciphertext = new byte[length];
+        int    rc;
+
+        if ((rc = jniCryptoStreamSalsa20(ciphertext,nonce,key)) != 0) { 
+            throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
+        }
+   
+        return ciphertext;
+    }    
+    
     // INNER CLASSES
     
     public static final class KeyPair {
