@@ -492,7 +492,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignKeyPair(JNIEnv *env,jobje
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject object,jbyteArray signature,jbyteArray message,jbyteArray secretKey) {
 	int            N     = (*env)->GetArrayLength(env,message);
-	u64            smlen = N + crypto_sign_BYTES;
+	u64            smlen = (*env)->GetArrayLength(env,signature);
 	unsigned char *m     = (unsigned char *) malloc(N);
 	unsigned char *sm    = (unsigned char *) malloc(smlen);
 	unsigned char sk[crypto_sign_SECRETKEYBYTES];
@@ -510,4 +510,29 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject obje
     free(m);
 
     return (jint) rc;
+}
+
+/** jniCryptoSignOpen
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray signature,jbyteArray publicKey) {
+	int            N     = (*env)->GetArrayLength(env,signature);
+	u64            mlen  = (*env)->GetArrayLength(env,message);
+	unsigned char *sm    = (unsigned char *) malloc(N);
+	unsigned char *m     = (unsigned char *) malloc(N);
+	unsigned char  pk[crypto_sign_PUBLICKEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,signature,0,N,sm);
+    (*env)->GetByteArrayRegion(env,publicKey,0,crypto_sign_PUBLICKEYBYTES,pk);
+
+	int rc = crypto_sign_open(m,&mlen,sm,N,pk);
+
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,message,0,mlen,m);
+	}
+
+    free(sm);
+    free(m);
+
+    return rc == 0 ? (jint) mlen : (jint) rc;
 }

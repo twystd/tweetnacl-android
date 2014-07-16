@@ -1,5 +1,7 @@
 package za.co.twyst.tweetnacl;
 
+import java.util.Arrays;
+
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 
@@ -70,7 +72,8 @@ public class TweetNaCl {
     private native int jniCryptoStreamSalsa20    (byte[] ciphertext,byte[] nonce,     byte[] key);
     private native int jniCryptoStreamSalsa20Xor (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
     private native int jniCryptoSignKeyPair      (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoSign             (byte[] signature, byte[] message,   byte[] secretKey);
+    private native int jniCryptoSign             (byte[] signed,    byte[] message,   byte[] secretKey);
+    private native int jniCryptoSignOpen         (byte[] message,   byte[] signed,    byte[] publicKey);
 
     // CLASS METHODS
 
@@ -807,6 +810,38 @@ public class TweetNaCl {
         }
         
         return signed;
+    }    
+
+    /** Wrapper function for crypto_sign_open.
+     * 
+     * @param  signed
+     * @param  publicKey
+     * 
+     * @return message
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoSignOpen(final byte[] signed,byte[] publicKey) throws Exception { 
+        // ... validate
+        
+        if (signed == null) {
+            throw new IllegalArgumentException("Invalid 'signed message' - may not be null");
+        }
+        
+        if ((publicKey == null) || (publicKey.length != SIGN_PUBLICKEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'public key' - must be "+ SIGN_PUBLICKEYBYTES + " bytes");
+        }
+        
+        // ... sign
+        
+        byte[] message = new byte[signed.length - SIGN_BYTES];
+        int    rc;
+
+        if ((rc = jniCryptoSignOpen(message,signed,publicKey)) < 0) {
+            throw new EncryptException("Error verifying message signature[" + Integer.toString(rc) + "]");
+        }
+        
+        return message;
     }    
     
     // INNER CLASSES
