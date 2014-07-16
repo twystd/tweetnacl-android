@@ -1,6 +1,10 @@
 package za.co.twyst.tweetnacl.test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+
+import android.content.Context;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 
@@ -63,7 +67,6 @@ public class TestCryptoSign extends TweetNaClTest
          /** crypto_sign_open (adapted from http://ed25519.cr.yp.to/python/sign.py).
           * 
           */
-         
          public void testCryptoSignOpen() throws Exception
                 { final byte[] key = { (byte) 0x3f,(byte) 0x60,(byte) 0xc7,(byte) 0x54,(byte) 0x1a,(byte) 0xfa,(byte) 0x76,(byte) 0xc0,
                                        (byte) 0x19,(byte) 0xcf,(byte) 0x5a,(byte) 0xa8,(byte) 0x2d,(byte) 0xcd,(byte) 0xb0,(byte) 0x88,
@@ -96,6 +99,21 @@ public class TestCryptoSign extends TweetNaClTest
                   android.util.Log.i(TAG,"MESSAGE: " + tohex(out));
                   
                   assertTrue("Invalid message",Arrays.equals(message,tweetnacl.cryptoSignOpen(signed,key)));
+                }
+         
+         /** crypto_sign/crypto_sign_open (adapted from http://ed25519.cr.yp.to/python/sign.py).
+          * 
+          */
+         public void testED25519() throws Exception 
+                { Context        context = getContext();
+                  BufferedReader reader  = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(za.co.twyst.tweetnacl.R.raw.sign)));
+                  String         line;
+               
+                  while ((line = reader.readLine()) != null)
+                        { android.util.Log.i(TAG,line);
+                        }
+               
+                  reader.close();
                 }
        }
 
