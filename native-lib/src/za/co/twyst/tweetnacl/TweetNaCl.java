@@ -42,6 +42,10 @@ public class TweetNaCl {
     public static final int STREAM_SALSA20_KEYBYTES   = 32;
     public static final int STREAM_SALSA20_NONCEBYTES = 8;
 
+    public static final int SIGN_BYTES          = 64;
+    public static final int SIGN_PUBLICKEYBYTES = 32;
+    public static final int SIGN_SECRETKEYBYTES = 64;
+
     // NATIVE METHODS
 
     private native int jniRandomBytes            (byte[] bytes);
@@ -65,6 +69,8 @@ public class TweetNaCl {
     private native int jniCryptoStreamXor        (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
     private native int jniCryptoStreamSalsa20    (byte[] ciphertext,byte[] nonce,     byte[] key);
     private native int jniCryptoStreamSalsa20Xor (byte[] ciphertext,byte[] plaintext, byte[] nonce,byte[] key);
+    private native int jniCryptoSignKeyPair      (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoSign             (byte[] signature, byte[] message,   byte[] secretKey);
 
     // CLASS METHODS
 
@@ -752,16 +758,66 @@ public class TweetNaCl {
    
         return ciphertext;
     }    
+
+    /** Wrapper function for crypto_sign_keypair.
+     * 
+     * @return keypair
+     * 
+     * @throws Exception
+     */
+    public KeyPair cryptoSignKeyPair() throws Exception { 
+        byte[] publicKey = new byte[SIGN_PUBLICKEYBYTES];
+        byte[] secretKey = new byte[SIGN_SECRETKEYBYTES];
+        int    rc;
+
+        if ((rc = jniCryptoSignKeyPair(publicKey,secretKey)) != 0) {
+            throw new Exception("Error generating signing keypair [" + Integer.toString(rc) + "]");
+        }
+            
+        return new KeyPair(publicKey,secretKey);
+    }    
+
+    /** Wrapper function for crypto_sign.
+     * 
+     * @param  message
+     * @param  secretKey
+     * 
+     * @return signed
+     * 
+     * @throws Exception
+     */
+    public byte[] cryptoSign(final byte[] message,byte[] secretKey) throws Exception { 
+        // ... validate
+        
+        if (message == null) {
+            throw new IllegalArgumentException("Invalid 'message' - may not be null");
+        }
+        
+        if ((secretKey == null) || (secretKey.length != SIGN_SECRETKEYBYTES)) {
+            throw new IllegalArgumentException("Invalid 'secret key' - must be "+ SIGN_SECRETKEYBYTES + " bytes");
+        }
+        
+        // ... sign
+        
+        byte[] signed = new byte[message.length + SIGN_BYTES];
+        int    rc;
+
+        if ((rc = jniCryptoSign(signed,message,secretKey)) != 0) {
+            throw new EncryptException("Error signing message [" + Integer.toString(rc) + "]");
+        }
+        
+        return signed;
+    }    
     
     // INNER CLASSES
     
     public static final class KeyPair {
-        public final byte[] publicKey = new byte[BOX_PUBLICKEYBYTES];
-        public final byte[] secretKey = new byte[BOX_SECRETKEYBYTES];
+        public final byte[] publicKey;
+        public final byte[] secretKey;
         
         private KeyPair(byte[] publicKey,byte[] secretKey) {
-            System.arraycopy(publicKey,0,this.publicKey,0,BOX_PUBLICKEYBYTES);
-            System.arraycopy(secretKey,0,this.secretKey,0,BOX_SECRETKEYBYTES);
+            this.publicKey = publicKey.clone();
+            this.secretKey = secretKey.clone();
         }
     }
 }

@@ -28,6 +28,7 @@ Implemented
 14. crypto_scalarmult_base
 15. crypto_secretbox
 16. crypto_secretbox_open
+19. crypto_sign_keypair
 20. crypto_stream
 21. crypto_stream_xor
 22. crypto_stream_salsa20
@@ -38,7 +39,6 @@ Pending
 
 17. crypto_sign
 18. crypto_sign_open
-19. crypto_sign_keypair
 24. crypto_verify_16
 25. crypto_verify_32
 

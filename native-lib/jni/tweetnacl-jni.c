@@ -50,8 +50,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
 
 	int rc = crypto_box_keypair(pk,sk);
 
-    (*env)->SetByteArrayRegion(env,publicKey,0,crypto_box_PUBLICKEYBYTES,pk);
-    (*env)->SetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,publicKey,0,crypto_box_PUBLICKEYBYTES,pk);
+		(*env)->SetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
+	}
 
     return (jint) rc;
 }
@@ -74,7 +76,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
 
 	int rc = crypto_box(c,m,N,n,pk,sk);
 
-    (*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	}
 
     return (jint) rc;
 }
@@ -97,7 +101,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
 
 	int rc = crypto_box_open(m,c,N,n,pk,sk);
 
-    (*env)->SetByteArrayRegion(env,message,0,N,m);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,message,0,N,m);
+	}
 
     return (jint) rc;
 }
@@ -115,7 +121,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
 
 	int rc = crypto_box_beforenm(k,pk,sk);
 
-    (*env)->SetByteArrayRegion(env,key,0,crypto_box_BEFORENMBYTES,k);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,key,0,crypto_box_BEFORENMBYTES,k);
+	}
 
     return (jint) rc;
 }
@@ -136,7 +144,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 
 	int rc = crypto_box_afternm(c,m,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	}
 
     return (jint) rc;
 }
@@ -157,7 +167,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jo
 
 	int rc = crypto_box_open_afternm(m,c,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,message,0,N,m);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,message,0,N,m);
+	}
 
     return (jint) rc;
 }
@@ -177,7 +189,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobj
 
 	int rc = crypto_core_hsalsa20(o,i,k,c);
 
-     (*env)->SetByteArrayRegion(env,out,0,crypto_core_hsalsa20_OUTPUTBYTES,o);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,out,0,crypto_core_hsalsa20_OUTPUTBYTES,o);
+	}
 
     return (jint) rc;
 }
@@ -197,7 +211,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
 
 	int rc = crypto_core_salsa20(o,i,k,c);
 
-     (*env)->SetByteArrayRegion(env,out,0,crypto_core_salsa20_OUTPUTBYTES,o);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,out,0,crypto_core_salsa20_OUTPUTBYTES,o);
+	}
 
     return (jint) rc;
 }
@@ -214,7 +230,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
 
 	int rc = crypto_hash(h,m,(u64) N);
 
-    (*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+	}
 
     return (jint) rc;
 }
@@ -232,7 +250,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 
 	int rc = crypto_hashblocks(h,m,N);
 
-    (*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
+	}
 
     return (jint) rc;
 }
@@ -251,7 +271,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
 
 	int rc = crypto_onetimeauth(a,m,N,k);
 
-    (*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
+	}
 
     return (jint) rc;
 }
@@ -283,7 +305,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMultBase(JNIEnv *env,jo
 
 	int rc = crypto_scalarmult_base(q,n);
 
-	(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+	}
 
     return (jint) rc;
 }
@@ -301,7 +325,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMult(JNIEnv *env,jobjec
 
 	int rc = crypto_scalarmult(q,n,p);
 
-	(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+	}
 
     return (jint) rc;
 }
@@ -322,7 +348,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject
 
 	int rc = crypto_secretbox(c,m,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+	}
 
     return (jint) rc;
 }
@@ -343,7 +371,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
 
 	int rc = crypto_secretbox_open(m,c,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,plaintext,0,N,m);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,plaintext,0,N,m);
+	}
 
     return (jint) rc;
 }
@@ -362,7 +392,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject ob
 
 	int rc = crypto_stream(c,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,stream,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,stream,0,N,c);
+	}
 
     return (jint) rc;
 }
@@ -383,7 +415,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject
 
 	int rc = crypto_stream_xor(c,m,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+	}
 
     return (jint) rc;
 }
@@ -403,7 +437,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,job
 
 	int rc = crypto_stream_salsa20(c,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,stream,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,stream,0,N,c);
+	}
 
     free(c);
 
@@ -427,7 +463,51 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,
 
 	int rc = crypto_stream_salsa20_xor(c,m,N,n,k);
 
-    (*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+	}
+
+    return (jint) rc;
+}
+
+/** jniCryptoSignKeyPair
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignKeyPair(JNIEnv *env,jobject object,jbyteArray publicKey,jbyteArray secretKey) {
+	unsigned char pk[crypto_sign_PUBLICKEYBYTES];
+	unsigned char sk[crypto_sign_SECRETKEYBYTES];
+
+	int rc = crypto_sign_keypair(pk,sk);
+
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,publicKey,0,crypto_sign_PUBLICKEYBYTES,pk);
+		(*env)->SetByteArrayRegion(env,secretKey,0,crypto_sign_SECRETKEYBYTES,sk);
+	}
+
+    return (jint) rc;
+}
+
+/** jniCryptoSign
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject object,jbyteArray signature,jbyteArray message,jbyteArray secretKey) {
+	int            N     = (*env)->GetArrayLength(env,message);
+	u64            smlen = N + crypto_sign_BYTES;
+	unsigned char *m     = (unsigned char *) malloc(N);
+	unsigned char *sm    = (unsigned char *) malloc(smlen);
+	unsigned char sk[crypto_sign_SECRETKEYBYTES];
+
+    (*env)->GetByteArrayRegion(env,message,  0,N, m);
+    (*env)->GetByteArrayRegion(env,secretKey,0,crypto_sign_SECRETKEYBYTES,sk);
+
+	int rc = crypto_sign(sm,&smlen,m,N,sk);
+
+	if (rc == 0) {
+		(*env)->SetByteArrayRegion(env,signature,0,smlen,sm);
+	}
+
+    free(sm);
+    free(m);
 
     return (jint) rc;
 }
