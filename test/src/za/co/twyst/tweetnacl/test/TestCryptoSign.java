@@ -7,6 +7,7 @@ import java.util.Arrays;
 import android.content.Context;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.exceptions.VerifyException;
 
 public class TestCryptoSign extends TweetNaClTest 
        { // CONSTANTS
@@ -109,11 +110,74 @@ public class TestCryptoSign extends TweetNaClTest
                   BufferedReader reader  = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(za.co.twyst.tweetnacl.R.raw.sign)));
                   String         line;
                
-                  while ((line = reader.readLine()) != null)
-                        { android.util.Log.i(TAG,line);
-                        }
-               
-                  reader.close();
+                  try
+                     { while ((line = reader.readLine()) != null)
+                             { String[] tokens = line.split(":");
+                        
+                               assertEquals("Invalid line",4,tokens.length);
+                               
+                               byte[] sk = fromhex(tokens[0]);
+                               byte[] pk = fromhex(tokens[1]);
+                               byte[] m  = fromhex(tokens[2]);
+                               byte[] sm = fromhex(tokens[3]);
+                               
+                               assertTrue("Invalid signed message",Arrays.equals(sm,tweetnacl.cryptoSign    (m,sk)));
+                               assertTrue("Invalid message",       Arrays.equals(m, tweetnacl.cryptoSignOpen(sm,pk)));
+                               
+                               byte[] forgedm  = forge  (m);
+                               byte[] forgedsm = forgesm(sm);
+
+                               assertFalse("Valid forgery",Arrays.equals(sm,tweetnacl.cryptoSign(forgedm,sk)));
+                               
+                               try
+                                  { assertFalse("Valid forgery",Arrays.equals(m, tweetnacl.cryptoSignOpen(forgedsm,pk)));
+                                  }
+                               catch(VerifyException x)
+                                  { continue;
+                                  }
+                               
+                               fail("Valid forgery");
+                             }
+                     }
+                  finally 
+                     { reader.close();
+                     }
                 }
+         
+         // UTILITY FUNCTIONS
+         
+         private static byte[] forge(byte[] m)
+                 { if (m.length == 0)
+                      { return "x".getBytes();
+                      }
+                 
+                   byte[] fm = m.clone();
+                   int    ix = fm.length - 1;
+                   
+                   fm[ix] = (byte) ((fm[ix] & 0x00ff) + 1);
+                   
+                   return fm;
+                 }
+         
+         private static byte[] forgesm(byte[] sm)
+                 { byte[] fm = new byte[sm.length == TweetNaCl.SIGN_BYTES ? 1             : sm.length - TweetNaCl.SIGN_BYTES];
+                   int    ix = fm.length - 1;
+                 
+                   if (sm.length == TweetNaCl.SIGN_BYTES)
+                      { System.arraycopy("x".getBytes(),0,fm,0,fm.length);
+                      }
+                      else
+                      { System.arraycopy(sm,TweetNaCl.SIGN_BYTES,fm,0,fm.length);
+
+                        fm[ix] = (byte) ((fm[ix] & 0x00ff) + 1);
+                      }
+
+                   byte[] fsm = new byte[TweetNaCl.SIGN_BYTES + fm.length];
+                   
+                   System.arraycopy(sm,0,fsm,0,                   TweetNaCl.SIGN_BYTES);
+                   System.arraycopy(fm,0,fsm,TweetNaCl.SIGN_BYTES,fm.length);
+                   
+                   return fsm;
+                 }
        }
 

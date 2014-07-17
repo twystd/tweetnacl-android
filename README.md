@@ -42,6 +42,8 @@ Pending
 24. crypto_verify_16
 25. crypto_verify_32
 
+Disclaimer
+----------
 
 References
 ----------

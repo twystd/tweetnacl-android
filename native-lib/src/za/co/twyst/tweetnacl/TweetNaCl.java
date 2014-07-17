@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
+import za.co.twyst.tweetnacl.exceptions.VerifyException;
 
 public class TweetNaCl { 
     // CONSTANTS
@@ -819,9 +820,9 @@ public class TweetNaCl {
      * 
      * @return message
      * 
-     * @throws Exception
+     * @throws VerifyException
      */
-    public byte[] cryptoSignOpen(final byte[] signed,byte[] publicKey) throws Exception { 
+    public byte[] cryptoSignOpen(final byte[] signed,byte[] publicKey) throws VerifyException { 
         // ... validate
         
         if (signed == null) {
@@ -838,7 +839,7 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoSignOpen(message,signed,publicKey)) < 0) {
-            throw new EncryptException("Error verifying message signature[" + Integer.toString(rc) + "]");
+            throw new VerifyException("Error verifying message signature[" + Integer.toString(rc) + "]");
         }
         
         return message;

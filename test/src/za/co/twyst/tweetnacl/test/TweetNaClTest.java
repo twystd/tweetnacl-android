@@ -44,4 +44,26 @@ public abstract class TweetNaClTest extends AndroidTestCase
                     
                      return new String(string);
                    }
+         
+         /** Converts a hexadecimal string to a byte array. This function
+           * intentionally crashes with an ArrayIndexOutOfRange if the 
+           * string length isn't a multiple of 2.
+           * <p>
+           * And yes, using a Map lookup isn't efficient.
+           */
+         protected static byte[] fromhex(String string)
+                   { char[] chars = string.toCharArray();
+                     byte[] bytes = new byte[chars.length/2];
+                     int    i     = 0;
+                     int    ix    = 0;
+                
+                     while(i < chars.length)
+                          { int msb = Character.digit(chars[i++],16);
+                            int lsb = Character.digit(chars[i++],16);
+                            
+                            bytes[ix++] = (byte) (((msb << 4) & 0x00f0) | (lsb & 0x000f));
+                          }
+                    
+                     return bytes;
+                   }
        }
