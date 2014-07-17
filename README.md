@@ -7,7 +7,7 @@ the Android NDK.
 
 Status
 ------
-Coming along slowly .....
+Almost there .....
 
 Implemented
 -----------
@@ -38,12 +38,17 @@ Implemented
 
 Pending
 -------
-
 24. crypto_verify_16
 25. crypto_verify_32
 
 Disclaimer
 ----------
+The JNI wrapper has been kept as 'thin' as possible to avoid compromising the careful design
+and coding of the TweetNaCl implementation. However, cryptography being what it is, the wrapper
+may have (entirely inadvertently) introduced vulnerabilities (e.g. timing) that did 
+not exist in the original implementation. 
+
+USE ENTIRELY AT YOUR OWN RISK !
 
 References
 ----------
