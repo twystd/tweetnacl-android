@@ -45,10 +45,10 @@ Disclaimer
 ----------
 The JNI wrapper has been kept as 'thin' as possible to avoid compromising the careful design
 and coding of the original TweetNaCl implementation. However, cryptography being what it is, 
-the wrapper may have introduced non-obvious vulnerabilities (e.g. timing/memory) - entirely
-inadvertently of course.
+the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities (e.g.
+timing side-channel attacks)
 
-USE ENTIRELY AT YOUR OWN RISK !
+**USE ENTIRELY AT YOUR OWN RISK !**
 
 References
 ----------

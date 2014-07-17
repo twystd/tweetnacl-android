@@ -6,7 +6,6 @@
 4.  Do the padding/unpadding inside TweetNaCl (?)
 5.  Change to u8 etc instead of unsigned char
 6.  Rethink KeyPair
-7.  Add disclaimer for side-channel attacks etc
 8.  javadoc
 9.  Benchmark app
 10.  Reformat test cases
