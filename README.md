@@ -44,9 +44,9 @@ Pending
 Disclaimer
 ----------
 The JNI wrapper has been kept as 'thin' as possible to avoid compromising the careful design
-and coding of the TweetNaCl implementation. However, cryptography being what it is, the wrapper
-may have (entirely inadvertently) introduced vulnerabilities (e.g. timing) that did 
-not exist in the original implementation. 
+and coding of the original TweetNaCl implementation. However, cryptography being what it is, 
+the wrapper may have introduced non-obvious vulnerabilities (e.g. timing/memory) - entirely
+inadvertently of course.
 
 USE ENTIRELY AT YOUR OWN RISK !
 
