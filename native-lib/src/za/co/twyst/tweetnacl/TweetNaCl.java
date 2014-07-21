@@ -1,7 +1,5 @@
 package za.co.twyst.tweetnacl;
 
-import java.util.Arrays;
-
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
@@ -49,6 +47,9 @@ public class TweetNaCl {
     public static final int SIGN_PUBLICKEYBYTES = 32;
     public static final int SIGN_SECRETKEYBYTES = 64;
 
+    public static final int VERIFY16_BYTES      = 16;
+    public static final int VERIFY32_BYTES      = 32;
+
     // NATIVE METHODS
 
     private native int jniRandomBytes            (byte[] bytes);
@@ -75,6 +76,8 @@ public class TweetNaCl {
     private native int jniCryptoSignKeyPair      (byte[] publicKey, byte[] secretKey);
     private native int jniCryptoSign             (byte[] signed,    byte[] message,   byte[] secretKey);
     private native int jniCryptoSignOpen         (byte[] message,   byte[] signed,    byte[] publicKey);
+    private native int jniCryptoVerify16         (byte[] x,         byte[] y);
+    private native int jniCryptoVerify32         (byte[] x,         byte[] y);
 
     // CLASS METHODS
 
@@ -843,6 +846,74 @@ public class TweetNaCl {
         }
         
         return message;
+    }    
+
+    /** Wrapper function for crypto_verify_16.
+     * 
+     * @param  x
+     * @param  y
+     * 
+     * @return boolean
+     * 
+     * @throws VerifyException
+     */
+    public boolean cryptoVerify16(final byte[] x,byte[] y) throws VerifyException { 
+        // ... validate
+        
+        if ((x == null) || (x.length != VERIFY16_BYTES)) {
+            throw new IllegalArgumentException("Invalid 'x' - must be "+ VERIFY16_BYTES + " bytes");
+        }
+        
+        if ((y == null) || (y.length != VERIFY16_BYTES)) {
+            throw new IllegalArgumentException("Invalid 'y' - must be "+ VERIFY16_BYTES + " bytes");
+        }
+        
+        // ... verify
+        
+        switch (jniCryptoVerify16(x,y))
+               { case 0: 
+                      return true;
+                      
+                 case -1:
+                      return false;
+                      
+                 default:
+                     throw new VerifyException("Invalid result from crypto_verify_16");
+               }
+    }    
+
+    /** Wrapper function for crypto_verify_32.
+     * 
+     * @param  x
+     * @param  y
+     * 
+     * @return boolean
+     * 
+     * @throws VerifyException
+     */
+    public boolean cryptoVerify32(final byte[] x,byte[] y) throws VerifyException { 
+        // ... validate
+        
+        if ((x == null) || (x.length != VERIFY32_BYTES)) {
+            throw new IllegalArgumentException("Invalid 'x' - must be "+ VERIFY32_BYTES + " bytes");
+        }
+        
+        if ((y == null) || (y.length != VERIFY32_BYTES)) {
+            throw new IllegalArgumentException("Invalid 'y' - must be "+ VERIFY32_BYTES + " bytes");
+        }
+        
+        // ... verify
+        
+        switch (jniCryptoVerify32(x,y))
+               { case 0: 
+                      return true;
+                      
+                 case -1:
+                      return false;
+                      
+                 default:
+                     throw new VerifyException("Invalid result from crypto_verify_32");
+               }
     }    
     
     // INNER CLASSES

@@ -536,3 +536,33 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignOpen(JNIEnv *env,jobject 
 
     return rc == 0 ? (jint) mlen : (jint) rc;
 }
+
+/** jniCryptoVerify16
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoVerify16(JNIEnv *env,jobject object,jbyteArray X,jbyteArray Y) {
+	unsigned char x[crypto_verify_16_BYTES];
+	unsigned char y[crypto_verify_16_BYTES];
+
+    (*env)->GetByteArrayRegion(env,X,0,crypto_verify_16_BYTES,x);
+    (*env)->GetByteArrayRegion(env,Y,0,crypto_verify_16_BYTES,y);
+
+	int rc = crypto_verify_16(x,y);
+
+    return (jint) rc;
+}
+
+/** jniCryptoVerify32
+ *
+ */
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoVerify32(JNIEnv *env,jobject object,jbyteArray X,jbyteArray Y) {
+	unsigned char x[crypto_verify_32_BYTES];
+	unsigned char y[crypto_verify_32_BYTES];
+
+    (*env)->GetByteArrayRegion(env,X,0,crypto_verify_32_BYTES,x);
+    (*env)->GetByteArrayRegion(env,Y,0,crypto_verify_32_BYTES,y);
+
+	int rc = crypto_verify_32(x,y);
+
+    return (jint) rc;
+}

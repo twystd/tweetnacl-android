@@ -8,5 +8,6 @@
 6.  Rethink KeyPair
 8.  javadoc
 9.  Benchmark app
-10.  Reformat test cases
+10. Reformat test cases
 11. Mine .cpp tests for useful test cases
+12. Mine try.c tests for useful test cases

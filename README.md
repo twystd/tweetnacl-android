@@ -7,7 +7,7 @@ the Android NDK.
 
 Status
 ------
-Almost there .....
+Tidying up .....
 
 Implemented
 -----------
@@ -35,9 +35,6 @@ Implemented
 21. crypto_stream_xor
 22. crypto_stream_salsa20
 23. crypto_stream_salsa20_xor
-
-Pending
--------
 24. crypto_verify_16
 25. crypto_verify_32
 
@@ -45,8 +42,7 @@ Disclaimer
 ----------
 The JNI wrapper has been kept as 'thin' as possible to avoid compromising the careful design
 and coding of the original TweetNaCl implementation. However, cryptography being what it is, 
-the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities (e.g.
-timing side-channel attacks)
+the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities. So ....
 
 **USE ENTIRELY AT YOUR OWN RISK !**
 
