@@ -3,29 +3,29 @@
 #include <android/log.h>
 #include "tweetnacl.h"
 
-typedef unsigned char u8;
-typedef unsigned long u32;
+typedef unsigned char      u8;
+typedef unsigned long      u32;
 typedef unsigned long long u64;
-typedef long long i64;
-typedef i64 gf[16];
+typedef long long          i64;
+typedef i64                gf[16];
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
-
-const char HEX[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
-
-char *tohex(const u8 *b,u64 n,char *string) {
-	int ix = 0;
-	int i;
-
-	memset(string,0,n*2 + 1);
-
-	for (i=0; i<n; i++) {
-        string[ix++] = HEX[(b[i] >> 4) & 0x000f];
-        string[ix++] = HEX[(b[i] >> 0) & 0x000f];
-	}
-
-	return string;
-}
+//
+//const char HEX[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+//
+//char *tohex(const u8 *b,u64 n,char *string) {
+//	int ix = 0;
+//	int i;
+//
+//	memset(string,0,n*2 + 1);
+//
+//	for (i=0; i<n; i++) {
+//        string[ix++] = HEX[(b[i] >> 4) & 0x000f];
+//        string[ix++] = HEX[(b[i] >> 0) & 0x000f];
+//	}
+//
+//	return string;
+//}
 
 /** jniRandomBytes
  *
@@ -33,12 +33,14 @@ char *tohex(const u8 *b,u64 n,char *string) {
 void Java_za_co_twyst_tweetnacl_TweetNaCl_jniRandomBytes(JNIEnv *env,jobject object,jbyteArray bytes) {
      int                N = (*env)->GetArrayLength(env,bytes);
  	 unsigned long long l = (unsigned long long) N;
- 	 unsigned char      b[N];
+ 	 unsigned char     *b = (unsigned char *) malloc(N);
  	 int                i;
 
 	 randombytes(b,l);
 
      (*env)->SetByteArrayRegion(env,bytes,0,N,b);
+
+     free(b);
 }
 
 /** jniCryptoBoxKeyPair
@@ -63,9 +65,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
 	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char c[N];
-	unsigned char m[N];
-	unsigned char n[crypto_box_NONCEBYTES];
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char n [crypto_box_NONCEBYTES];
 	unsigned char pk[crypto_box_PUBLICKEYBYTES];
 	unsigned char sk[crypto_box_SECRETKEYBYTES];
 
@@ -80,6 +82,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
 		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
 	}
 
+	free(c);
+	free(m);
+
     return (jint) rc;
 }
 
@@ -87,12 +92,12 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	unsigned char c[N];
-	unsigned char m[N];
-	unsigned char n[crypto_box_NONCEBYTES];
-	unsigned char pk[crypto_box_PUBLICKEYBYTES];
-	unsigned char sk[crypto_box_SECRETKEYBYTES];
+	int            N = (*env)->GetArrayLength(env,ciphertext);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_box_NONCEBYTES];
+	unsigned char  pk[crypto_box_PUBLICKEYBYTES];
+	unsigned char  sk[crypto_box_SECRETKEYBYTES];
 
     (*env)->GetByteArrayRegion(env,ciphertext,0, N,c);
     (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
@@ -104,6 +109,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
 	if (rc == 0) {
 		(*env)->SetByteArrayRegion(env,message,0,N,m);
 	}
+
+	free(m);
+	free(c);
 
     return (jint) rc;
 }
@@ -132,11 +140,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char c[N];
-	unsigned char m[N];
-	unsigned char n[crypto_box_NONCEBYTES];
-	unsigned char k[crypto_box_BEFORENMBYTES];
+	int            N = (*env)->GetArrayLength(env,message);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_box_NONCEBYTES];
+	unsigned char  k[crypto_box_BEFORENMBYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,                       m);
     (*env)->GetByteArrayRegion(env,nonce,  0,crypto_box_NONCEBYTES,   n);
@@ -148,6 +156,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
 	}
 
+	free(m);
+	free(c);
+
     return (jint) rc;
 }
 
@@ -155,9 +166,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	unsigned char c[N];
-	unsigned char m[N];
+	int            N  = (*env)->GetArrayLength(env,ciphertext);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
 	unsigned char n[crypto_box_NONCEBYTES];
 	unsigned char k[crypto_box_BEFORENMBYTES];
 
@@ -170,6 +181,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jo
 	if (rc == 0) {
 		(*env)->SetByteArrayRegion(env,message,0,N,m);
 	}
+
+	free(m);
+	free(c);
 
     return (jint) rc;
 }
@@ -222,9 +236,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char m[N];
-	unsigned char h[crypto_hash_BYTES];
+	int            N = (*env)->GetArrayLength(env,message);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  h[crypto_hash_BYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
 
@@ -234,6 +248,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
 		(*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
 	}
 
+	free(m);
+
     return (jint) rc;
 }
 
@@ -241,8 +257,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char m[N];
+	int            N = (*env)->GetArrayLength(env,message);
+	unsigned char *m = (unsigned char *) malloc(N);
 	unsigned char h[crypto_hashblocks_STATEBYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
@@ -254,6 +270,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 		(*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
 	}
 
+	free(m);
+
     return (jint) rc;
 }
 
@@ -261,10 +279,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char m[N];
-	unsigned char k[crypto_onetimeauth_KEYBYTES];
-	unsigned char a[crypto_onetimeauth_BYTES];
+	int            N = (*env)->GetArrayLength(env,message);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  k[crypto_onetimeauth_KEYBYTES];
+	unsigned char  a[crypto_onetimeauth_BYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
     (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
@@ -275,6 +293,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
 		(*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
 	}
 
+	free(m);
+
     return (jint) rc;
 }
 
@@ -282,16 +302,20 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char m[N];
-	unsigned char k[crypto_onetimeauth_KEYBYTES];
-	unsigned char a[crypto_onetimeauth_BYTES];
+	int            N  = (*env)->GetArrayLength(env,message);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  k[crypto_onetimeauth_KEYBYTES];
+	unsigned char  a[crypto_onetimeauth_BYTES];
 
     (*env)->GetByteArrayRegion(env,auth,   0,crypto_onetimeauth_BYTES,a);
     (*env)->GetByteArrayRegion(env,message,0,N,m);
     (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
 
-	return (jint) crypto_onetimeauth_verify(a,m,N,k);
+	int rc = crypto_onetimeauth_verify(a,m,N,k);
+
+	free(m);
+
+	return (jint) rc;
 }
 
 /** jniCryptoScalarMultBase
@@ -336,11 +360,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMult(JNIEnv *env,jobjec
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,message);
-	unsigned char c[N];
-	unsigned char m[N];
-	unsigned char n[crypto_secretbox_NONCEBYTES];
-	unsigned char k[crypto_secretbox_KEYBYTES];
+	int            N = (*env)->GetArrayLength(env,message);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_secretbox_NONCEBYTES];
+	unsigned char  k[crypto_secretbox_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,message,0,N,m);
     (*env)->GetByteArrayRegion(env,nonce,  0,crypto_secretbox_NONCEBYTES,n);
@@ -352,6 +376,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject
 		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
 	}
 
+	free(m);
+	free(c);
+
     return (jint) rc;
 }
 
@@ -359,11 +386,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,jobject object,jbyteArray plaintext,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	unsigned char c[N];
-	unsigned char m[N];
-	unsigned char n[crypto_secretbox_NONCEBYTES];
-	unsigned char k[crypto_secretbox_KEYBYTES];
+	int            N  = (*env)->GetArrayLength(env,ciphertext);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_secretbox_NONCEBYTES];
+	unsigned char  k[crypto_secretbox_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,ciphertext,0,N,c);
     (*env)->GetByteArrayRegion(env,nonce,     0,crypto_secretbox_NONCEBYTES,n);
@@ -375,6 +402,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
 		(*env)->SetByteArrayRegion(env,plaintext,0,N,m);
 	}
 
+	free(m);
+	free(c);
+
     return (jint) rc;
 }
 
@@ -382,10 +412,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject object,jbyteArray stream,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,stream);
-	unsigned char c[N];
-	unsigned char n[crypto_stream_NONCEBYTES];
-	unsigned char k[crypto_stream_KEYBYTES];
+	int            N = (*env)->GetArrayLength(env,stream);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_stream_NONCEBYTES];
+	unsigned char  k[crypto_stream_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_NONCEBYTES,n);
     (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_KEYBYTES,  k);
@@ -396,6 +426,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject ob
 		(*env)->SetByteArrayRegion(env,stream,0,N,c);
 	}
 
+	free(c);
+
     return (jint) rc;
 }
 
@@ -403,11 +435,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject ob
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject object,jbyteArray crypttext,jbyteArray plaintext,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,plaintext);
-	unsigned char m[N];
-	unsigned char c[N];
-	unsigned char n[crypto_stream_NONCEBYTES];
-	unsigned char k[crypto_stream_KEYBYTES];
+	int            N  = (*env)->GetArrayLength(env,plaintext);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_stream_NONCEBYTES];
+	unsigned char  k[crypto_stream_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,plaintext,0,N,m);
     (*env)->GetByteArrayRegion(env,nonce,    0,crypto_stream_NONCEBYTES,n);
@@ -419,6 +451,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject
 		(*env)->SetByteArrayRegion(env,crypttext,0,N,c);
 	}
 
+	free(c);
+	free(m);
+
     return (jint) rc;
 }
 
@@ -429,8 +464,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,jobject object,jbyteArray stream,jbyteArray nonce,jbyteArray key) {
 	int            N = (*env)->GetArrayLength(env,stream);
 	unsigned char *c = (unsigned char *) malloc(N);
-	unsigned char n[crypto_stream_salsa20_NONCEBYTES];
-	unsigned char k[crypto_stream_salsa20_KEYBYTES];
+	unsigned char  n[crypto_stream_salsa20_NONCEBYTES];
+	unsigned char  k[crypto_stream_salsa20_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_salsa20_NONCEBYTES,n);
     (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_salsa20_KEYBYTES,  k);
@@ -451,11 +486,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,job
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,jobject object,jbyteArray crypttext,jbyteArray plaintext,jbyteArray nonce,jbyteArray key) {
-	int      N  = (*env)->GetArrayLength(env,plaintext);
-	unsigned char m[N];
-	unsigned char c[N];
-	unsigned char n[crypto_stream_salsa20_NONCEBYTES];
-	unsigned char k[crypto_stream_salsa20_KEYBYTES];
+	int            N = (*env)->GetArrayLength(env,plaintext);
+	unsigned char *m = (unsigned char *) malloc(N);
+	unsigned char *c = (unsigned char *) malloc(N);
+	unsigned char  n[crypto_stream_salsa20_NONCEBYTES];
+	unsigned char  k[crypto_stream_salsa20_KEYBYTES];
 
     (*env)->GetByteArrayRegion(env,plaintext,0,N,m);
     (*env)->GetByteArrayRegion(env,nonce,    0,crypto_stream_salsa20_NONCEBYTES,n);
@@ -466,6 +501,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,
 	if (rc == 0) {
 		(*env)->SetByteArrayRegion(env,crypttext,0,N,c);
 	}
+
+	free(c);
+	free(m);
 
     return (jint) rc;
 }

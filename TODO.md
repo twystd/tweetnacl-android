@@ -1,6 +1,5 @@
 ### TODO
 
-1.  JNI: use malloc/free instead of statically allocated arrays
 2.  JNI: see if there is a way to use Java byte arrays directly instead of duplicating
 3.  JNI: zero out arrays and only populate if rc == 0
 4.  Do the padding/unpadding inside TweetNaCl (?)
