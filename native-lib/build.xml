@@ -2,14 +2,36 @@
 
  <property name="ndk.dir" value="${user.home}/Development/tools/adt-bundle-mac-x86_64-20130522/android-ndk-r9c" />
 	
- <target name="build">
+ <!-- NATIVE LIBRARY BUILD -->
+ 
+ <target name="build" description="Build native lib">
   <exec executable="${ndk.dir}/ndk-build" dir="${basedir}/jni" failonerror="true"/>
  </target>
 
- <target name="clean">
+ <!-- NATIVE LIBRARY CLEAN -->
+ 
+ <target name="clean" description="Remove all native lib build artifacts">
   <exec executable="${ndk.dir}/ndk-build" dir="${basedir}/jni" failonerror="true" >
    <arg value="clean"/>
   </exec>
+ </target>
+
+ <!-- JAVADOC -->
+ 
+ <target name="doc" description="Generate API documentation">
+  <javadoc packagenames="za.co.twyst.tweetnacl.*"
+           sourcepath="src"
+           defaultexcludes="yes"
+           destdir="docs/api"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="TweetNaCl for Android">
+   <doctitle><![CDATA[<h1>TweetNaCl for Android</h1>]]></doctitle>
+   <bottom><![CDATA[<i>Public Domain (Unlicense)</i>]]></bottom>
+   <tag name="todo" scope="all" description="To do:"/>
+   <link href="http://tweetnacl.cr.yp.to"/> 
+  </javadoc>  
  </target>
  
 </project>
