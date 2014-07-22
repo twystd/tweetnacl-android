@@ -1,7 +1,7 @@
 ### TODO
 
 1. Do the padding/unpadding inside TweetNaCl (?)
-2. JNI: see if there is a way to use Java byte arrays directly instead of duplicating (ByteBuffer)
+2. JNI: see if there is a way to use Java byte arrays directly instead of duplicating (ByteBuffer ?)
 3. Rethink KeyPair (?)
 4. javadoc
 5. Reformat test cases
