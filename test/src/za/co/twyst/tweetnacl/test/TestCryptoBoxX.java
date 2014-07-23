@@ -82,7 +82,15 @@ public class TestCryptoBoxX extends TweetNaClTest {
             (byte) 0x19, (byte) 0xe0, (byte) 0x03, (byte) 0x6b, (byte) 0x7a,
             (byte) 0x0b, (byte) 0x37 };
 
-    private static final byte[] SK = { (byte) 0x77, (byte) 0x07,
+    private static final byte[] ALICEPK = { (byte) 0x85, (byte) 0x20,
+            (byte) 0xf0, (byte) 0x09, (byte) 0x89, (byte) 0x30, (byte) 0xa7,
+            (byte) 0x54, (byte) 0x74, (byte) 0x8b, (byte) 0x7d, (byte) 0xdc,
+            (byte) 0xb4, (byte) 0x3e, (byte) 0xf7, (byte) 0x5a, (byte) 0x0d,
+            (byte) 0xbf, (byte) 0x3a, (byte) 0x0d, (byte) 0x26, (byte) 0x38,
+            (byte) 0x1a, (byte) 0xf4, (byte) 0xeb, (byte) 0xa4, (byte) 0xa9,
+            (byte) 0x8e, (byte) 0xaa, (byte) 0x9b, (byte) 0x4e, (byte) 0x6a, };
+
+    private static final byte[] ALICESK = { (byte) 0x77, (byte) 0x07,
             (byte) 0x6d, (byte) 0x0a, (byte) 0x73, (byte) 0x18, (byte) 0xa5,
             (byte) 0x7d, (byte) 0x3c, (byte) 0x16, (byte) 0xc1, (byte) 0x72,
             (byte) 0x51, (byte) 0xb2, (byte) 0x66, (byte) 0x45, (byte) 0xdf,
@@ -90,7 +98,7 @@ public class TestCryptoBoxX extends TweetNaClTest {
             (byte) 0x99, (byte) 0x2a, (byte) 0xb1, (byte) 0x77, (byte) 0xfb,
             (byte) 0xa5, (byte) 0x1d, (byte) 0xb9, (byte) 0x2c, (byte) 0x2a };
 
-    private static final byte[] PK = { (byte) 0xde, (byte) 0x9e,
+    private static final byte[] BOBPK = { (byte) 0xde, (byte) 0x9e,
             (byte) 0xdb, (byte) 0x7d, (byte) 0x7b, (byte) 0x7d, (byte) 0xc1,
             (byte) 0xb4, (byte) 0xd3, (byte) 0x5b, (byte) 0x61, (byte) 0xc2,
             (byte) 0xec, (byte) 0xe4, (byte) 0x35, (byte) 0x37, (byte) 0x3f,
@@ -98,82 +106,95 @@ public class TestCryptoBoxX extends TweetNaClTest {
             (byte) 0x67, (byte) 0x4d, (byte) 0xad, (byte) 0xfc, (byte) 0x7e,
             (byte) 0x14, (byte) 0x6f, (byte) 0x88, (byte) 0x2b, (byte) 0x4f, };
 
+    private static final byte[] BOBSK = { (byte) 0x5d, (byte) 0xab,
+            (byte) 0x08, (byte) 0x7e, (byte) 0x62, (byte) 0x4a, (byte) 0x8a,
+            (byte) 0x4b, (byte) 0x79, (byte) 0xe1, (byte) 0x7f, (byte) 0x8b,
+            (byte) 0x83, (byte) 0x80, (byte) 0x0e, (byte) 0xe6, (byte) 0x6f,
+            (byte) 0x3b, (byte) 0xb1, (byte) 0x29, (byte) 0x26, (byte) 0x18,
+            (byte) 0xb6, (byte) 0xfd, (byte) 0x1c, (byte) 0x2f, (byte) 0x8b,
+            (byte) 0x27, (byte) 0xff, (byte) 0x88, (byte) 0xe0, (byte) 0xeb, };
+
+    private static final byte[] KEY = { (byte) 0x1b, (byte) 0x27, (byte) 0x55,
+            (byte) 0x64, (byte) 0x73, (byte) 0xe9, (byte) 0x85, (byte) 0xd4,
+            (byte) 0x62, (byte) 0xcd, (byte) 0x51, (byte) 0x19, (byte) 0x7a,
+            (byte) 0x9a, (byte) 0x46, (byte) 0xc7, (byte) 0x60, (byte) 0x09,
+            (byte) 0x54, (byte) 0x9e, (byte) 0xac, (byte) 0x64, (byte) 0x74,
+            (byte) 0xf2, (byte) 0x06, (byte) 0xc4, (byte) 0xee, (byte) 0x08,
+            (byte) 0x44, (byte) 0xf6, (byte) 0x83, (byte) 0x89 };
+
+
     // UNIT TESTS
 
-    /**
-     * crypto_box (adapted from tests/box.c)
-     * 
-     */
-    public void testBox2() throws Exception {
-        byte[] ciphertext = tweetnacl.cryptoBox2(MESSAGE, NONCE, PK, SK);
+    public void testBoxX() throws Exception {
+        byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXT,NONCE,ALICEPK,BOBSK);
 
-        for (int i = 16; i < CIPHERTEXT.length; i++) {
-            assertEquals("Invalid byte " + i, (int) (CIPHERTEXT[i] & 0x00ff),(int) (ciphertext[i] & 0x00ff));
+        for (int i = 32; i < MESSAGE.length; i++) {
+            assertEquals("Invalid byte " + i, (int) (MESSAGE[i] & 0x00ff),(int) (message[i] & 0x00ff));
         }
     }
 
-    /**
-     * crypto_box (adapted from tests/box.c)
-     * 
-     */
-    public void testBox2X() throws Exception {
-        for (int i=0; i<1000; i++) {
-            int    N       = 1000 + random.nextInt(10000);
-            byte[] message = new byte[N];
-            byte[] nonce   = new byte[24];
-            
-            random.nextBytes(message);
-            random.nextBytes(nonce);
-
-            assertTrue("OOOOPS !",Arrays.equals(tweetnacl.cryptoBox (message,nonce,PK,SK),
-                                                tweetnacl.cryptoBox2(message,nonce,PK,SK)));
-        }
-    }
-
-
-    /**
-     * crypto_box (adapted from tests/box.c)
-     * 
-     */
-    public void testBox2P() throws Exception {
-        long DT  = 0;
-        long DT2 = 0;
-        
-        for (int i=0; i<32; i++) {
-            int    N       = 1024 + random.nextInt(16384);
-            byte[] message = new byte[N];
-            byte[] nonce   = new byte[24];
-            byte[] c       = new byte[0];
-            byte[] c2      = new byte[0];
-            long   start;
-            long   dt;
-            long   dt2;
-            
-            random.nextBytes(message);
-            random.nextBytes(nonce);
-
-            start = System.currentTimeMillis();
-            
-            for (int j=0; j<1024; j++) {
-                c = tweetnacl.cryptoBox (message,nonce,PK,SK);
-            }
-            
-            dt    = System.currentTimeMillis() - start;
-            start = System.currentTimeMillis();
-
-            for (int j=0; j<1024; j++) {
-                c2 = tweetnacl.cryptoBox2(message,nonce,PK,SK);
-            }
-
-            dt2  = System.currentTimeMillis() - start;
-            DT  += dt;
-            DT2 += dt2;
-
-            assertTrue(Arrays.equals(c,c2));            
-
-            android.util.Log.i(TAG,"DT: " + dt + "  " + dt2 + "  " + DT + "  " + DT2 + "  " + ((double) DT - (double) DT2)/(double) DT);
-        }
-
-        android.util.Log.i(TAG,"DT/FINAL: " + DT + "  " + DT2);
-    }
+//    public void testBoxY() throws Exception {
+//        for (int i=0; i<1000; i++) {
+//            int    N       = 1000 + random.nextInt(10000);
+//            byte[] message = new byte[N];
+//            byte[] nonce   = new byte[24];
+//            
+//            random.nextBytes(message);
+//            random.nextBytes(nonce);
+//
+//            Arrays.fill(message,0,32,(byte) 0);
+//
+//            byte[] crypttext = tweetnacl.cryptoBox     (message,  nonce,BOBPK,ALICESK);
+//            byte[] p         = tweetnacl.cryptoBoxOpen (crypttext,nonce,ALICEPK,BOBSK);
+//            byte[] q         = tweetnacl.cryptoBoxOpen2(crypttext,nonce,ALICEPK,BOBSK);
+//
+//            assertTrue("OOOOPS !",Arrays.equals(p,q));
+//        }
+//    }
+//
+//    public void testBoxZ() throws Exception {
+//        long DT  = 0;
+//        long DT2 = 0;
+//        
+//        for (int i=0; i<64; i++) {
+//            int    N       = 1024 + random.nextInt(16384);
+//            byte[] message = new byte[N];
+//            byte[] nonce   = new byte[24];
+//            byte[] m       = new byte[0];
+//            byte[] m2      = new byte[0];
+//            long   start;
+//            long   dt;
+//            long   dt2;
+//            
+//            random.nextBytes(message);
+//            random.nextBytes(nonce);
+//            
+//            Arrays.fill(message,0,32,(byte) 0);
+//
+//            byte[] crypttext = tweetnacl.cryptoBox     (message,  nonce,BOBPK,ALICESK);
+//
+//            start = System.currentTimeMillis();
+//            
+//            for (int j=0; j<1024; j++) {
+//                m = tweetnacl.cryptoBoxOpen(crypttext,nonce,ALICEPK,BOBSK);
+//            }
+//            
+//            dt    = System.currentTimeMillis() - start;
+//            start = System.currentTimeMillis();
+//
+//            for (int j=0; j<1024; j++) {
+//                m2 = tweetnacl.cryptoBoxOpen2(crypttext,nonce,ALICEPK,BOBSK);
+//            }
+//
+//            dt2  = System.currentTimeMillis() - start;
+//            DT  += dt;
+//            DT2 += dt2;
+//
+//            assertTrue(Arrays.equals(m,m2));            
+//
+//            android.util.Log.i(TAG,"DT: " + dt + "  " + dt2 + "  " + DT + "  " + DT2 + "  " + ((double) DT - (double) DT2)/(double) DT);
+//        }
+//
+//        android.util.Log.i(TAG,"DT/FINAL: " + DT + "  " + DT2);
+//    }
 }

@@ -50,65 +50,83 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
 
 /** jniCryptoBox
  *
- *  JNI wrapper function for crypto_box. The code is structured around the
- *  assumption that GetByteArrayElements will succeed a lot more often than
- *  it will fail.
+ *  JNI wrapper function for crypto_box. The code is structured around the assumption
+ *  that GetByteArrayElements will succeed a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	int  N      = (*env)->GetArrayLength(env,message);
-	u8  *c      = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,NULL);
-	u8  *m      = (u8 *) (*env)->GetByteArrayElements(env,message,   NULL);
-	u8  *n      = (u8 *) (*env)->GetByteArrayElements(env,nonce,     NULL);
-	u8  *pk     = (u8 *) (*env)->GetByteArrayElements(env,publicKey, NULL);
-	u8  *sk     = (u8 *) (*env)->GetByteArrayElements(env,secretKey, NULL);
-	int  rc     = -1;
-	jint commit = JNI_ABORT;
+	jboolean copyC;
+	jboolean copyM;
+	int      N = (*env)->GetArrayLength(env,message);
+	u8      *c = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
+	u8      *m = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8       n [crypto_box_NONCEBYTES];
+	u8       pk[crypto_box_PUBLICKEYBYTES];
+	u8       sk[crypto_box_SECRETKEYBYTES];
+	int      rc     = -1;
+	jint     commit = JNI_ABORT;
 
-	if (c && m && n && pk && sk) {
+	if (c && m) {
+	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
+	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
+	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
+
 		if ((rc = crypto_box(c,m,N,n,pk,sk)) == 0) {
 			commit = 0;
 		   }
 	}
 
-	if (c)  (*env)->ReleaseByteArrayElements(env,ciphertext,c, commit);
-	if (m)  (*env)->ReleaseByteArrayElements(env,message,   m, JNI_ABORT);
-	if (n)  (*env)->ReleaseByteArrayElements(env,nonce,     n, JNI_ABORT);
-	if (pk) (*env)->ReleaseByteArrayElements(env,publicKey, pk,JNI_ABORT);
-	if (sk) (*env)->ReleaseByteArrayElements(env,secretKey, sk,JNI_ABORT);
+	if (c) (*env)->ReleaseByteArrayElements(env,ciphertext,c,commit);
+	if (m) (*env)->ReleaseByteArrayElements(env,message,   m,JNI_ABORT);
+
+	if (copyC) memset(c, 0,N);
+	if (copyM) memset(m, 0,N);
+
+	memset(n, 0,crypto_box_NONCEBYTES);
+	memset(pk,0,crypto_box_PUBLICKEYBYTES);
+	memset(sk,0,crypto_box_SECRETKEYBYTES);
 
     return (jint) rc;
 }
 
 /** jniCryptoBoxOpen
  *
+ *  JNI wrapper function for crypto_box_open.
+ *
+ *  The code is structured around the assumption that GetByteArrayElements will succeed a lot more often than
+ *  it will fail.
+ *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	int N = (*env)->GetArrayLength(env,ciphertext);
-	u8 *c = (u8 *) malloc(N);
-	u8 *m = (u8 *) malloc(N);
-	u8  n[crypto_box_NONCEBYTES];
-	u8  pk[crypto_box_PUBLICKEYBYTES];
-	u8  sk[crypto_box_SECRETKEYBYTES];
+	jboolean copyC;
+	jboolean copyM;
+	int      N  = (*env)->GetArrayLength(env,ciphertext);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8       n [crypto_box_NONCEBYTES];
+	u8       pk[crypto_box_PUBLICKEYBYTES];
+	u8       sk[crypto_box_SECRETKEYBYTES];
+	int      rc     = -1;
+	jint     commit = JNI_ABORT;
 
-    (*env)->GetByteArrayRegion(env,ciphertext,0, N,c);
-    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
-    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
-    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
+	if (c && m) {
+	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
+	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
+	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
 
-	int rc = crypto_box_open(m,c,N,n,pk,sk);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,message,0,N,m);
+		if ((rc = crypto_box_open(m,c,N,n,pk,sk)) == 0) {
+			commit = 0;
+		   }
 	}
 
-	memset(c, 0,N);
-	memset(m, 0,N);
+	if (m) (*env)->ReleaseByteArrayElements(env,message,   m, commit);
+	if (c) (*env)->ReleaseByteArrayElements(env,ciphertext,c, JNI_ABORT);
+
+	if (copyC) memset(c, 0,N);
+	if (copyM) memset(m, 0,N);
+
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
 	memset(sk,0,crypto_box_SECRETKEYBYTES);
-
-	free(m);
-	free(c);
 
     return (jint) rc;
 }

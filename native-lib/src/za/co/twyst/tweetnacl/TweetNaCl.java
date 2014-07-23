@@ -112,10 +112,8 @@ public class TweetNaCl {
 
     private native int jniRandomBytes     (byte[] bytes);
     private native int jniCryptoBoxKeyPair(byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox       (byte[] ciphertext,byte[] message,byte[] nonce,byte[] publicKey,byte[] secretKey);
-
-    private native int jniCryptoBoxOpen(byte[] message, byte[] ciphertext, byte[] nonce, byte[] publicKey,
-            byte[] secretKey);
+    private native int jniCryptoBox       (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen   (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
 
     private native int jniCryptoBoxBeforeNM(byte[] key, byte[] publicKey, byte[] secretKey);
 
@@ -340,7 +338,7 @@ public class TweetNaCl {
 
         return message;
     }
-
+    
     /**
      * Wrapper function for crypto_box_beforenm.
      * 
