@@ -110,11 +110,9 @@ public class TweetNaCl {
 
     // NATIVE METHODS
 
-    private native int jniRandomBytes(byte[] bytes);
-
+    private native int jniRandomBytes     (byte[] bytes);
     private native int jniCryptoBoxKeyPair(byte[] publicKey, byte[] secretKey);
-
-    private native int jniCryptoBox(byte[] ciphertext, byte[] message, byte[] nonce, byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox       (byte[] ciphertext,byte[] message,byte[] nonce,byte[] publicKey,byte[] secretKey);
 
     private native int jniCryptoBoxOpen(byte[] message, byte[] ciphertext, byte[] nonce, byte[] publicKey,
             byte[] secretKey);
@@ -279,7 +277,7 @@ public class TweetNaCl {
         // ... encrypt
 
         byte[] ciphertext = new byte[message.length];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoBox(ciphertext, message, nonce, publicKey, secretKey)) != 0) {
             throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
