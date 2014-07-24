@@ -8,16 +8,17 @@ typedef unsigned long       u32;
 typedef unsigned long long  u64;
 typedef long long           i64;
 typedef i64                 gf[16];
-typedef enum { FALSE,TRUE } bool;
+
+#define YES 1
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
 
 /** Utility function to release a JNI byte array reference.
  *
  */
-void release(JNIEnv *env,jbyteArray jbytes,u8 *bytes,u64 N,bool commit,jboolean copied) {
+void release(JNIEnv *env,jbyteArray jbytes,u8 *bytes,u64 N,int discard,jboolean copied) {
 	if (bytes) {
-		(*env)->ReleaseByteArrayElements(env,jbytes,bytes,commit ? 0 : JNI_ABORT);
+		(*env)->ReleaseByteArrayElements(env,jbytes,bytes,discard ? JNI_ABORT : 0);
 	}
 
 	if (copied) {
@@ -64,8 +65,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
 
 /** jniCryptoBox
  *
- *  JNI wrapper function for crypto_box. The code is structured around the assumption
- *  that GetByteArrayElements will succeed a lot more often than it will fail.
+ *  JNI wrapper function for crypto_box.
+ *
+ *  The code is structured around the assumption that GetByteArrayElements will
+ *  succeed a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
 	jboolean copyC;
@@ -106,37 +109,30 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
  *
  *  JNI wrapper function for crypto_box_open.
  *
- *  The code is structured around the assumption that GetByteArrayElements will succeed a lot more often than
- *  it will fail.
- *
+ *  The code is structured around the assumption that GetByteArrayElements will succeed
+ *  a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
 	jboolean copyC;
 	jboolean copyM;
+	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,ciphertext);
 	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
 	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
 	u8       n [crypto_box_NONCEBYTES];
 	u8       pk[crypto_box_PUBLICKEYBYTES];
 	u8       sk[crypto_box_SECRETKEYBYTES];
-	int      rc     = -1;
-	jint     commit = JNI_ABORT;
 
 	if (c && m) {
 	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
 	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
 	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
 
-		if ((rc = crypto_box_open(m,c,N,n,pk,sk)) == 0) {
-			commit = 0;
-		   }
+		rc = crypto_box_open(m,c,N,n,pk,sk);
 	}
 
-	if (m) (*env)->ReleaseByteArrayElements(env,message,   m, commit);
-	if (c) (*env)->ReleaseByteArrayElements(env,ciphertext,c, JNI_ABORT);
-
-	if (copyC) memset(c, 0,N);
-	if (copyM) memset(m, 0,N);
+	release(env,message,   m,N,rc, copyM);
+	release(env,ciphertext,c,N,YES,copyC);
 
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
@@ -147,6 +143,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
 
 /** jniCryptoBoxBeforeNM
  *
+ *  JNI wrapper function for crypto_box_beforenm.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobject object,jbyteArray key,jbyteArray publicKey,jbyteArray secretKey) {
 	u8 k [crypto_box_BEFORENMBYTES];
@@ -171,6 +168,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
 
 /** jniCryptoBoxAfterNM
  *
+ *  JNI wrapper function for crypto_box_afternm.
+ *
+ *  The code is structured around the assumption that GetByteArrayElements will succeed
+ *  a lot more often than it will fail.
+ *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
 	jboolean copyC;
@@ -189,8 +191,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 		rc = crypto_box_afternm(c,m,N,n,k);
 	}
 
-	release(env,ciphertext,c,N,rc == 0,copyC);
-	release(env,message,   m,N,FALSE,  copyM);
+	release(env,ciphertext,c,N,rc, copyC);
+	release(env,message,   m,N,YES,copyM);
 
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
@@ -200,31 +202,33 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 
 /** jniCryptoBoxOpenAfterNM
  *
+ *  JNI wrapper function for crypto_box_open_afternm.
+ *
+ *  The code is structured around the assumption that GetByteArrayElements will succeed
+ *  a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,ciphertext);
-	u8 *c = (u8 *) malloc(N);
-	u8 *m = (u8 *) malloc(N);
-	u8  n[crypto_box_NONCEBYTES];
-	u8  k[crypto_box_BEFORENMBYTES];
+	jboolean copyC;
+	jboolean copyM;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,ciphertext);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8       n[crypto_box_NONCEBYTES];
+	u8       k[crypto_box_BEFORENMBYTES];
 
-    (*env)->GetByteArrayRegion(env,ciphertext,0, N,c);
-    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
-    (*env)->GetByteArrayRegion(env,key,       0,crypto_box_BEFORENMBYTES,k);
+	if (m && c) {
+		(*env)->GetByteArrayRegion(env,nonce,0,crypto_box_NONCEBYTES,   n);
+		(*env)->GetByteArrayRegion(env,key,  0,crypto_box_BEFORENMBYTES,k);
 
-	int rc = crypto_box_open_afternm(m,c,N,n,k);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,message,0,N,m);
+		rc = crypto_box_open_afternm(m,c,N,n,k);
 	}
 
-	memset(c,0,N);
-	memset(m,0,N);
+	release(env,message,   m,N,rc, copyM);
+	release(env,ciphertext,c,N,YES,copyC);
+
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
-
-	free(m);
-	free(c);
 
     return (jint) rc;
 }

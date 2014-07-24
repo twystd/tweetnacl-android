@@ -3,6 +3,7 @@ package za.co.twyst.tweetnacl.test;
 import java.util.Arrays;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 
 public class TestCryptoX extends TweetNaClTest {
     // CONSTANTS
@@ -49,40 +50,47 @@ public class TestCryptoX extends TweetNaClTest {
                                                (byte) 0x4c, (byte) 0xb4, (byte) 0x5a, (byte) 0x74,
                                                (byte) 0xe3, (byte) 0x55, (byte) 0xa5 };
 
-    private static final byte[] MESSAGE = { (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5, (byte) 0x3c,
-            (byte) 0x81, (byte) 0xf2, (byte) 0xd5, (byte) 0xcf, (byte) 0x14,
-            (byte) 0x13, (byte) 0x16, (byte) 0xeb, (byte) 0xeb, (byte) 0x0c,
-            (byte) 0x7b, (byte) 0x52, (byte) 0x28, (byte) 0xc5, (byte) 0x2a,
-            (byte) 0x4c, (byte) 0x62, (byte) 0xcb, (byte) 0xd4, (byte) 0x4b,
-            (byte) 0x66, (byte) 0x84, (byte) 0x9b, (byte) 0x64, (byte) 0x24,
-            (byte) 0x4f, (byte) 0xfc, (byte) 0xe5, (byte) 0xec, (byte) 0xba,
-            (byte) 0xaf, (byte) 0x33, (byte) 0xbd, (byte) 0x75, (byte) 0x1a,
-            (byte) 0x1a, (byte) 0xc7, (byte) 0x28, (byte) 0xd4, (byte) 0x5e,
-            (byte) 0x6c, (byte) 0x61, (byte) 0x29, (byte) 0x6c, (byte) 0xdc,
-            (byte) 0x3c, (byte) 0x01, (byte) 0x23, (byte) 0x35, (byte) 0x61,
-            (byte) 0xf4, (byte) 0x1d, (byte) 0xb6, (byte) 0x6c, (byte) 0xce,
-            (byte) 0x31, (byte) 0x4a, (byte) 0xdb, (byte) 0x31, (byte) 0x0e,
-            (byte) 0x3b, (byte) 0xe8, (byte) 0x25, (byte) 0x0c, (byte) 0x46,
-            (byte) 0xf0, (byte) 0x6d, (byte) 0xce, (byte) 0xea, (byte) 0x3a,
-            (byte) 0x7f, (byte) 0xa1, (byte) 0x34, (byte) 0x80, (byte) 0x57,
-            (byte) 0xe2, (byte) 0xf6, (byte) 0x55, (byte) 0x6a, (byte) 0xd6,
-            (byte) 0xb1, (byte) 0x31, (byte) 0x8a, (byte) 0x02, (byte) 0x4a,
-            (byte) 0x83, (byte) 0x8f, (byte) 0x21, (byte) 0xaf, (byte) 0x1f,
-            (byte) 0xde, (byte) 0x04, (byte) 0x89, (byte) 0x77, (byte) 0xeb,
-            (byte) 0x48, (byte) 0xf5, (byte) 0x9f, (byte) 0xfd, (byte) 0x49,
-            (byte) 0x24, (byte) 0xca, (byte) 0x1c, (byte) 0x60, (byte) 0x90,
-            (byte) 0x2e, (byte) 0x52, (byte) 0xf0, (byte) 0xa0, (byte) 0x89,
-            (byte) 0xbc, (byte) 0x76, (byte) 0x89, (byte) 0x70, (byte) 0x40,
-            (byte) 0xe0, (byte) 0x82, (byte) 0xf9, (byte) 0x37, (byte) 0x76,
-            (byte) 0x38, (byte) 0x48, (byte) 0x64, (byte) 0x5e, (byte) 0x07,
-            (byte) 0x05 };
+    private static final byte[] MESSAGE = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                                            (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5,
+                                            (byte) 0x3c, (byte) 0x81, (byte) 0xf2, (byte) 0xd5,
+                                            (byte) 0xcf, (byte) 0x14, (byte) 0x13, (byte) 0x16,
+                                            (byte) 0xeb, (byte) 0xeb, (byte) 0x0c, (byte) 0x7b,
+                                            (byte) 0x52, (byte) 0x28, (byte) 0xc5, (byte) 0x2a,
+                                            (byte) 0x4c, (byte) 0x62, (byte) 0xcb, (byte) 0xd4,
+                                            (byte) 0x4b, (byte) 0x66, (byte) 0x84, (byte) 0x9b,
+                                            (byte) 0x64, (byte) 0x24, (byte) 0x4f, (byte) 0xfc,
+                                            (byte) 0xe5, (byte) 0xec, (byte) 0xba, (byte) 0xaf,
+                                            (byte) 0x33, (byte) 0xbd, (byte) 0x75, (byte) 0x1a,
+                                            (byte) 0x1a, (byte) 0xc7, (byte) 0x28, (byte) 0xd4,
+                                            (byte) 0x5e, (byte) 0x6c, (byte) 0x61, (byte) 0x29,
+                                            (byte) 0x6c, (byte) 0xdc, (byte) 0x3c, (byte) 0x01,
+                                            (byte) 0x23, (byte) 0x35, (byte) 0x61, (byte) 0xf4,
+                                            (byte) 0x1d, (byte) 0xb6, (byte) 0x6c, (byte) 0xce,
+                                            (byte) 0x31, (byte) 0x4a, (byte) 0xdb, (byte) 0x31,
+                                            (byte) 0x0e, (byte) 0x3b, (byte) 0xe8, (byte) 0x25,
+                                            (byte) 0x0c, (byte) 0x46, (byte) 0xf0, (byte) 0x6d,
+                                            (byte) 0xce, (byte) 0xea, (byte) 0x3a, (byte) 0x7f,
+                                            (byte) 0xa1, (byte) 0x34, (byte) 0x80, (byte) 0x57,
+                                            (byte) 0xe2, (byte) 0xf6, (byte) 0x55, (byte) 0x6a,
+                                            (byte) 0xd6, (byte) 0xb1, (byte) 0x31, (byte) 0x8a,
+                                            (byte) 0x02, (byte) 0x4a, (byte) 0x83, (byte) 0x8f,
+                                            (byte) 0x21, (byte) 0xaf, (byte) 0x1f, (byte) 0xde,
+                                            (byte) 0x04, (byte) 0x89, (byte) 0x77, (byte) 0xeb,
+                                            (byte) 0x48, (byte) 0xf5, (byte) 0x9f, (byte) 0xfd,
+                                            (byte) 0x49, (byte) 0x24, (byte) 0xca, (byte) 0x1c,
+                                            (byte) 0x60, (byte) 0x90, (byte) 0x2e, (byte) 0x52,
+                                            (byte) 0xf0, (byte) 0xa0, (byte) 0x89, (byte) 0xbc,
+                                            (byte) 0x76, (byte) 0x89, (byte) 0x70, (byte) 0x40,
+                                            (byte) 0xe0, (byte) 0x82, (byte) 0xf9, (byte) 0x37,
+                                            (byte) 0x76, (byte) 0x38, (byte) 0x48, (byte) 0x64,
+                                            (byte) 0x5e, (byte) 0x07, (byte) 0x05 };
 
     private static final byte[] NONCE = { (byte) 0x69, (byte) 0x69,
             (byte) 0x6e, (byte) 0xe9, (byte) 0x55, (byte) 0xb6, (byte) 0x2b,
@@ -135,72 +143,70 @@ public class TestCryptoX extends TweetNaClTest {
     // UNIT TESTS
 
 //    public void testX() throws Exception {
-//        byte[] key        = tweetnacl.cryptoBoxBeforeNM(BOBPK, ALICESK);
-//        byte[] ciphertext = tweetnacl.cryptoBoxAfterNM2(MESSAGE,NONCE,key);
+//        byte[] key     = tweetnacl.cryptoBoxBeforeNM(ALICEPK, BOBSK);
+//        byte[] message = tweetnacl.cryptoBoxOpenAfterNM2(CIPHERTEXT, NONCE, key);
 //
-//        for (int i = 16; i < CIPHERTEXT.length; i++) {
-//            assertEquals("Invalid byte " + i, (int) (CIPHERTEXT[i] & 0x00ff),
-//                    (int) (ciphertext[i] & 0x00ff));
+//        for (int i = 32; i < MESSAGE.length; i++) {
+//            assertEquals("Invalid byte " + i, (int) (MESSAGE[i] & 0x00ff),
+//                    (int) (message[i] & 0x00ff));
 //        }
 //    }
-//
+
 //    public void testY() throws Exception {
 //        for (int i=0; i<1000; i++) {
-//            byte[] pk      = new byte[TweetNaCl.BOX_PUBLICKEYBYTES];
-//            byte[] sk      = new byte[TweetNaCl.BOX_SECRETKEYBYTES];
+//            KeyPair alice  = tweetnacl.cryptoBoxKeyPair();
+//            KeyPair bob    = tweetnacl.cryptoBoxKeyPair();
 //            byte[] nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
 //            byte[] message = new byte[32 + random.nextInt(16384)];
 //            
-//            random.nextBytes(pk);
-//            random.nextBytes(sk);
 //            random.nextBytes(nonce);
 //            random.nextBytes(message);
 //
 //            Arrays.fill(message,0,32,(byte) 0);
 //
-//            byte[] key = tweetnacl.cryptoBoxBeforeNM(pk,sk);
-//            byte[] p   = tweetnacl.cryptoBoxAfterNM (message,nonce,key);
-//            byte[] q   = tweetnacl.cryptoBoxAfterNM2(message,nonce,key);
+//            byte[] crypttext = tweetnacl.cryptoBox            (message,nonce,bob.publicKey,alice.secretKey);
+//            byte[] key       = tweetnacl.cryptoBoxBeforeNM    (alice.publicKey,bob.secretKey);
+//            byte[] p         = tweetnacl.cryptoBoxOpenAfterNM (crypttext,nonce,key);
+//            byte[] q         = tweetnacl.cryptoBoxOpenAfterNM2(crypttext,nonce,key);
 //
 //            assertTrue("OOOOPS !",Arrays.equals(p,q));
 //        }
 //    }
-//
+
 //    public void testZ() throws Exception {
 //        long DT  = 0;
 //        long DT2 = 0;
 //        
 //        for (int i=0; i<64; i++) {
-//            byte[] pk      = new byte[TweetNaCl.BOX_PUBLICKEYBYTES];
-//            byte[] sk      = new byte[TweetNaCl.BOX_SECRETKEYBYTES];
+//            KeyPair alice  = tweetnacl.cryptoBoxKeyPair();
+//            KeyPair bob    = tweetnacl.cryptoBoxKeyPair();
 //            byte[] nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
 //            byte[] message = new byte[32 + random.nextInt(16384)];
+//            
+//            random.nextBytes(nonce);
+//            random.nextBytes(message);
+//
+//            Arrays.fill(message,0,32,(byte) 0);
+//
+//            byte[] crypttext = tweetnacl.cryptoBox            (message,nonce,bob.publicKey,alice.secretKey);
+//            byte[] key       = tweetnacl.cryptoBoxBeforeNM    (alice.publicKey,bob.secretKey);
 //            byte[] p       = new byte[0];
 //            byte[] q       = new byte[0];
 //            long   start;
 //            long   dt;
 //            long   dt2;
 //            
-//            random.nextBytes(pk);
-//            random.nextBytes(sk);
-//            random.nextBytes(nonce);
-//            random.nextBytes(message);
-//            
-//            Arrays.fill(message,0,32,(byte) 0);
-//
-//            byte[] key = tweetnacl.cryptoBoxBeforeNM(pk,sk);
-//
 //            start = System.currentTimeMillis();
 //            
 //            for (int j=0; j<1024; j++) {
-//                p = tweetnacl.cryptoBoxAfterNM(message,nonce,key);
+//                p = tweetnacl.cryptoBoxOpenAfterNM (crypttext,nonce,key);
 //            }
 //            
 //            dt    = System.currentTimeMillis() - start;
 //            start = System.currentTimeMillis();
 //
 //            for (int j=0; j<1024; j++) {
-//                q = tweetnacl.cryptoBoxAfterNM2(message,nonce,key);
+//                q = tweetnacl.cryptoBoxOpenAfterNM2(crypttext,nonce,key);
 //            }
 //
 //            dt2  = System.currentTimeMillis() - start;

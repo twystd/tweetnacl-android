@@ -201,21 +201,19 @@ public class TestCryptoBox extends TweetNaClTest {
         Random random = new Random();
 
         for (int mlen = 0; mlen < ROUNDS; ++mlen) {
-            TweetNaCl.KeyPair alice = tweetnacl.cryptoBoxKeyPair();
-            TweetNaCl.KeyPair bob = tweetnacl.cryptoBoxKeyPair();
-            byte[] message = new byte[mlen + TweetNaCl.BOX_ZEROBYTES];
-            byte[] nonce = new byte[TweetNaCl.BOX_NONCEBYTES];
-            byte[] ciphertext;
-            byte[] plaintext;
+            TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
+            TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
+            byte[]            message = new byte[mlen + TweetNaCl.BOX_ZEROBYTES];
+            byte[]            nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
+            byte[]            ciphertext;
+            byte[]            plaintext;
 
             random.nextBytes(nonce);
             random.nextBytes(message);
             Arrays.fill(message, 0, TweetNaCl.BOX_ZEROBYTES, (byte) 0);
 
-            ciphertext = tweetnacl.cryptoBox(message, nonce, bob.publicKey,
-                    alice.secretKey);
-            plaintext = tweetnacl.cryptoBoxOpen(ciphertext, nonce,
-                    alice.publicKey, bob.secretKey);
+            ciphertext = tweetnacl.cryptoBox    (message,   nonce,bob.publicKey,alice.secretKey);
+            plaintext  = tweetnacl.cryptoBoxOpen(ciphertext,nonce,alice.publicKey, bob.secretKey);
 
             assertTrue("Bad decryption", Arrays.equals(message, plaintext));
         }

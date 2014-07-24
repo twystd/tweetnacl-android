@@ -115,15 +115,15 @@ public class TweetNaCl {
     public static final int VERIFY32_BYTES = 32;
 
     // NATIVE METHODS
-
-    private native int jniRandomBytes      (byte[] bytes);
-    private native int jniCryptoBoxKeyPair (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox        (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen    (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM(byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM (byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
-
+ 
+    private native int jniRandomBytes         (byte[] bytes);
+    private native int jniCryptoBoxKeyPair    (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox           (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen       (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM   (byte[] key,       byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBoxAfterNM    (byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
     private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM2(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
 
     private native int jniCryptoCoreHSalsa20(byte[] out, byte[] in, byte[] key, byte[] constant);
 
@@ -486,15 +486,37 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_box_open_afternm.
+     * Wrapper function for <code>crypto_box_open_afternm</code>.
+     * <p>
+     * <code>crypto_box_open_afternm</code> is identical to crypto_secret_box_open - it 
+     * takes a BOX_NONCEBYTES byte nonce and a BOX_BEFORENMBYTES byte key and generates an
+     * authenticated stream cipher. The first 32 bytes of the output are used for the MAC, 
+     * the rest are XOR'd with the ciphertext to decrypt it.
      * 
      * @param ciphertext
+     *            Byte array containing the encrypted message to be encrypted.
      * @param nonce
+     *            BOX_NONCEBYTES byte array containing the unique nonce to use
+     *            when encrypting the message.
      * @param key
+     *            BOX_BEFORENMBYTES byte array containing the byte array
+     *            initialised by crypto_box_beforenm.
      * 
-     * @return plaintext
+     * @return Byte array with the encrypted message.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_box_afternm</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>ciphertext</code> is <code>null</code>
+     *             <li><code>nonce</code> is <code>null</code> or not exactly BOX_NONCEBYTES bytes
+     *             <li><code>key</code> is <code>null</code> or not exactly BOX_BEFORENMBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
     public byte[] cryptoBoxOpenAfterNM(final byte[] ciphertext, final byte[] nonce, byte[] key) throws DecryptException {
         // ... validate
@@ -513,7 +535,7 @@ public class TweetNaCl {
                     + " bytes");
         }
 
-        // ... encrypt
+        // ... decrypt
 
         byte[] message = new byte[ciphertext.length];
         int rc;
@@ -524,7 +546,6 @@ public class TweetNaCl {
 
         return message;
     }
-
     /**
      * Wrapper function for crypto_core_hsalsa20.
      * 
