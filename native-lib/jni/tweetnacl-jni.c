@@ -3,13 +3,27 @@
 #include <android/log.h>
 #include "tweetnacl.h"
 
-typedef unsigned char      u8;
-typedef unsigned long      u32;
-typedef unsigned long long u64;
-typedef long long          i64;
-typedef i64                gf[16];
+typedef unsigned char       u8;
+typedef unsigned long       u32;
+typedef unsigned long long  u64;
+typedef long long           i64;
+typedef i64                 gf[16];
+typedef enum { FALSE,TRUE } bool;
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
+
+/** Utility function to release a JNI byte array reference.
+ *
+ */
+void release(JNIEnv *env,jbyteArray jbytes,u8 *bytes,u64 N,bool commit,jboolean copied) {
+	if (bytes) {
+		(*env)->ReleaseByteArrayElements(env,jbytes,bytes,commit ? 0 : JNI_ABORT);
+	}
+
+	if (copied) {
+		memset(bytes,0,N);
+	}
+}
 
 /** jniRandomBytes
  *
@@ -159,29 +173,27 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,message);
-	u8 *c = (u8 *) malloc(N);
-	u8 *m = (u8 *) malloc(N);
-	u8  n[crypto_box_NONCEBYTES];
-	u8  k[crypto_box_BEFORENMBYTES];
+	jboolean copyC;
+	jboolean copyM;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8       n[crypto_box_NONCEBYTES];
+	u8       k[crypto_box_BEFORENMBYTES];
 
-    (*env)->GetByteArrayRegion(env,message,0,N,                       m);
-    (*env)->GetByteArrayRegion(env,nonce,  0,crypto_box_NONCEBYTES,   n);
-    (*env)->GetByteArrayRegion(env,key,    0,crypto_box_BEFORENMBYTES,k);
+	if (m && c) {
+		(*env)->GetByteArrayRegion(env,nonce,0,crypto_box_NONCEBYTES,   n);
+		(*env)->GetByteArrayRegion(env,key,  0,crypto_box_BEFORENMBYTES,k);
 
-	int rc = crypto_box_afternm(c,m,N,n,k);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,ciphertext,0,N,c);
+		rc = crypto_box_afternm(c,m,N,n,k);
 	}
 
-	memset(c,0,N);
-	memset(m,0,N);
+	release(env,ciphertext,c,N,rc == 0,copyC);
+	release(env,message,   m,N,FALSE,  copyM);
+
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
-
-	free(m);
-	free(c);
 
     return (jint) rc;
 }

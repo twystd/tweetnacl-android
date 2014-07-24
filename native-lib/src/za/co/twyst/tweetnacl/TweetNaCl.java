@@ -38,7 +38,11 @@ import za.co.twyst.tweetnacl.exceptions.VerifyException;
  * 
  * @author Tony Seebregts
  * 
- * @see <a href="http://nacl.cr.yp.to">http://nacl.cr.yp.to</a>
+ * @see <ul>
+ *      <li><a href="http://nacl.cr.yp.to">http://nacl.cr.yp.to</a></li>
+ *      <li><a href="https://stackoverflow.com/questions/13663604/questions-about-the-nacl-crypto-library">Questions about the NaCL crypto library</a></li>
+ *      </ul>
+ * 
  * 
  */
 public class TweetNaCl {
@@ -62,7 +66,9 @@ public class TweetNaCl {
      */
     public static final int BOX_BEFORENMBYTES = 32;
 
-    /** crypto_box_NONCEBYTES. The number of bytes for a crypto_box nonce. */
+    /** 
+     * crypto_box_NONCEBYTES. The number of bytes for a crypto_box nonce. 
+     */
     public static final int BOX_NONCEBYTES = 24;
 
     /**
@@ -110,14 +116,12 @@ public class TweetNaCl {
 
     // NATIVE METHODS
 
-    private native int jniRandomBytes     (byte[] bytes);
-    private native int jniCryptoBoxKeyPair(byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox       (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen   (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-
-    private native int jniCryptoBoxBeforeNM(byte[] key, byte[] publicKey, byte[] secretKey);
-
-    private native int jniCryptoBoxAfterNM(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
+    private native int jniRandomBytes      (byte[] bytes);
+    private native int jniCryptoBoxKeyPair (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox        (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen    (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM(byte[] key,       byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBoxAfterNM (byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
 
     private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
 
@@ -183,7 +187,7 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for <code>randombytes<code>.
+     * Wrapper function for <code>randombytes</code>.
      * <p>
      * The <code>randombytes</code> function is not part of the TweetNaCl API
      * but is exposed here for test purposes.
@@ -216,8 +220,7 @@ public class TweetNaCl {
      * 
      * @return KeyPair initialised with a crypto_box public/private key pair.
      * 
-     * @see <a
-     *      href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
     public KeyPair cryptoBoxKeyPair() {
         byte[] publicKey = new byte[BOX_PUBLICKEYBYTES];
@@ -229,8 +232,11 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_box.
-     * 
+     * Wrapper function for <code>crypto_box</code>.
+     * <p>
+     * Encrypts and authenticates the <code>message</code> using the <code>secretKey</code>, 
+     * <code>publicKey</code> and <code>nonce</code>.
+     *  
      * @param message
      *            Byte array containing the message to be encrypted. May not be
      *            <code>null</code>.
@@ -247,13 +253,20 @@ public class TweetNaCl {
      * @return Byte array with the encrypted message.
      * 
      * @throws EncryptException
-     *             Thrown if crypto_box returns anything other than 0.
+     *             Thrown if the wrapped <code>crypto_box</code> function returns anything other than 0.
      * 
-     * @see <a
-     *      href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>
+     *             <li><code>nonce</code> is <code>null</code> or not exactly BOX_NONCEBYTES bytes
+     *             <li><code>publicKey</code> is <code>null</code> or not exactly BOX_PUBLICKEYBYTES bytes
+     *             <li><code>secretKey</code> is <code>null</code> or not exactly BOX_SECRETKEYBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
-    public byte[] cryptoBox(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey)
-            throws EncryptException {
+    public byte[] cryptoBox(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
         // ... validate
 
         if (message == null) {
@@ -285,7 +298,10 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_box_open.
+     * Wrapper function for <code>crypto_box_open</code>.
+     * <p>
+     * Verifies and decrypts the <code>ciphertext</code> using the <code>secretKey</code>,
+     * <code>publicKey</code>, and <code>nonce</code>. 
      * 
      * @param ciphertext
      *            Byte array containing the ciphertext to be decrypted
@@ -299,13 +315,22 @@ public class TweetNaCl {
      *            BOX_SECRETKEYBYTES byte array containing the secret key of the
      *            sender.
      * 
-     * @return Byte array with the decrypted message.
+     * @return Byte array with the plaintext.
      * 
      * @throws DecryptException
-     *             Thrown if crypto_box_open returns anything other than 0.
+     *             Thrown if the wrapped <code>crypto_box_open</code> function returns anything 
+     *             other than 0.
      * 
-     * @see <a
-     *      href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>ciphertext</code> is <code>null</code>
+     *             <li><code>nonce</code> is <code>null</code> or not exactly BOX_NONCEBYTES bytes
+     *             <li><code>publicKey</code> is <code>null</code> or not exactly BOX_PUBLICKEYBYTES bytes
+     *             <li><code>secretKey</code> is <code>null</code> or not exactly BOX_SECRETKEYBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
     public byte[] cryptoBoxOpen(final byte[] ciphertext, final byte[] nonce, byte[] publicKey, byte[] secretKey)
             throws DecryptException {
@@ -340,8 +365,18 @@ public class TweetNaCl {
     }
     
     /**
-     * Wrapper function for crypto_box_beforenm.
-     * 
+     * Wrapper function for <code>crypto_box_beforenm</code>.
+     * <p>
+     * Calculates a 32 byte shared key for the  hashed key-exchange described for curve 25519.
+     * <p>
+     * Applications that send several messages to the same receiver can gain speed by splitting 
+     * <code>crypto_box</code> into two steps, <code>crypto_box_beforenm</code> and
+     * <code>crypto_box_afternm</code>.
+     * <p>
+     * Similarly, applications that receive several messages from the same sender can gain speed by 
+     * splitting <code>crypto_box_open</code> into two steps, <code>crypto_box_beforenm</code> and
+     * <code>crypto_box_afternm_open</code>.
+     *  
      * @param publicKey
      *            BOX_PUBLICKEYBYTES byte array containing the public key of the
      *            recipient.
@@ -350,13 +385,19 @@ public class TweetNaCl {
      *            sender.
      * 
      * @return BOX_BEFORENMBYTES byte array initialised for use with
-     *         crypto_box_afternm.
+     *         crypto_box_afternm and crypto_box_afternmopen
      * 
      * @throws Exception
      *             Thrown if crypto_box_beforenm returns anything other than 0.
      * 
-     * @see <a
-     *      href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>publicKey</code> is <code>null</code> or not exactly BOX_PUBLICKEYBYTES bytes
+     *             <li><code>secretKey</code> is <code>null</code> or not exactly BOX_SECRETKEYBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
     public byte[] cryptoBoxBeforeNM(byte[] publicKey, byte[] secretKey) throws Exception {
         // ... validate
@@ -382,7 +423,12 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_box_afternm.
+     * Wrapper function for <code>crypto_box_afternm</code>.
+     * <p>
+     * <code>crypto_box_afternm</code> is identical to crypto_secret_box - it takes a 
+     * BOX_NONCEBYTES byte nonce and a BOX_BEFORENMBYTES byte key and generates an
+     * authenticated stream cipher. The first 32 bytes of the output are used for the MAC, 
+     * the rest are XOR'd with the plaintext to encrypt it.
      * 
      * @param message
      *            Byte array containing the message to be encrypted. May not be
@@ -397,10 +443,18 @@ public class TweetNaCl {
      * @return Byte array with the encrypted message.
      * 
      * @throws Exception
-     *             Thrown if crypto_box_afternm returns anything other than 0.
+     *             Thrown if the wrapped <code>crypto_box_afternm</code> returns anything other 
+     *             than 0.
      * 
-     * @see <a
-     *      href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>
+     *             <li><code>nonce</code> is <code>null</code> or not exactly BOX_NONCEBYTES bytes
+     *             <li><code>key</code> is <code>null</code> or not exactly BOX_BEFORENMBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
     public byte[] cryptoBoxAfterNM(final byte[] message, final byte[] nonce, byte[] key) throws EncryptException {
         // ... validate
