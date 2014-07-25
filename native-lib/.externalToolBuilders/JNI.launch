@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
 <booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="false"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/Users/AnthonySeebregts/Development/tools/adt-bundle-mac-x86_64-20130522/android-ndk-r9c/ndk-build"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/Users/tonys/Development/tools/android/android-ndk-r10/ndk-build"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="full,incremental,"/>
 <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/TweetNaCl/jni}"/>
