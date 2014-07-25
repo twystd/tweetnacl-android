@@ -1,7 +1,8 @@
 <project name="tweetnacl" default="build">
-
+<!-- 
  <property name="ndk.dir" value="${user.home}/Development/tools/adt-bundle-mac-x86_64-20130522/android-ndk-r9c" />
 	
+ -->
  <!-- NATIVE LIBRARY BUILD -->
  
  <target name="build" description="Build native lib">
