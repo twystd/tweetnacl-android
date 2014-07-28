@@ -77,17 +77,59 @@ public class TweetNaCl {
      */
     public static final int BOX_ZEROBYTES = 32;
 
+    /**
+     * crypto_core_hsalsa20_OUTPUTBYTES. The number of bytes in the calculated
+     * intermediate key.
+     */
     public static final int HSALSA20_OUTPUTBYTES = 32;
+
+    /**
+     * crypto_core_hsalsa20_INPUTBYTES. The number of bytes in the shared secret
+     * for crypto_core_hsalsa20.
+     */
     public static final int HSALSA20_INPUTBYTES = 16;
+
+    /**
+     * crypto_core_hsalsa20_KEYBYTES. The number of bytes in the secret key
+     * for crypto_core_hsalsa20.
+     */
     public static final int HSALSA20_KEYBYTES = 32;
+
+    /**
+     * crypto_core_hsalsa20_INPUTBYTES. The number of bytes in the constant
+     * for crypto_core_hsalsa20.
+     */
     public static final int HSALSA20_CONSTBYTES = 16;
 
+    /**
+     * crypto_core_salsa20_OUTPUTBYTES. The number of bytes in the calculated
+     * intermediate key.
+     */
     public static final int SALSA20_OUTPUTBYTES = 64;
+
+    /**
+     * crypto_core_salsa20_INPUTBYTES. The number of bytes in the shared secret
+     * for crypto_core_salsa20.
+     */
     public static final int SALSA20_INPUTBYTES = 16;
+
+    /**
+     * crypto_core_salsa20_KEYBYTES. The number of bytes in the secret key
+     * for crypto_core_salsa20.
+     */
     public static final int SALSA20_KEYBYTES = 32;
+
+    /**
+     * crypto_core_salsa20_INPUTBYTES. The number of bytes in the constant
+     * for crypto_core_salsa20.
+     */
     public static final int SALSA20_CONSTBYTES = 16;
 
+    /**
+     * crypto_hash_BYTES. The number of returned from crypto_hash.
+     */
     public static final int HASH_BYTES = 64;
+    
     public static final int HASHBLOCKS_STATEBYTES = 64;
     public static final int HASHBLOCKS_BLOCKBYTES = 128;
 
@@ -118,20 +160,17 @@ public class TweetNaCl {
 
     // NATIVE METHODS
  
-    private native int jniRandomBytes         (byte[] bytes);
-    private native int jniCryptoBoxKeyPair    (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox           (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen       (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM   (byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM    (byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM2(byte[] ciphertext, byte[] message, byte[] nonce, byte[] key);
-
-    private native int jniCryptoCoreHSalsa20(byte[] out, byte[] in, byte[] key, byte[] constant);
-
-    private native int jniCryptoCoreSalsa20(byte[] out, byte[] in, byte[] key, byte[] constant);
-
-    private native int jniCryptoHash(byte[] hash, byte[] message);
+    private native int jniRandomBytes          (byte[] bytes);
+    private native int jniCryptoBoxKeyPair     (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox            (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen        (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM    (byte[] key,       byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBoxAfterNM     (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM2(byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoCoreHSalsa20   (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
+    private native int jniCryptoCoreSalsa20    (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
+    private native int jniCryptoHash           (byte[] hash,      byte[] message);
 
     private native int jniCryptoHashBlocks(byte[] state, byte[] message);
 
@@ -352,7 +391,7 @@ public class TweetNaCl {
         // ... decrypt
 
         byte[] message = new byte[ciphertext.length];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoBoxOpen(message, ciphertext, nonce, publicKey, secretKey)) != 0) {
             throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
@@ -405,7 +444,7 @@ public class TweetNaCl {
         // ... encrypt
 
         byte[] key = new byte[BOX_BEFORENMBYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoBoxBeforeNM(key, publicKey, secretKey)) != 0) {
             throw new Exception("Error generating message key [" + Integer.toString(rc) + "]");
@@ -458,7 +497,7 @@ public class TweetNaCl {
         // ... encrypt
 
         byte[] ciphertext = new byte[message.length];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoBoxAfterNM(ciphertext, message, nonce, key)) != 0) {
             throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
@@ -510,7 +549,7 @@ public class TweetNaCl {
         // ... decrypt
 
         byte[] message = new byte[ciphertext.length];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoBoxOpenAfterNM(message, ciphertext, nonce, key)) != 0) {
             throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
@@ -560,7 +599,7 @@ public class TweetNaCl {
         // ... invoke
 
         byte[] out = new byte[HSALSA20_OUTPUTBYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoCoreHSalsa20(out, in, key, constant)) != 0) {
             throw new Exception("Error calculating hsalsa20 [" + Integer.toString(rc) + "]");
@@ -599,7 +638,6 @@ public class TweetNaCl {
      *             <li><code>key</code> is <code>null</code> or not exactly SALSA20_INPUTBYTES bytes
      *             <li><code>constant</code> is <code>null</code> or not exactly SALSA20_CONSTBYTES bytes
      *             </ul>
-     * 
      */
     public byte[] cryptoCoreSalsa20(final byte[] in, final byte[] key, byte[] constant) throws Exception {
         // ... validate
@@ -611,7 +649,7 @@ public class TweetNaCl {
         // ... invoke
 
         byte[] out = new byte[SALSA20_OUTPUTBYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoCoreSalsa20(out, in, key, constant)) != 0) {
             throw new Exception("Error calculating salsa20 [" + Integer.toString(rc) + "]");
@@ -622,23 +660,36 @@ public class TweetNaCl {
 
     /**
      * Wrapper function for crypto_hash.
+     * <p>
+     * <code>crypto_hash</code> calculates a SHA-512 hash of the message for use with DSA,RSA-PSS, key derivation, 
+     * etc.
      * 
      * @param message
-     * @return hash
+     *          Message to be hashed.
+     * 
+     * @return HASH_BYTES byte array with the message hash.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_hash</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/hash.html">http://nacl.cr.yp.to/hash.html</a>
      */
     public byte[] cryptoHash(final byte[] message) throws EncryptException {
         // ... validate
 
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message'");
-        }
+        validate(message,"message");
 
         // ... invoke
 
         byte[] hash = new byte[HASH_BYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoHash(hash, message)) != 0) {
             throw new EncryptException("Error calculating message hash [" + Integer.toString(rc) + "]");

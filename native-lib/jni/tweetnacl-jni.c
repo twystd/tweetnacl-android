@@ -291,22 +291,20 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
-	int N = (*env)->GetArrayLength(env,message);
-	u8 *m = (u8 *) malloc(N);
-	u8  h[crypto_hash_BYTES];
+	jboolean copyM;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copyM);
+	u8       h[crypto_hash_BYTES];
 
-    (*env)->GetByteArrayRegion(env,message,0,N,m);
-
-	int rc = crypto_hash(h,m,(u64) N);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+	if (m) {
+		if ((rc = crypto_hash(h,m,(u64) N)) == 0) {
+			(*env)->SetByteArrayRegion(env,hash,0,crypto_hash_BYTES,h);
+		}
 	}
 
-	memset(m,0,N);
-	memset(h,0,crypto_hash_BYTES);
-
-	free(m);
+	release(env,message,m,N,YES,copyM);
+	memset (h,0,crypto_hash_BYTES);
 
     return (jint) rc;
 }

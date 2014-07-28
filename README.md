@@ -9,6 +9,34 @@ Status
 ------
 Tidying up .....
 
+Version Info
+------------
+tweetnacl: 20140427
+
+Usage
+-----
+1. The easiest and simplest way to use the tweetnacl-android library is to clone the project into your workspace and reference the TweetNaCl project as a library project.
+
+2. Alternatively, copy the lib and src directories to your own project and then use the methods declared in 
+za.co.twyst.tweetnacl.TweetNaCl.
+
+Building
+--------
+1. To rebuild the native library:
+   - create an entry for ndk.dir in the local.properties file in the native-lib project
+   - drag the build.xml Ant script to the Ant window
+   - run the 'clean' and 'build' commands from the Ant script
+
+2. Alternatively invoke $ANDROID_NDK/ndk-build from the jni directory in the native-lib project
+
+3. To build the 'TweetNaCl - Measure' project, update the Android section of the project properties so that android-support-v7-appcompat
+   library project references the Android SDK extras/android/support/v7/appcompat project (or a copy thereof). For some infinitely bizarre
+   reason you will probably have to update the v4 support library in both projects (and quite probably restart Eclipse/ADT) to get the project
+   to build.
+
+4. The 'TweetNaCl - Test' project references the 'TweetNacl - Measure' project in the manifest and should build correctly once the 
+   'TweetNaCl - Measure' project builds cleanly.
+
 Implemented
 -----------
 0.  randombytes
@@ -45,6 +73,9 @@ and coding of the original TweetNaCl implementation. However, cryptography being
 the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities. So ....
 
 **USE ENTIRELY AT YOUR OWN RISK !**
+
+Notes
+-----
 
 References
 ----------
