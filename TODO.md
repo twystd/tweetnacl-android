@@ -9,3 +9,4 @@
 8.  Benchmark app
 9.  Increase ROUNDS in test cases
 10. Remove jniRandomBytes
+11. Check John Regehr's bug against NDK compiler
