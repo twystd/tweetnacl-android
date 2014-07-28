@@ -260,7 +260,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobj
     return (jint) rc;
 }
 
-/** jniCryptoCoreSSalsa20
+/** jniCryptoCoreSalsa20
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobject object,jbyteArray out,jbyteArray in,jbyteArray key,jbyteArray constant) {

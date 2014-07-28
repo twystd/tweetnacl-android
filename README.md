@@ -54,9 +54,11 @@ References
 3. [Cryptography in NaCl] [nacl-pdf]
 4. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
 5. [NaCl: Cryptography for the Internet][slides]
+6. [On NaCl: Undefined Behaviour][ciawic]
 
 [tweetnacl]:     http://tweetnacl.cr.yp.to
 [tweetnacl-pdf]: http://tweetnacl.cr.yp.to/tweetnacl-20131229.pdf
 [nacl-pdf]:      http://cr.yp.to/highspeed/naclcrypto-20090310.pdf
 [carrybitbug]:   http://blog.skylable.com/2014/05/tweetnacl-carrybit-bug
 [slides]:        http://cryptojedi.org/peter/data/tenerife-20130121.pdf
+[ciawof]:        http://coderinaworldofcode.blogspot.com/2014/03/on-nacl.html

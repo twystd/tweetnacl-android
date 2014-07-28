@@ -17,7 +17,7 @@ public class MainActivity extends ActionBarActivity
          
          // INSTANCE VARIABLES
          
-         private TweetNaCl tweetNaCl = new TweetNaCl();
+//       private TweetNaCl tweetNaCl = new TweetNaCl();
     
 	     // *** ActionBarActivity ***
 

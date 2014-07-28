@@ -114,6 +114,8 @@ public class TweetNaCl {
     public static final int VERIFY16_BYTES = 16;
     public static final int VERIFY32_BYTES = 32;
 
+    private static final String INVALID_BYTE_ARRAY = "Invalid '%s' - must be %d bytes";
+
     // NATIVE METHODS
  
     private native int jniRandomBytes         (byte[] bytes);
@@ -173,6 +175,26 @@ public class TweetNaCl {
         System.loadLibrary("tweetnacl");
     }
 
+    /** Validates a byte array, throwing an IllegalArgumentException if it is <code>null</code>
+     * 
+     */
+    private static void validate(byte[] array,String name) {
+        if (array == null)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - may not be null",name));
+    }
+
+    /** Validates a byte array, throwing an IllegalArgumentException if it is <code>null</code> or
+     *  not the correct length
+     * 
+     */
+    private static void validate(byte[] array,String name,int length) {
+        if (array == null)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - may not be null",name));
+        
+        if (array.length != length)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - must be %d bytes",name,length));
+    }
+    
     // PUBLIC API
 
     /**
@@ -202,9 +224,7 @@ public class TweetNaCl {
     public void randomBytes(final byte[] bytes) {
         // ... validate
 
-        if (bytes == null) {
-            throw new IllegalArgumentException("Invalid 'bytes' - may not be null");
-        }
+        validate(bytes,"bytes");
 
         // ... fill with random bytes
 
@@ -269,21 +289,10 @@ public class TweetNaCl {
     public byte[] cryptoBox(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
         // ... validate
 
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message' - may not be null");
-        }
-
-        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be BOX_NONCEBYTES bytes");
-        }
-
-        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'public key' - must be BOX_PUBLICKEYBYTES bytes");
-        }
-
-        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'secret key' - must be BOX_SECRETKEYBYTES bytes");
-        }
+        validate(message,  "message");
+        validate(nonce,    "nonce",    BOX_NONCEBYTES);
+        validate(publicKey,"publicKey",BOX_PUBLICKEYBYTES);
+        validate(secretKey,"secretKey",BOX_SECRETKEYBYTES);
 
         // ... encrypt
 
@@ -332,25 +341,13 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
-    public byte[] cryptoBoxOpen(final byte[] ciphertext, final byte[] nonce, byte[] publicKey, byte[] secretKey)
-            throws DecryptException {
+    public byte[] cryptoBoxOpen(final byte[] ciphertext, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws DecryptException {
         // ... validate
 
-        if (ciphertext == null) {
-            throw new IllegalArgumentException("Invalid 'ciphertext' - may not be null");
-        }
-
-        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be 24 bytes");
-        }
-
-        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
-        }
-
-        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
-        }
+        validate(ciphertext,"ciphertext");
+        validate(nonce,     "nonce",    BOX_NONCEBYTES);
+        validate(publicKey, "publicKey",BOX_PUBLICKEYBYTES);
+        validate(secretKey, "secretKey",BOX_SECRETKEYBYTES);
 
         // ... decrypt
 
@@ -402,13 +399,8 @@ public class TweetNaCl {
     public byte[] cryptoBoxBeforeNM(byte[] publicKey, byte[] secretKey) throws Exception {
         // ... validate
 
-        if ((publicKey == null) || (publicKey.length != BOX_PUBLICKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'public key' - must be 32 bytes");
-        }
-
-        if ((secretKey == null) || (secretKey.length != BOX_SECRETKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'secret key' - must be 32 bytes");
-        }
+        validate(publicKey,"publicKey",BOX_PUBLICKEYBYTES);
+        validate(secretKey,"secretKey",BOX_SECRETKEYBYTES);
 
         // ... encrypt
 
@@ -459,19 +451,9 @@ public class TweetNaCl {
     public byte[] cryptoBoxAfterNM(final byte[] message, final byte[] nonce, byte[] key) throws EncryptException {
         // ... validate
 
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message' - may not be null");
-        }
-
-        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(BOX_NONCEBYTES)
-                    + " bytes");
-        }
-
-        if ((key == null) || (key.length != BOX_BEFORENMBYTES)) {
-            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BOX_BEFORENMBYTES)
-                    + " bytes");
-        }
+        validate(message,"message");
+        validate(nonce,  "nonce",BOX_NONCEBYTES);
+        validate(key,    "key",  BOX_BEFORENMBYTES);
 
         // ... encrypt
 
@@ -521,19 +503,9 @@ public class TweetNaCl {
     public byte[] cryptoBoxOpenAfterNM(final byte[] ciphertext, final byte[] nonce, byte[] key) throws DecryptException {
         // ... validate
 
-        if (ciphertext == null) {
-            throw new IllegalArgumentException("Invalid 'ciphertext' - may not be null");
-        }
-
-        if ((nonce == null) || (nonce.length != BOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - must be " + Integer.toString(BOX_NONCEBYTES)
-                    + " bytes");
-        }
-
-        if ((key == null) || (key.length != BOX_BEFORENMBYTES)) {
-            throw new IllegalArgumentException("Invalid 'message key' - must be " + Integer.toString(BOX_BEFORENMBYTES)
-                    + " bytes");
-        }
+        validate(ciphertext,"ciphertext");
+        validate(nonce,     "nonce",BOX_NONCEBYTES);
+        validate(key,       "key",  BOX_BEFORENMBYTES);
 
         // ... decrypt
 
@@ -546,34 +518,44 @@ public class TweetNaCl {
 
         return message;
     }
+    
     /**
-     * Wrapper function for crypto_core_hsalsa20.
+     * Wrapper function for <code>crypto_core_hsalsa20</code>.
+     * <p>
+     * From the available documentation <code>crypto_core_hsalsa20</code> seemingly calculates an 
+     * intermediate key for encrypting and authenticating packets. The intermediate key is calculated
+     * from a secret key and shared secret. 
      * 
      * @param in
+     *          HSALSA20_INPUTBYTES byte array containing the shared secret.
+     *          
      * @param key
-     * @param constant
+     *          HSALSA20_KEYBYTES byte array containing the secret key.
      * 
-     * @return out
+     * @param constant
+     *          HSALSA20_CONSTBYTES byte array containing an apparently arbitrary 'constant' (IV ?) to be used
+     *          for the intermediate key calculation.
+     *          
+     * @return HSALSA20_OUTPUTBYTES bytes with the intermediate key.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_box_hsalsa20</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>in</code> is <code>null</code>
+     *             <li><code>key</code> is <code>null</code> or not exactly HSALSA20_INPUTBYTES bytes
+     *             <li><code>constant</code> is <code>null</code> or not exactly HSALSA20_CONSTBYTES bytes
+     *             </ul>
      */
-    public byte[] cryptoCoreHSalsa20(final byte[] in, final byte[] key, byte[] constant) throws EncryptException {
+    public byte[] cryptoCoreHSalsa20(final byte[] in, final byte[] key, byte[] constant) throws Exception {
         // ... validate
 
-        if ((in == null) || (in.length != HSALSA20_INPUTBYTES)) {
-            throw new IllegalArgumentException("Invalid 'in' - must be " + Integer.toString(HSALSA20_INPUTBYTES)
-                    + " bytes");
-        }
-
-        if ((key == null) || (key.length != HSALSA20_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - must be " + Integer.toString(HSALSA20_KEYBYTES)
-                    + " bytes");
-        }
-
-        if ((constant == null) || (constant.length != HSALSA20_CONSTBYTES)) {
-            throw new IllegalArgumentException("Invalid 'constant' - must be " + Integer.toString(HSALSA20_CONSTBYTES)
-                    + " bytes");
-        }
+        validate(in,      "in",      HSALSA20_INPUTBYTES);
+        validate(key,     "key",     HSALSA20_KEYBYTES);
+        validate(constant,"constant",HSALSA20_CONSTBYTES);
 
         // ... invoke
 
@@ -581,40 +563,50 @@ public class TweetNaCl {
         int rc;
 
         if ((rc = jniCryptoCoreHSalsa20(out, in, key, constant)) != 0) {
-            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+            throw new Exception("Error calculating hsalsa20 [" + Integer.toString(rc) + "]");
         }
 
         return out;
     }
 
     /**
-     * Wrapper function for crypto_core_salsa20.
+     * Wrapper function for <code>crypto_core_salsa20</code>.
+     * <p>
+     * From the available documentation <code>crypto_core_salsa20</code> seemingly calculates an 
+     * intermediate key for encrypting and authenticating packets. The intermediate key is 
+     * calculated from a secret key and shared secret. 
      * 
      * @param in
+     *          SALSA20_INPUTBYTES byte array containing the shared secret.
+     *          
      * @param key
-     * @param constant
+     *          SALSA20_KEYBYTES byte array containing the secret key.
      * 
-     * @return out
+     * @param constant
+     *          SALSA20_CONSTBYTES byte array containing an apparently arbitrary 'constant' (IV ?) to be used
+     *          for the intermediate key calculation.
+     *          
+     * @return SALSA20_OUTPUTBYTES bytes with the intermediate key.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_box_hsalsa20</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>in</code> is <code>null</code>
+     *             <li><code>key</code> is <code>null</code> or not exactly SALSA20_INPUTBYTES bytes
+     *             <li><code>constant</code> is <code>null</code> or not exactly SALSA20_CONSTBYTES bytes
+     *             </ul>
+     * 
      */
-    public byte[] cryptoCoreSalsa20(final byte[] in, final byte[] key, byte[] constant) throws EncryptException {
+    public byte[] cryptoCoreSalsa20(final byte[] in, final byte[] key, byte[] constant) throws Exception {
         // ... validate
 
-        if ((in == null) || (in.length != SALSA20_INPUTBYTES)) {
-            throw new IllegalArgumentException("Invalid 'in' - must be " + Integer.toString(SALSA20_INPUTBYTES)
-                    + " bytes");
-        }
-
-        if ((key == null) || (key.length != SALSA20_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - must be " + Integer.toString(SALSA20_KEYBYTES)
-                    + " bytes");
-        }
-
-        if ((constant == null) || (constant.length != SALSA20_CONSTBYTES)) {
-            throw new IllegalArgumentException("Invalid 'constant' - must be " + Integer.toString(SALSA20_CONSTBYTES)
-                    + " bytes");
-        }
+        validate(in,      "in",      SALSA20_INPUTBYTES);
+        validate(key,     "key",     SALSA20_KEYBYTES);
+        validate(constant,"constant",SALSA20_CONSTBYTES);
 
         // ... invoke
 
@@ -622,7 +614,7 @@ public class TweetNaCl {
         int rc;
 
         if ((rc = jniCryptoCoreSalsa20(out, in, key, constant)) != 0) {
-            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+            throw new Exception("Error calculating salsa20 [" + Integer.toString(rc) + "]");
         }
 
         return out;
