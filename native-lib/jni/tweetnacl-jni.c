@@ -12,6 +12,7 @@ typedef i64                 gf[16];
 #define YES 1
 #define M   0
 #define C   1
+#define H   1
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
 
@@ -108,12 +109,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
  *  a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	jboolean copyC;
-	jboolean copyM;
+	jboolean copied[2];
 	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
 	u8       n [crypto_box_NONCEBYTES];
 	u8       pk[crypto_box_PUBLICKEYBYTES];
 	u8       sk[crypto_box_SECRETKEYBYTES];
@@ -126,8 +126,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
 		rc = crypto_box_open(m,c,N,n,pk,sk);
 	}
 
-	release(env,message,   m,N,rc, copyM);
-	release(env,ciphertext,c,N,YES,copyC);
+	release(env,message,   m,N,rc, copied[M]);
+	release(env,ciphertext,c,N,YES,copied[C]);
 
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
@@ -170,12 +170,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
-	jboolean copyC;
-	jboolean copyM;
+	jboolean copied[2];
 	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,message);
-	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
 	u8       n[crypto_box_NONCEBYTES];
 	u8       k[crypto_box_BEFORENMBYTES];
 
@@ -186,8 +185,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 		rc = crypto_box_afternm(c,m,N,n,k);
 	}
 
-	release(env,ciphertext,c,N,rc, copyC);
-	release(env,message,   m,N,YES,copyM);
+	release(env,ciphertext,c,N,rc, copied[C]);
+	release(env,message,   m,N,YES,copied[M]);
 
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
@@ -203,12 +202,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
  *  a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray key) {
-	jboolean copyC;
-	jboolean copyM;
+	jboolean copied[2];
 	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
 	u8       n[crypto_box_NONCEBYTES];
 	u8       k[crypto_box_BEFORENMBYTES];
 
@@ -219,8 +217,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jo
 		rc = crypto_box_open_afternm(m,c,N,n,k);
 	}
 
-	release(env,message,   m,N,rc, copyM);
-	release(env,ciphertext,c,N,YES,copyC);
+	release(env,message,   m,N,rc, copied[M]);
+	release(env,ciphertext,c,N,YES,copied[C]);
 
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
@@ -286,10 +284,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
-	jboolean copyM;
+	jboolean copied;
 	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,message);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copyM);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied);
 	u8       h[crypto_hash_BYTES];
 
 	if (m) {
@@ -298,7 +296,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
 		}
 	}
 
-	release(env,message,m,N,YES,copyM);
+	release(env,message,m,N,YES,copied);
 	memset (h,0,crypto_hash_BYTES);
 
     return (jint) rc;
@@ -311,15 +309,15 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
 	jboolean copied[2];
 	int      rc = -2;
 	int      N  = (*env)->GetArrayLength(env,message);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied[0]);
-	u8      *h  = (u8 *) (*env)->GetByteArrayElements(env,hash,   &copied[1]);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied[M]);
+	u8      *h  = (u8 *) (*env)->GetByteArrayElements(env,hash,   &copied[H]);
 
 	if (m && h) {
 	    rc = crypto_hashblocks(h,m,N);
 	}
 
-	release(env,message,m,N,YES,copied[0]);
-	release(env,hash,   h,N,rc, copied[1]);
+	release(env,message,m,N,YES,copied[M]);
+	release(env,hash,   h,N,rc, copied[H]);
 
     return (jint) rc;
 }
@@ -328,25 +326,25 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobjec
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,message);
-	u8 *m = (u8 *) malloc(N);
-	u8  k[crypto_onetimeauth_KEYBYTES];
-	u8  a[crypto_onetimeauth_BYTES];
+	jboolean copied;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied);
+	u8       k[crypto_onetimeauth_KEYBYTES];
+	u8       a[crypto_onetimeauth_BYTES];
 
-    (*env)->GetByteArrayRegion(env,message,0,N,m);
-    (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
+	if (m) {
+		(*env)->GetByteArrayRegion(env,key,0,crypto_onetimeauth_KEYBYTES,k);
 
-	int rc = crypto_onetimeauth(a,m,N,k);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
+		if ((rc = crypto_onetimeauth(a,m,N,k)) == 0) {
+			(*env)->SetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,a);
+		}
 	}
 
-	memset(m,0,N);
+	release(env,message,m,N,YES,copied);
+
     memset(k,0,crypto_onetimeauth_KEYBYTES);
     memset(a,0,crypto_onetimeauth_BYTES);
-
-	free(m);
 
     return (jint) rc;
 }

@@ -29,8 +29,6 @@
            windowtitle="TweetNaCl for Android">
    <doctitle><![CDATA[<h1>TweetNaCl for Android</h1>]]></doctitle>
    <bottom><![CDATA[<i>Public Domain (Unlicense)</i>]]></bottom>
-   <tag name="todo" scope="all" description="To do:"/>
-   <link href="http://tweetnacl.cr.yp.to"/> 
   </javadoc>  
  </target>
  

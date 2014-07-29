@@ -39,7 +39,8 @@ import za.co.twyst.tweetnacl.exceptions.VerifyException;
  * @author Tony Seebregts
  * 
  * @see <ul>
- *      <li><a href="http://nacl.cr.yp.to">http://nacl.cr.yp.to</a></li>
+ *      <li><a href="http://tweetnacl.cr.yp.to">TweetNaCl</a></li> 
+ *      <li><a href="http://nacl.cr.yp.to">NaCl</a></li>
  *      <li><a href="https://stackoverflow.com/questions/13663604/questions-about-the-nacl-crypto-library">Questions about the NaCL crypto library</a></li>
  *      </ul>
  * 
@@ -141,8 +142,16 @@ public class TweetNaCl {
      * for crypto_hashblocks.
      */
     public static final int HASHBLOCKS_BLOCKBYTES = 128;
-
+    
+    /**
+     * crypto_onetimeauth_BYTES. The number of bytes in the authenticator.
+     */
     public static final int ONETIMEAUTH_BYTES = 16;
+
+    /**
+     * crypto_onetimeauth_KEYBYTES. The number of bytes in the secret key used to
+     * generate the authenticator.
+     */
     public static final int ONETIMEAUTH_KEYBYTES = 32;
 
     public static final int SCALARMULT_BYTES = 32;
@@ -181,8 +190,7 @@ public class TweetNaCl {
     private native int jniCryptoCoreSalsa20    (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
     private native int jniCryptoHash           (byte[] hash,      byte[] message);
     private native int jniCryptoHashBlocks     (byte[] state,     byte[] message);
-
-    private native int jniCryptoOneTimeAuth(byte[] signature, byte[] message, byte[] key);
+    private native int jniCryptoOneTimeAuth    (byte[] auth,      byte[] message,   byte[] key);
 
     private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message, byte[] key);
 
@@ -762,32 +770,45 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_onetimeauth.
+     * Wrapper function for <code>crypto_onetimeauth</code>.
+     * <p>
+     * Uses the key to calculate an authenticator for the message.  
      * 
      * @param message
-     * @param key
+     *          Message requiring an authenticator.
      * 
-     * @return hash
+     * @param key
+     *          Secret key to be used to generate an authenticator.
+     * 
+     * @return ONETIMEAUTH_BYTES bytes array containing the authenticator for the message.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_onetimeauth</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>
+     *             <li><code>key</code> is <code>null</code> or not exactly ONETIMEAUTH_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/onetimeauth.html</a>
      */
-    public byte[] cryptoOneTimeAuth(final byte[] message, final byte[] key) throws EncryptException {
+    public byte[] cryptoOneTimeAuth(final byte[] message, final byte[] key) throws Exception {
         // ... validate
 
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message'");
-        }
-
-        if ((key == null) || (key.length != ONETIMEAUTH_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be "
-                    + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
-        }
+        validate(message,"message");
+        validate(key,    "key",ONETIMEAUTH_KEYBYTES);
 
         // ... invoke
 
         byte[] authorisation = new byte[ONETIMEAUTH_BYTES];
+        int    rc;
 
-        jniCryptoOneTimeAuth(authorisation, message, key);
+        if ((rc = jniCryptoOneTimeAuth(authorisation, message, key)) != 0) {
+            throw new Exception("Error calculating one time auth [" + Integer.toString(rc) + "]");
+        }
 
         return authorisation;
     }
