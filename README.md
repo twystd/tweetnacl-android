@@ -55,7 +55,7 @@ Notes
 References
 ----------
 
-1. [TweetNaCl (website)][tweetnacl]
+1. [TweetNaCl][tweetnacl]
 2. [TweetNaCl: A crypto library in 100 tweets] [tweetnacl-pdf]
 3. [Cryptography in NaCl] [nacl-pdf]
 4. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]

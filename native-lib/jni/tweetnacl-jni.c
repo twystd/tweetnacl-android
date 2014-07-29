@@ -353,22 +353,24 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env,jobject object,jbyteArray auth,jbyteArray message,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,message);
-	u8 *m = (u8 *) malloc(N);
-	u8  k[crypto_onetimeauth_KEYBYTES];
-	u8  a[crypto_onetimeauth_BYTES];
+	jboolean copied;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied);
+	u8       k[crypto_onetimeauth_KEYBYTES];
+	u8       a[crypto_onetimeauth_BYTES];
 
-    (*env)->GetByteArrayRegion(env,auth,   0,crypto_onetimeauth_BYTES,a);
-    (*env)->GetByteArrayRegion(env,message,0,N,m);
-    (*env)->GetByteArrayRegion(env,key,    0,crypto_onetimeauth_KEYBYTES,k);
+	if (m) {
+		(*env)->GetByteArrayRegion(env,auth,0,crypto_onetimeauth_BYTES,   a);
+		(*env)->GetByteArrayRegion(env,key, 0,crypto_onetimeauth_KEYBYTES,k);
 
-	int rc = crypto_onetimeauth_verify(a,m,N,k);
+	    rc = crypto_onetimeauth_verify(a,m,N,k);
+	}
 
-	memset(m,0,N);
+	release(env,message,m,N,YES,copied);
+
 	memset(k,0,crypto_onetimeauth_KEYBYTES);
 	memset(a,0,crypto_onetimeauth_BYTES);
-
-	free(m);
 
 	return (jint) rc;
 }

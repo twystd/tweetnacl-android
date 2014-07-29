@@ -178,21 +178,20 @@ public class TweetNaCl {
 
     // NATIVE METHODS
  
-    private native int jniRandomBytes          (byte[] bytes);
-    private native int jniCryptoBoxKeyPair     (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox            (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen        (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM    (byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM     (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM2(byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoCoreHSalsa20   (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
-    private native int jniCryptoCoreSalsa20    (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
-    private native int jniCryptoHash           (byte[] hash,      byte[] message);
-    private native int jniCryptoHashBlocks     (byte[] state,     byte[] message);
-    private native int jniCryptoOneTimeAuth    (byte[] auth,      byte[] message,   byte[] key);
-
-    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message, byte[] key);
+    private native int jniRandomBytes            (byte[] bytes);
+    private native int jniCryptoBoxKeyPair       (byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBox              (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey, byte[] secretKey);
+    private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM2  (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
+    private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
+    private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
+    private native int jniCryptoHash             (byte[] hash,      byte[] message);
+    private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
+    private native int jniCryptoOneTimeAuth      (byte[] auth,      byte[] message,   byte[] key);
+    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
 
     private native int jniCryptoScalarMultBase(byte[] q, byte[] n);
 
@@ -772,7 +771,7 @@ public class TweetNaCl {
     /**
      * Wrapper function for <code>crypto_onetimeauth</code>.
      * <p>
-     * Uses the key to calculate an authenticator for the message.  
+     * Uses the supplied secret key to calculate an authenticator for the message.  
      * 
      * @param message
      *          Message requiring an authenticator.
@@ -814,36 +813,44 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_onetimeauth_verify.
+     * Wrapper function for <code>crypto_onetimeauth_verify</code>.
+     * <p>
+     * Uses the supplied secret key to verify the authenticator for the message.  
      * 
-     * @param authorisation
+     * @param authenticator
+     *          Authenticator to verify against message and secret key.
      * @param message
+     *          Message requiring an authenticator.
+     *          
      * @param key
-     * @return verified
+     *          Secret key to be used to verify an authenticator.
+     *          
+     * @return <code>true</code> if the authenticator is valid,<code>false</code> otherwise.
      * 
-     * @throws Exception
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>
+     *             <li><code>authenticator</code> is <code>null</code> or not exactly ONETIMEAUTH_BYTES bytes.
+     *             <li><code>key</code> is <code>null</code> or not exactly ONETIMEAUTH_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/onetimeauth.html</a>
      */
-    public boolean cryptoOneTimeAuthVerify(final byte[] authorisation, final byte[] message, final byte[] key)
-            throws EncryptException {
+    public boolean cryptoOneTimeAuthVerify(final byte[] authenticator, final byte[] message, final byte[] key) {
         // ... validate
 
-        if ((authorisation == null) || (authorisation.length != ONETIMEAUTH_BYTES)) {
-            throw new IllegalArgumentException("Invalid 'authorisation' - length must be "
-                    + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
-        }
-
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message'");
-        }
-
-        if ((key == null) || (key.length != ONETIMEAUTH_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be "
-                    + Integer.toString(ONETIMEAUTH_KEYBYTES) + " bytes");
-        }
+        validate(message,      "message");
+        validate(authenticator,"authenticator",ONETIMEAUTH_BYTES);
+        validate(key,          "key",          ONETIMEAUTH_KEYBYTES);
 
         // ... invoke
-
-        return jniCryptoOneTimeAuthVerify(authorisation, message, key) == 0;
+        
+        if (jniCryptoOneTimeAuthVerify(authenticator,message, key) == 0) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
