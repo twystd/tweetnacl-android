@@ -126,11 +126,20 @@ public class TweetNaCl {
     public static final int SALSA20_CONSTBYTES = 16;
 
     /**
-     * crypto_hash_BYTES. The number of returned from crypto_hash.
+     * crypto_hash_BYTES. The number of bytes returned by crypto_hash.
      */
     public static final int HASH_BYTES = 64;
     
+    /**
+     * crypto_hashblocks_STATEBYTES. The size of the 'state' byte array
+     * for crypto_hashblocks.
+     */
     public static final int HASHBLOCKS_STATEBYTES = 64;
+    
+    /**
+     * crypto_hashblocks_BLOCKBYTES. The block size for the message
+     * for crypto_hashblocks.
+     */
     public static final int HASHBLOCKS_BLOCKBYTES = 128;
 
     public static final int ONETIMEAUTH_BYTES = 16;
@@ -171,8 +180,7 @@ public class TweetNaCl {
     private native int jniCryptoCoreHSalsa20   (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
     private native int jniCryptoCoreSalsa20    (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
     private native int jniCryptoHash           (byte[] hash,      byte[] message);
-
-    private native int jniCryptoHashBlocks(byte[] state, byte[] message);
+    private native int jniCryptoHashBlocks     (byte[] state,     byte[] message);
 
     private native int jniCryptoOneTimeAuth(byte[] signature, byte[] message, byte[] key);
 
@@ -234,6 +242,18 @@ public class TweetNaCl {
             throw new IllegalArgumentException(String.format("Invalid '%s' - must be %d bytes",name,length));
     }
     
+    /** Validates a byte array, throwing an IllegalArgumentException if it is <code>null</code> or
+     *  not a multiple of length
+     * 
+     */
+    private static void validatem(byte[] array,String name,int length) {
+        if (array == null)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - may not be null",name));
+        
+        if ((array.length % length) != 0)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - must be a multiple of %d bytes",name,length));
+    }
+
     // PUBLIC API
 
     /**
@@ -661,8 +681,7 @@ public class TweetNaCl {
     /**
      * Wrapper function for crypto_hash.
      * <p>
-     * <code>crypto_hash</code> calculates a SHA-512 hash of the message for use with DSA,RSA-PSS, key derivation, 
-     * etc.
+     * Calculates a SHA-512 hash of the message. 
      * 
      * @param message
      *          Message to be hashed.
@@ -699,33 +718,47 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_hashblocks.
+     * Wrapper function for <code>crypto_hashblocks</code>.
+     * <p>
+     * Undocumented anywhere, but seems to be a designed to calculate the SHA-512 hash of a stream of
+     * blocks.
      * 
-     * @param message
-     * @return hash
+     * @param state
+     *          Current hash 'state'. Seemingly initialised to the initialisation vector for the first
+     *          block in a stream and thereafter the 'state' returned from a previous call to crypto_hash_blocks.
+     * 
+     * @return block
+     *          Byte array with length a multiple of HASHBLOCKS_BLOCKBYTES to add to the hash.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_hash_blocks</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>state</code> is <code>null</code> or not exactly HASHBLOCKS_STATEBYTES bytes
+     *             <li><code>blocks</code> is <code>null</code> or not a multiple of exactly HASHBLOCKS_BLOCKBYTES bytes
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/hash.html">http://nacl.cr.yp.to/hash.html</a>
      */
-    public byte[] cryptoHashBlocks(final byte[] x, final byte[] m) throws EncryptException {
+    public byte[] cryptoHashBlocks(final byte[] state, final byte[] blocks) throws Exception {
         // ... validate
 
-        if ((x == null) || (x.length != HASHBLOCKS_STATEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'x' - must be " + Integer.toString(HASHBLOCKS_BLOCKBYTES)
-                    + " bytes");
-        }
-
-        if ((m == null) || ((m.length % HASHBLOCKS_BLOCKBYTES) != 0)) {
-            throw new IllegalArgumentException("Invalid 'm' - must be a multiple of "
-                    + Integer.toString(HASHBLOCKS_BLOCKBYTES) + " bytes");
-        }
+        validate (state,"state", HASHBLOCKS_STATEBYTES);
+        validatem(blocks,"block",HASHBLOCKS_BLOCKBYTES);
 
         // ... invoke
 
-        byte[] h = x.clone();
+        byte[] hash = state.clone();
+        int    rc;
 
-        jniCryptoHashBlocks(h, m);
+        if ((rc = jniCryptoHashBlocks(hash,blocks)) != 0) {
+            throw new Exception("Error calculating message hash [" + Integer.toString(rc) + "]");
+        }
 
-        return h;
+        return hash;
     }
 
     /**

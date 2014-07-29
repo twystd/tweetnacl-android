@@ -10,6 +10,8 @@ typedef long long           i64;
 typedef i64                 gf[16];
 
 #define YES 1
+#define M   0
+#define C   1
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
 
@@ -71,32 +73,25 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
  *  succeed a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	jboolean copyC;
-	jboolean copyM;
+	jboolean copied[2];
 	int      N = (*env)->GetArrayLength(env,message);
-	u8      *c = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copyC);
-	u8      *m = (u8 *) (*env)->GetByteArrayElements(env,message,   &copyM);
+	u8      *c = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
 	u8       n [crypto_box_NONCEBYTES];
 	u8       pk[crypto_box_PUBLICKEYBYTES];
 	u8       sk[crypto_box_SECRETKEYBYTES];
-	int      rc     = -1;
-	jint     commit = JNI_ABORT;
+	int      rc     = -2;
 
 	if (c && m) {
 	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
 	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
 	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
 
-		if ((rc = crypto_box(c,m,N,n,pk,sk)) == 0) {
-			commit = 0;
-		   }
+		rc = crypto_box(c,m,N,n,pk,sk);
 	}
 
-	if (c) (*env)->ReleaseByteArrayElements(env,ciphertext,c,commit);
-	if (m) (*env)->ReleaseByteArrayElements(env,message,   m,JNI_ABORT);
-
-	if (copyC) memset(c, 0,N);
-	if (copyM) memset(m, 0,N);
+	release(env,ciphertext,c,N,rc, copied[C]);
+	release(env,message,   m,N,YES,copied[M]);
 
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
@@ -313,23 +308,18 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHashBlocks(JNIEnv *env,jobject object,jbyteArray hash,jbyteArray message) {
-	int N = (*env)->GetArrayLength(env,message);
-	u8 *m = (u8 *) malloc(N);
-	u8  h[crypto_hashblocks_STATEBYTES];
+	jboolean copied[2];
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,&copied[0]);
+	u8      *h  = (u8 *) (*env)->GetByteArrayElements(env,hash,   &copied[1]);
 
-    (*env)->GetByteArrayRegion(env,message,0,N,m);
-    (*env)->GetByteArrayRegion(env,hash,   0,crypto_hashblocks_STATEBYTES,h);
-
-	int rc = crypto_hashblocks(h,m,N);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,hash,0,crypto_hashblocks_STATEBYTES,h);
+	if (m && h) {
+	    rc = crypto_hashblocks(h,m,N);
 	}
 
-	memset(m,0,N);
-	memset(h,0,crypto_hashblocks_STATEBYTES);
-
-	free(m);
+	release(env,message,m,N,YES,copied[0]);
+	release(env,hash,   h,N,rc, copied[1]);
 
     return (jint) rc;
 }
