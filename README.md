@@ -29,7 +29,7 @@ Building (Eclipse/ADT)
 
 2. Alternatively invoke the Android NDK ndk-build script from the jni directory in the native-lib project
 
-3. To build the 'TweetNaCl - Measure' project:
+3. To build the 'TweetNaCl - Benchmark' project:
    - update the Android section of the project properties so that the android-support-v7-appcompat
      library project references the Android SDK extras/android/support/v7/appcompat project (or a copy
      thereof)
@@ -38,8 +38,8 @@ Building (Eclipse/ADT)
    - for the same (infinitely bizarre) reason you will quite probably have to restart Eclipse/ADT after
      updating the v4 support library to get the project to build cleanly
 
-4. The 'TweetNaCl - Test' project manifest references the 'TweetNacl - Measure' project and should build 
-   correctly once the 'TweetNaCl - Measure' project builds cleanly.
+4. The 'TweetNaCl - Test' project manifest references the 'TweetNacl - Benchmark' project and should build 
+   correctly once the 'TweetNaCl - Benchmark' project builds cleanly.
 
 Disclaimer
 ----------

@@ -203,8 +203,7 @@ public class TweetNaCl {
     private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
     private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
     private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
-
-    private native int jniCryptoSecretBox(byte[] ciphertext, byte[] plaintext, byte[] nonce, byte[] key);
+    private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
 
     private native int jniCryptoSecretBoxOpen(byte[] plaintext, byte[] ciphertext, byte[] nonce, byte[] key);
 
@@ -947,38 +946,48 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_secretbox.
+     * Wrapper function for <code>crypto_secretbox</code>.
+     * <p>
+     * Encrypts and authenticates a message using the supplied secret key and nonce.
      * 
-     * @param plaintext
+     * @param message
+     *          message to be encrypted and authenticated
+     *          
      * @param key
+     *          secret key to use for encryption and authentication
+     *          
      * @param nonce
-     * @return ciphertext
+     *          unique nonce to use for encryption and authentication
+     *          
+     * @return ciphertext with prepended message authenticator
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_secretbox</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>.
+     *             <li><code>nonce</code> is <code>null</code> or not exactly SECRETBOX_NONCEBYTES bytes.
+     *             <li><code>key</code> is <code>null</code> or not exactly SECRETBOX_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/secretbox.html</a>
      */
-    public byte[] cryptoSecretBox(final byte[] plaintext, final byte[] nonce, final byte[] key) throws EncryptException {
+    public byte[] cryptoSecretBox(final byte[] message, final byte[] nonce, final byte[] key) throws EncryptException {
         // ... validate
 
-        if (plaintext == null) {
-            throw new IllegalArgumentException("Invalid 'plaintext'");
-        }
-
-        if ((nonce == null) || (nonce.length != SECRETBOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - length must be "
-                    + Integer.toString(SECRETBOX_NONCEBYTES) + " bytes");
-        }
-
-        if ((key == null) || (key.length != SECRETBOX_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(SECRETBOX_KEYBYTES)
-                    + " bytes");
-        }
+        validate(message,"message");
+        validate(nonce,  "nonce",SECRETBOX_NONCEBYTES);
+        validate(key,    "key",  SECRETBOX_KEYBYTES);
 
         // ... invoke
 
-        byte[] ciphertext = new byte[plaintext.length];
+        byte[] ciphertext = new byte[message.length];
         int rc;
 
-        if ((rc = jniCryptoSecretBox(ciphertext, plaintext, nonce, key)) != 0) {
+        if ((rc = jniCryptoSecretBox(ciphertext, message, nonce, key)) != 0) {
             throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
         }
 
