@@ -62,6 +62,10 @@ References
 5. [NaCl: Cryptography for the Internet][slides]
 6. [On NaCl: Undefined Behaviour][ciawof]
 7. [Safe, Efficient, and Portable Rotate in C/C++][regehr]
+8. [StackOveflow:Is there a replacement for /dev/random on Android JNI][stackoverflow]
+9. [Issue 42265:Android empties the entropy pool, resulting in blocking, user perceived lag/poor performance][issue]	
+10.[Android Developer's Blog:Some SecureRandom Thoughts][android]
+
 
 [tweetnacl]:     http://tweetnacl.cr.yp.to
 [tweetnacl-pdf]: http://tweetnacl.cr.yp.to/tweetnacl-20131229.pdf
@@ -70,3 +74,6 @@ References
 [slides]:        http://cryptojedi.org/peter/data/tenerife-20130121.pdf
 [ciawof]:        http://coderinaworldofcode.blogspot.com/2014/03/on-nacl.html
 [regehr]:        http://blog.regehr.org/archives/1063
+[stackoverflow]: https://stackoverflow.com/questions/13055491/is-there-a-replacement-for-dev-random-on-android-jni
+[issue]:         https://code.google.com/p/android/issues/detail?id=42265
+[android]:       http://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html

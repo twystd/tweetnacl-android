@@ -480,25 +480,24 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject object,jbyteArray stream,jbyteArray nonce,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,stream);
-	u8 *c = (u8 *) malloc(N);
-	u8  n[crypto_stream_NONCEBYTES];
-	u8  k[crypto_stream_KEYBYTES];
+	jboolean copied;
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,stream);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,stream,&copied);
+	u8       n[crypto_stream_NONCEBYTES];
+	u8       k[crypto_stream_KEYBYTES];
 
-    (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_NONCEBYTES,n);
-    (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_KEYBYTES,  k);
+	if (c) {
+		(*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_NONCEBYTES,n);
+		(*env)->GetByteArrayRegion(env,key,  0,crypto_stream_KEYBYTES,  k);
 
-	int rc = crypto_stream(c,N,n,k);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,stream,0,N,c);
+		rc = crypto_stream(c,N,n,k);
 	}
 
-	memset(c,0,N);
+	release(env,stream,c,N,rc,copied);
+
 	memset(n,0,crypto_stream_NONCEBYTES);
 	memset(k,0,crypto_stream_KEYBYTES);
-
-	free(c);
 
     return (jint) rc;
 }

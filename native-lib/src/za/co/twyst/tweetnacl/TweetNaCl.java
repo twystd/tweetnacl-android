@@ -190,7 +190,14 @@ public class TweetNaCl {
      */
     public static final int SECRETBOX_BOXZEROBYTES = 16;
 
+    /**
+     * crypto_stream_KEYBYTES. The number of bytes in the secret key for crypto_stream.
+     */
     public static final int STREAM_KEYBYTES = 32;
+
+    /**
+     * crypto_stream_NONCEBYTES. The number of bytes in the nonce for crypto_stream.
+     */
     public static final int STREAM_NONCEBYTES = 24;
     public static final int STREAM_SALSA20_KEYBYTES = 32;
     public static final int STREAM_SALSA20_NONCEBYTES = 8;
@@ -224,8 +231,7 @@ public class TweetNaCl {
     private native int jniCryptoScalarMult       (byte[] q,         byte[] n,          byte[] p);
     private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,    byte[] nonce, byte[] key);
     private native int jniCryptoSecretBoxOpen    (byte[] plaintext, byte[] ciphertext, byte[] nonce, byte[] key);
-
-    private native int jniCryptoStream(byte[] ciphertext, byte[] nonce, byte[] key);
+    private native int jniCryptoStream           (byte[] ciphertext,byte[] nonce,      byte[] key);
 
     private native int jniCryptoStreamXor(byte[] ciphertext, byte[] plaintext, byte[] nonce, byte[] key);
 
@@ -1062,31 +1068,45 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_stream.
+     * Wrapper function for <code>crypto_stream</code>.
+     * <p>
+     * Produces a <code>length</code> stream as a function of the <code>key</code> and 
+     * <code>nonce</code>.
      * 
      * @param length
+     *          number of stream bytes to generate
+     *          
      * @param nonce
+     *          unique nonce to use to generate stream
+     *          
      * @param key
-     * @return ciphertext
+     *          secret key to use to generate stream
+     *          
+     * @return 'stream' byte array
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_stream</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>length</code> is less than 0.
+     *             <li><code>nonce</code> is <code>null</code> or not exactly STREAM_NONCEBYTES bytes.
+     *             <li><code>key</code> is <code>null</code> or not exactly STREAM_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/stream.html</a>
      */
-    public byte[] cryptoStream(final int length, final byte[] nonce, final byte[] key) throws EncryptException {
+    public byte[] cryptoStream(final int length, final byte[] nonce, final byte[] key) throws Exception {
         // ... validate
 
         if (length < 0) {
             throw new IllegalArgumentException("Invalid 'length' - may not be negative");
         }
-
-        if ((nonce == null) || (nonce.length != STREAM_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - length must be "
-                    + Integer.toString(STREAM_NONCEBYTES) + " bytes");
-        }
-
-        if ((key == null) || (key.length != STREAM_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(STREAM_KEYBYTES)
-                    + " bytes");
-        }
+        
+        validate(nonce,"nonce",STREAM_NONCEBYTES);
+        validate(key,  "key",  STREAM_KEYBYTES);
 
         // ... invoke
 
@@ -1094,7 +1114,7 @@ public class TweetNaCl {
         int rc;
 
         if ((rc = jniCryptoStream(ciphertext, nonce, key)) != 0) {
-            throw new EncryptException("Error encrypting plaintext [" + Integer.toString(rc) + "]");
+            throw new Exception("Error generating stream [" + Integer.toString(rc) + "]");
         }
 
         return ciphertext;
