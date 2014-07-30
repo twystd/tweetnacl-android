@@ -379,19 +379,19 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMultBase(JNIEnv *env,jobject object,jbyteArray Q,jbyteArray N) {
-	u8 n[crypto_scalarmult_BYTES];
-	u8 q[crypto_scalarmult_SCALARBYTES];
+	u8 n[crypto_scalarmult_SCALARBYTES];
+	u8 q[crypto_scalarmult_BYTES];
 
-    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_BYTES,n);
+    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_SCALARBYTES,n);
 
 	int rc = crypto_scalarmult_base(q,n);
 
 	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_BYTES,q);
 	}
 
-	memset(n,0,crypto_scalarmult_BYTES);
-	memset(q,0,crypto_scalarmult_SCALARBYTES);
+	memset(n,0,crypto_scalarmult_SCALARBYTES);
+	memset(q,0,crypto_scalarmult_BYTES);
 
     return (jint) rc;
 }
@@ -400,22 +400,22 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMultBase(JNIEnv *env,jo
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMult(JNIEnv *env,jobject object,jbyteArray Q,jbyteArray N,jbyteArray P) {
-	u8 n[crypto_scalarmult_BYTES];
+	u8 n[crypto_scalarmult_SCALARBYTES];
 	u8 p[crypto_scalarmult_BYTES];
-	u8 q[crypto_scalarmult_SCALARBYTES];
+	u8 q[crypto_scalarmult_BYTES];
 
-    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_BYTES,n);
-    (*env)->GetByteArrayRegion(env,P,0,crypto_scalarmult_BYTES,p);
+    (*env)->GetByteArrayRegion(env,N,0,crypto_scalarmult_SCALARBYTES,n);
+    (*env)->GetByteArrayRegion(env,P,0,crypto_scalarmult_BYTES,      p);
 
 	int rc = crypto_scalarmult(q,n,p);
 
 	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_SCALARBYTES,q);
+		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_BYTES,q);
 	}
 
-	memset(n,0,crypto_scalarmult_BYTES);
+	memset(n,0,crypto_scalarmult_SCALARBYTES);
 	memset(p,0,crypto_scalarmult_BYTES);
-	memset(q,0,crypto_scalarmult_SCALARBYTES);
+	memset(q,0,crypto_scalarmult_BYTES);
 
     return (jint) rc;
 }

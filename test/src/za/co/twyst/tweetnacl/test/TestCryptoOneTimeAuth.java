@@ -151,8 +151,8 @@ public class TestCryptoOneTimeAuth extends TweetNaClTest {
                 m[mx] = (byte) (message[mx] + 1 + random.nextInt(255));
                 a[ax] = (byte) (auth[ax]    + 1 + random.nextInt(255));
 
-                assertFalse("Verified forgery with altered message",                   tweetnacl.cryptoOneTimeAuthVerify(auth, m, key));
-                assertFalse("Verified forgery with altered authentication",            tweetnacl.cryptoOneTimeAuthVerify(a, message, key));
+                assertFalse("Verified forgery with altered message",tweetnacl.cryptoOneTimeAuthVerify(auth, m, key));
+                assertFalse("Verified forgery with altered authentication",tweetnacl.cryptoOneTimeAuthVerify(a, message, key));
                 assertFalse("Verified forgery with altered message and authentication",tweetnacl.cryptoOneTimeAuthVerify(a, m, key));
             }
         }

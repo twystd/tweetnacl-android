@@ -154,7 +154,16 @@ public class TweetNaCl {
      */
     public static final int ONETIMEAUTH_KEYBYTES = 32;
 
+    /**
+     * crypto_scalarmult_BYTES. The number of bytes in the group element component
+     * of scalar multiplication.
+     */
     public static final int SCALARMULT_BYTES = 32;
+
+    /**
+     * crypto_scalarmult_SCALARBYTES. The number of bytes in the integer component of 
+     * scalar multiplication.
+     */
     public static final int SCALARMULT_SCALARBYTES = 32;
 
     public static final int SECRETBOX_KEYBYTES = 32;
@@ -192,10 +201,8 @@ public class TweetNaCl {
     private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
     private native int jniCryptoOneTimeAuth      (byte[] auth,      byte[] message,   byte[] key);
     private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
-
-    private native int jniCryptoScalarMultBase(byte[] q, byte[] n);
-
-    private native int jniCryptoScalarMult(byte[] q, byte[] n, byte[] p);
+    private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
+    private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
 
     private native int jniCryptoSecretBox(byte[] ciphertext, byte[] plaintext, byte[] nonce, byte[] key);
 
@@ -282,7 +289,7 @@ public class TweetNaCl {
      * <p>
      * 
      * @param bytes
-     *            Byte array to fill with random bytes.
+     *            byte array to fill with random bytes.
      * 
      * @throws IllegalArgumentException
      *             Thrown if <code>bytes</code> is <code>null</code>.
@@ -324,7 +331,7 @@ public class TweetNaCl {
      * <code>publicKey</code> and <code>nonce</code>.
      *  
      * @param message
-     *            Byte array containing the message to be encrypted. May not be
+     *            byte array containing the message to be encrypted. May not be
      *            <code>null</code>.
      * @param nonce
      *            BOX_NONCEBYTES byte array containing the unique nonce to use
@@ -379,7 +386,7 @@ public class TweetNaCl {
      * <code>publicKey</code>, and <code>nonce</code>. 
      * 
      * @param ciphertext
-     *            Byte array containing the ciphertext to be decrypted
+     *            byte array containing the ciphertext to be decrypted
      * @param nonce
      *            BOX_NONCEBYTES byte array containing the unique nonce to use
      *            when encrypting the message.
@@ -489,7 +496,7 @@ public class TweetNaCl {
      * the rest are XOR'd with the plaintext to encrypt it.
      * 
      * @param message
-     *            Byte array containing the message to be encrypted. May not be
+     *            byte array containing the message to be encrypted. May not be
      *            <code>null</code>.
      * @param nonce
      *            BOX_NONCEBYTES byte array containing the unique nonce to use
@@ -542,7 +549,7 @@ public class TweetNaCl {
      * the rest are XOR'd with the ciphertext to decrypt it.
      * 
      * @param ciphertext
-     *            Byte array containing the encrypted message to be encrypted.
+     *            byte array containing the encrypted message to be encrypted.
      * @param nonce
      *            BOX_NONCEBYTES byte array containing the unique nonce to use
      *            when encrypting the message.
@@ -691,7 +698,7 @@ public class TweetNaCl {
      * Calculates a SHA-512 hash of the message. 
      * 
      * @param message
-     *          Message to be hashed.
+     *          message to be hashed.
      * 
      * @return HASH_BYTES byte array with the message hash.
      * 
@@ -731,11 +738,11 @@ public class TweetNaCl {
      * blocks.
      * 
      * @param state
-     *          Current hash 'state'. Seemingly initialised to the initialisation vector for the first
+     *          current hash 'state'. Seemingly initialised to the initialisation vector for the first
      *          block in a stream and thereafter the 'state' returned from a previous call to crypto_hash_blocks.
      * 
      * @return block
-     *          Byte array with length a multiple of HASHBLOCKS_BLOCKBYTES to add to the hash.
+     *          byte array with length a multiple of HASHBLOCKS_BLOCKBYTES to add to the hash.
      * 
      * @throws Exception
      *             Thrown if the wrapped <code>crypto_hash_blocks</code> returns anything other 
@@ -774,10 +781,10 @@ public class TweetNaCl {
      * Uses the supplied secret key to calculate an authenticator for the message.  
      * 
      * @param message
-     *          Message requiring an authenticator.
+     *          message requiring an authenticator.
      * 
      * @param key
-     *          Secret key to be used to generate an authenticator.
+     *          secret key to be used to generate an authenticator.
      * 
      * @return ONETIMEAUTH_BYTES bytes array containing the authenticator for the message.
      * 
@@ -818,12 +825,13 @@ public class TweetNaCl {
      * Uses the supplied secret key to verify the authenticator for the message.  
      * 
      * @param authenticator
-     *          Authenticator to verify against message and secret key.
+     *          authenticator to verify against message and secret key.
+     *          
      * @param message
-     *          Message requiring an authenticator.
+     *          message requiring an authenticator.
      *          
      * @param key
-     *          Secret key to be used to verify an authenticator.
+     *          secret key to be used to verify an authenticator.
      *          
      * @return <code>true</code> if the authenticator is valid,<code>false</code> otherwise.
      * 
@@ -854,62 +862,85 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_scalarmult_base.
+     * Wrapper function for <code>crypto_scalarmult_base</code>.
+     * <p>
+     * Computes the scalar product of a standard group element and an integer <code>n</code>.
      * 
      * @param n
-     * @return q
+     *          integer with which to multiply the standard group element
+     *          
+     * @return Group element calculated from the scalar multiplication of <code>n</code> and a
+     *         standard group element.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_scalarmult_base</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>n</code> is <code>null</code> or not exactly SCALARMULT_SCALARBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/scalarmult.html</a>
      */
-    public byte[] cryptoScalarMultBase(final byte[] n) throws EncryptException {
+    public byte[] cryptoScalarMultBase(final byte[] n) throws Exception {
         // ... validate
 
-        if ((n == null) || (n.length != SCALARMULT_SCALARBYTES)) {
-            throw new IllegalArgumentException("Invalid 'n' - length must be "
-                    + Integer.toString(SCALARMULT_SCALARBYTES) + " bytes");
-        }
+        validate(n,"n",SCALARMULT_SCALARBYTES);
 
         // ... invoke
 
         byte[] q = new byte[SCALARMULT_BYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoScalarMultBase(q, n)) != 0) {
-            throw new EncryptException("Error calculating scalarmult_base [" + Integer.toString(rc) + "]");
+            throw new Exception("Error calculating scalarmult_base [" + Integer.toString(rc) + "]");
         }
 
         return q;
     }
 
     /**
-     * Wrapper function for crypto_scalarmult.
+     * Wrapper function for <code>crypto_scalarmult</code>.
+     * <p>
+     * Computes the scalar product of a group element <code>p</code> and an integer <code>n</code>.
      * 
      * @param n
+     *          scalar with which to multiply the group element
+     * 
      * @param p
-     * @return q
+     *          group element with which to multiply the scalar
+     *          
+     * @return Group element calculated from the scalar multiplication of <code>n</code> and
+     *         <code>p</code>.
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_scalarmult</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>n</code> is <code>null</code> or not exactly SCALARMULT_SCALARBYTES bytes.
+     *             <li><code>p</code> is <code>null</code> or not exactly SCALARMULT_BYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/scalarmult.html</a>
      */
-    public byte[] cryptoScalarMult(final byte[] n, final byte[] p) throws EncryptException {
+    public byte[] cryptoScalarMult(final byte[] n, final byte[] p) throws Exception {
         // ... validate
 
-        if ((n == null) || (n.length != SCALARMULT_SCALARBYTES)) {
-            throw new IllegalArgumentException("Invalid 'n' - length must be "
-                    + Integer.toString(SCALARMULT_SCALARBYTES) + " bytes");
-        }
-
-        if ((p == null) || (p.length != SCALARMULT_BYTES)) {
-            throw new IllegalArgumentException("Invalid 'p' - length must be " + Integer.toString(SCALARMULT_BYTES)
-                    + " bytes");
-        }
+        validate(n,"n",SCALARMULT_SCALARBYTES);
+        validate(p,"p",SCALARMULT_BYTES);
 
         // ... invoke
 
         byte[] q = new byte[SCALARMULT_BYTES];
-        int rc;
+        int    rc;
 
         if ((rc = jniCryptoScalarMult(q, n, p)) != 0) {
-            throw new EncryptException("Error calculating scalarmult [" + Integer.toString(rc) + "]");
+            throw new Exception("Error calculating scalarmult [" + Integer.toString(rc) + "]");
         }
 
         return q;
