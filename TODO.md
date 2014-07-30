@@ -11,3 +11,4 @@
 10. Remove jniRandomBytes
 11. Check John Regehr's bug against NDK compiler
 12. Doxygen 
+13. Check zero padding

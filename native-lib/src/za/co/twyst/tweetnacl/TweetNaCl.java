@@ -166,9 +166,28 @@ public class TweetNaCl {
      */
     public static final int SCALARMULT_SCALARBYTES = 32;
 
+    /**
+     * crypto_secretbox_KEYBYTES. The number of bytes in the secret key used with crypto_secretbox
+     * and crypto_secretbox_open.
+     */
     public static final int SECRETBOX_KEYBYTES = 32;
+
+    /**
+     * crypto_secretbox_NONCEBYTES. The number of bytes in the nonce used with crypto_secretbox
+     * and crypto_secretbox_open.
+     */
     public static final int SECRETBOX_NONCEBYTES = 24;
+
+    /**
+     * crypto_secretbox_ZEROBYTES. The number of zero padding bytes in the message for 
+     * crypto_secretbox.
+     */
     public static final int SECRETBOX_ZEROBYTES = 32;
+
+    /**
+     * crypto_secretbox_BOXZEROBYTES. The number of zero padding bytes in the ciphertext for 
+     * crypto_secretbox_open.
+     */
     public static final int SECRETBOX_BOXZEROBYTES = 16;
 
     public static final int STREAM_KEYBYTES = 32;
@@ -189,23 +208,22 @@ public class TweetNaCl {
  
     private native int jniRandomBytes            (byte[] bytes);
     private native int jniCryptoBoxKeyPair       (byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBox              (byte[] ciphertext,byte[] message,   byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext,byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey, byte[] secretKey);
-    private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM2  (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-    private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
-    private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,        byte[] key,   byte[] constant);
+    private native int jniCryptoBox              (byte[] ciphertext,byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxOpen          (byte[] message,   byte[] ciphertext, byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxBeforeNM      (byte[] key,       byte[] publicKey,  byte[] secretKey);
+    private native int jniCryptoBoxAfterNM       (byte[] ciphertext,byte[] message,    byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext,byte[] message,    byte[] nonce, byte[] key);
+    private native int jniCryptoBoxOpenAfterNM2  (byte[] ciphertext,byte[] message,    byte[] nonce, byte[] key);
+    private native int jniCryptoCoreHSalsa20     (byte[] out,       byte[] in,         byte[] key,   byte[] constant);
+    private native int jniCryptoCoreSalsa20      (byte[] out,       byte[] in,         byte[] key,   byte[] constant);
     private native int jniCryptoHash             (byte[] hash,      byte[] message);
     private native int jniCryptoHashBlocks       (byte[] state,     byte[] message);
-    private native int jniCryptoOneTimeAuth      (byte[] auth,      byte[] message,   byte[] key);
-    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,   byte[] key);
+    private native int jniCryptoOneTimeAuth      (byte[] auth,      byte[] message,    byte[] key);
+    private native int jniCryptoOneTimeAuthVerify(byte[] signature, byte[] message,    byte[] key);
     private native int jniCryptoScalarMultBase   (byte[] q,         byte[] n);
-    private native int jniCryptoScalarMult       (byte[] q,         byte[] n,         byte[] p);
-    private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,   byte[] nonce, byte[] key);
-
-    private native int jniCryptoSecretBoxOpen(byte[] plaintext, byte[] ciphertext, byte[] nonce, byte[] key);
+    private native int jniCryptoScalarMult       (byte[] q,         byte[] n,          byte[] p);
+    private native int jniCryptoSecretBox        (byte[] ciphertext,byte[] message,    byte[] nonce, byte[] key);
+    private native int jniCryptoSecretBoxOpen    (byte[] plaintext, byte[] ciphertext, byte[] nonce, byte[] key);
 
     private native int jniCryptoStream(byte[] ciphertext, byte[] nonce, byte[] key);
 
@@ -953,11 +971,11 @@ public class TweetNaCl {
      * @param message
      *          message to be encrypted and authenticated
      *          
-     * @param key
-     *          secret key to use for encryption and authentication
-     *          
      * @param nonce
      *          unique nonce to use for encryption and authentication
+     *          
+     * @param key
+     *          secret key to use for encryption and authentication
      *          
      * @return ciphertext with prepended message authenticator
      * 
@@ -995,39 +1013,48 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_secretbox_open.
+     * Wrapper function for <code>crypto_secretbox_open</code>.
+     * <p>
+     * Verifies and decrypts the ciphertext using the supplied secret key and nonce.
      * 
      * @param ciphertext
-     * @param key
+     *          encrypted message to be verified and decrypted
+     *          
      * @param nonce
-     * @return plaintext
+     *          unique nonce to use for verification and decryption
+     *          
+     * @param key
+     *          secret key to use for verification and decryption
+     *          
+     * @return decrypted message
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_secretbox_open</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>ciphertext</code> is <code>null</code>.
+     *             <li><code>nonce</code> is <code>null</code> or not exactly SECRETBOX_NONCEBYTES bytes.
+     *             <li><code>key</code> is <code>null</code> or not exactly SECRETBOX_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/secretbox.html</a>
      */
-    public byte[] cryptoSecretBoxOpen(final byte[] crypttext, final byte[] nonce, final byte[] key)
-            throws DecryptException {
+    public byte[] cryptoSecretBoxOpen(final byte[] ciphertext, final byte[] nonce, final byte[] key) throws DecryptException {
         // ... validate
 
-        if (crypttext == null) {
-            throw new IllegalArgumentException("Invalid 'crypttext'");
-        }
-
-        if ((nonce == null) || (nonce.length != SECRETBOX_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - length must be "
-                    + Integer.toString(SECRETBOX_NONCEBYTES) + " bytes");
-        }
-
-        if ((key == null) || (key.length != SECRETBOX_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be " + Integer.toString(SECRETBOX_KEYBYTES)
-                    + " bytes");
-        }
+        validate(ciphertext,"ciphertext");
+        validate(nonce,     "nonce",SECRETBOX_NONCEBYTES);
+        validate(key,       "key",  SECRETBOX_KEYBYTES);
 
         // ... invoke
 
-        byte[] plaintext = new byte[crypttext.length];
+        byte[] plaintext = new byte[ciphertext.length];
         int rc;
 
-        if ((rc = jniCryptoSecretBoxOpen(plaintext, crypttext, nonce, key)) != 0) {
+        if ((rc = jniCryptoSecretBoxOpen(plaintext, ciphertext, nonce, key)) != 0) {
             throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
         }
 
