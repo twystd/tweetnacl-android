@@ -243,10 +243,8 @@ public class TweetNaCl {
     private native int jniCryptoStreamXor        (byte[] ciphertext, byte[] plaintext,  byte[] nonce, byte[] key);
     private native int jniCryptoStreamSalsa20    (byte[] ciphertext, byte[] nonce,      byte[] key);
     private native int jniCryptoStreamSalsa20Xor (byte[] ciphertext, byte[] plaintext,  byte[] nonce, byte[] key);
-
-    private native int jniCryptoSignKeyPair(byte[] publicKey, byte[] secretKey);
-
-    private native int jniCryptoSign(byte[] signed, byte[] message, byte[] secretKey);
+    private native int jniCryptoSignKeyPair      (byte[] publicKey,  byte[] secretKey);
+    private native int jniCryptoSign             (byte[] signed,     byte[] message,    byte[] key);
 
     private native int jniCryptoSignOpen(byte[] message, byte[] signed, byte[] publicKey);
 
@@ -1280,11 +1278,17 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_sign_keypair.
+     * Wrapper function for <code>crypto_sign_keypair</code>.
+     * <p>
+     * Randomly generates a secret key and corresponding public key.
      * 
-     * @return keypair
+     * @return Signing key pair
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_sign_keypair</code> returns anything other 
+     *             than 0.
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
     public KeyPair cryptoSignKeyPair() throws Exception {
         byte[] publicKey = new byte[SIGN_PUBLICKEYBYTES];
@@ -1299,33 +1303,44 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_sign.
+     * Wrapper function for <code>crypto_sign</code>.
+     * <p>
+     * Signs a message using a secret key and returns the signed message.
      * 
      * @param message
-     * @param secretKey
-     * 
-     * @return signed
+     *          message to encrypt
+     *          
+     * @param key
+     *          secret key to use to generate stream
+     *          
+     * @return signed message
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_sign</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>.
+     *             <li><code>key</code> is <code>null</code> or not exactly SIGN_SECRETKEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
-    public byte[] cryptoSign(final byte[] message, byte[] secretKey) throws Exception {
+    public byte[] cryptoSign(final byte[] message, byte[] key) throws Exception {
         // ... validate
 
-        if (message == null) {
-            throw new IllegalArgumentException("Invalid 'message' - may not be null");
-        }
-
-        if ((secretKey == null) || (secretKey.length != SIGN_SECRETKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'secret key' - must be " + SIGN_SECRETKEYBYTES + " bytes");
-        }
+        validate(message,"message");
+        validate(key,    "key",SIGN_SECRETKEYBYTES);
 
         // ... sign
 
         byte[] signed = new byte[message.length + SIGN_BYTES];
         int rc;
 
-        if ((rc = jniCryptoSign(signed, message, secretKey)) != 0) {
-            throw new EncryptException("Error signing message [" + Integer.toString(rc) + "]");
+        if ((rc = jniCryptoSign(signed, message, key)) != 0) {
+            throw new Exception("Error signing message [" + Integer.toString(rc) + "]");
         }
 
         return signed;

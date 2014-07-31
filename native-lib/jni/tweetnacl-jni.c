@@ -13,6 +13,7 @@ typedef i64                 gf[16];
 #define M   0
 #define C   1
 #define H   1
+#define S   1
 
 // __android_log_print(ANDROID_LOG_INFO,"TweetNaCl","ATTRIBUTE: %s::%s",name,value);
 
@@ -559,30 +560,27 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,job
 /** jniCryptoStreamSalsa20Xor
  *
  */
-jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,jobject object,jbyteArray crypttext,jbyteArray plaintext,jbyteArray nonce,jbyteArray key) {
-	int N = (*env)->GetArrayLength(env,plaintext);
-	u8 *m = (u8 *) malloc(N);
-	u8 *c = (u8 *) malloc(N);
-	u8  n[crypto_stream_salsa20_NONCEBYTES];
-	u8  k[crypto_stream_salsa20_KEYBYTES];
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
+	jboolean copied[2];
+	int      rc = -2;
+	int      N  = (*env)->GetArrayLength(env,message);
+	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
+	u8       n[crypto_stream_salsa20_NONCEBYTES];
+	u8       k[crypto_stream_salsa20_KEYBYTES];
 
-    (*env)->GetByteArrayRegion(env,plaintext,0,N,m);
-    (*env)->GetByteArrayRegion(env,nonce,    0,crypto_stream_salsa20_NONCEBYTES,n);
-    (*env)->GetByteArrayRegion(env,key,      0,crypto_stream_salsa20_KEYBYTES,  k);
+	if (m && c) {
+	    (*env)->GetByteArrayRegion(env,nonce,0,crypto_stream_salsa20_NONCEBYTES,n);
+	    (*env)->GetByteArrayRegion(env,key,  0,crypto_stream_salsa20_KEYBYTES,  k);
 
-	int rc = crypto_stream_salsa20_xor(c,m,N,n,k);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,crypttext,0,N,c);
+		rc = crypto_stream_salsa20_xor(c,m,N,n,k);
 	}
 
-	memset(m,0,N);
-	memset(c,0,N);
+	release(env,ciphertext,c,N,rc, copied[C]);
+	release(env,message,   m,N,YES,copied[M]);
+
 	memset(n,0,crypto_stream_salsa20_NONCEBYTES);
 	memset(k,0,crypto_stream_salsa20_KEYBYTES);
-
-	free(c);
-	free(m);
 
     return (jint) rc;
 }
@@ -610,28 +608,25 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignKeyPair(JNIEnv *env,jobje
 /** jniCryptoSign
  *
  */
-jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject object,jbyteArray signature,jbyteArray message,jbyteArray secretKey) {
-	int N     = (*env)->GetArrayLength(env,message);
-	u64 smlen = (*env)->GetArrayLength(env,signature);
-	u8 *m     = (u8 *) malloc(N);
-	u8 *sm    = (u8 *) malloc(smlen);
-	u8 sk[crypto_sign_SECRETKEYBYTES];
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject object,jbyteArray signedm,jbyteArray message,jbyteArray secretKey) {
+	jboolean copied[2];
+	int      rc    = -2;
+	int      N     = (*env)->GetArrayLength(env,message);
+	u64      smlen = (*env)->GetArrayLength(env,signedm);
+	u8      *m     = (u8 *) (*env)->GetByteArrayElements(env,message,&copied[M]);
+	u8      *sm    = (u8 *) (*env)->GetByteArrayElements(env,signedm,&copied[S]);
+	u8       sk[crypto_sign_SECRETKEYBYTES];
 
-    (*env)->GetByteArrayRegion(env,message,  0,N, m);
-    (*env)->GetByteArrayRegion(env,secretKey,0,crypto_sign_SECRETKEYBYTES,sk);
+	if (m && sm) {
+		(*env)->GetByteArrayRegion(env,secretKey,0,crypto_sign_SECRETKEYBYTES,sk);
 
-	int rc = crypto_sign(sm,&smlen,m,N,sk);
-
-	if (rc == 0) {
-		(*env)->SetByteArrayRegion(env,signature,0,smlen,sm);
+		rc = crypto_sign(sm,&smlen,m,N,sk);
 	}
 
-	memset(m, 0,N);
-    memset(sm,0,smlen);
-    memset(sk,0,crypto_sign_SECRETKEYBYTES);
+	release(env,signedm,sm,smlen,rc, copied[S]);
+	release(env,message,m, N,    YES,copied[M]);
 
-    free(sm);
-    free(m);
+    memset(sk,0,crypto_sign_SECRETKEYBYTES);
 
     return (jint) rc;
 }
