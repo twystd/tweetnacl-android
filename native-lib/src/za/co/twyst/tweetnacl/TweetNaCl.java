@@ -199,7 +199,15 @@ public class TweetNaCl {
      * crypto_stream_NONCEBYTES. The number of bytes in the nonce for crypto_stream.
      */
     public static final int STREAM_NONCEBYTES = 24;
+
+    /**
+     * crypto_stream_salsa20_KEYBYTES. The number of bytes in the secret key for crypto_stream_salsa20.
+     */
     public static final int STREAM_SALSA20_KEYBYTES = 32;
+
+    /**
+     * crypto_stream_salsa20_NONCEBYTES. The number of bytes in the nonce for crypto_stream_salsa20.
+     */
     public static final int STREAM_SALSA20_NONCEBYTES = 8;
 
     public static final int SIGN_BYTES = 64;
@@ -233,8 +241,7 @@ public class TweetNaCl {
     private native int jniCryptoSecretBoxOpen    (byte[] plaintext,  byte[] ciphertext, byte[] nonce, byte[] key);
     private native int jniCryptoStream           (byte[] ciphertext, byte[] nonce,      byte[] key);
     private native int jniCryptoStreamXor        (byte[] ciphertext, byte[] plaintext,  byte[] nonce, byte[] key);
-
-    private native int jniCryptoStreamSalsa20(byte[] ciphertext, byte[] nonce, byte[] key);
+    private native int jniCryptoStreamSalsa20    (byte[] ciphertext, byte[] nonce,      byte[] key);
 
     private native int jniCryptoStreamSalsa20Xor(byte[] ciphertext, byte[] plaintext, byte[] nonce, byte[] key);
 
@@ -1171,14 +1178,35 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_stream_salsa20.
+     * Wrapper function for <code>crypto_stream_salsa20</code>.
+     * <p>
+     * Uses Salsa20 as the underlying cipher to produces a <code>length</code> stream 
+     * as a function of the <code>key</code> and <code>nonce</code>.
      * 
      * @param length
+     *          number of stream bytes to generate
+     *          
      * @param nonce
+     *          unique nonce to use to generate stream
+     *          
      * @param key
-     * @return ciphertext
+     *          secret key to use to generate stream
+     *          
+     * @return 'stream' byte array
      * 
      * @throws Exception
+     *             Thrown if the wrapped <code>crypto_stream_salsa20</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>length</code> is less than 0.
+     *             <li><code>nonce</code> is <code>null</code> or not exactly STREAM_SALSA20_NONCEBYTES bytes.
+     *             <li><code>key</code> is <code>null</code> or not exactly STREAM_SALSA20_KEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/stream.html</a>
      */
     public byte[] cryptoStreamSalsa20(final int length, final byte[] nonce, final byte[] key) throws EncryptException {
         // ... validate
@@ -1187,15 +1215,8 @@ public class TweetNaCl {
             throw new IllegalArgumentException("Invalid 'length' - may not be negative");
         }
 
-        if ((nonce == null) || (nonce.length != STREAM_SALSA20_NONCEBYTES)) {
-            throw new IllegalArgumentException("Invalid 'nonce' - length must be "
-                    + Integer.toString(STREAM_SALSA20_NONCEBYTES) + " bytes");
-        }
-
-        if ((key == null) || (key.length != STREAM_SALSA20_KEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'key' - length must be "
-                    + Integer.toString(STREAM_SALSA20_KEYBYTES) + " bytes");
-        }
+        validate(nonce,"nonce",STREAM_SALSA20_NONCEBYTES);
+        validate(key,  "key",  STREAM_SALSA20_KEYBYTES);
 
         // ... invoke
 

@@ -151,36 +151,34 @@ public class TestCryptoStream extends TweetNaClTest {
     }
 
     /**
-     * crypto_stream_salsa20 (adapted from
-     * http://cr.yp.to/highspeed/naclcrypto-20090310.pdf, page 21)
+     * crypto_stream_salsa20 (adapted from http://cr.yp.to/highspeed/naclcrypto-20090310.pdf, page 21)
      * 
      */
     public void testCryptoStreamSalsa20() throws Exception {
-        final byte[] HASH = { (byte) 0x66, (byte) 0x2b, (byte) 0x9d,
-                (byte) 0x0e, (byte) 0x34, (byte) 0x63, (byte) 0x02,
-                (byte) 0x91, (byte) 0x56, (byte) 0x06, (byte) 0x9b,
-                (byte) 0x12, (byte) 0xf9, (byte) 0x18, (byte) 0x69,
-                (byte) 0x1a, (byte) 0x98, (byte) 0xf7, (byte) 0xdf,
-                (byte) 0xb2, (byte) 0xca, (byte) 0x03, (byte) 0x93,
-                (byte) 0xc9, (byte) 0x6b, (byte) 0xbf, (byte) 0xc6,
-                (byte) 0xb1, (byte) 0xfb, (byte) 0xd6, (byte) 0x30, (byte) 0xa2 };
+        final byte[] HASH = { (byte) 0x66, (byte) 0x2b, (byte) 0x9d, (byte) 0x0e, 
+				              (byte) 0x34, (byte) 0x63, (byte) 0x02, (byte) 0x91, 
+				              (byte) 0x56, (byte) 0x06, (byte) 0x9b, (byte) 0x12, 
+				              (byte) 0xf9, (byte) 0x18, (byte) 0x69, (byte) 0x1a, 
+				              (byte) 0x98, (byte) 0xf7, (byte) 0xdf, (byte) 0xb2, 
+				              (byte) 0xca, (byte) 0x03, (byte) 0x93, (byte) 0xc9, 
+				              (byte) 0x6b, (byte) 0xbf, (byte) 0xc6, (byte) 0xb1, 
+				              (byte) 0xfb, (byte) 0xd6, (byte) 0x30, (byte) 0xa2 };
 
-        final byte[] nonce = { (byte) 0x82, (byte) 0x19, (byte) 0xe0,
-                (byte) 0x03, (byte) 0x6b, (byte) 0x7a, (byte) 0x0b, (byte) 0x37 };
+        final byte[] nonce = { (byte) 0x82, (byte) 0x19, (byte) 0xe0, (byte) 0x03, 
+				               (byte) 0x6b, (byte) 0x7a, (byte) 0x0b, (byte) 0x37 };
 
-        final byte[] key = { (byte) 0xdc, (byte) 0x90, (byte) 0x8d,
-                (byte) 0xda, (byte) 0x0b, (byte) 0x93, (byte) 0x44,
-                (byte) 0xa9, (byte) 0x53, (byte) 0x62, (byte) 0x9b,
-                (byte) 0x73, (byte) 0x38, (byte) 0x20, (byte) 0x77,
-                (byte) 0x88, (byte) 0x80, (byte) 0xf3, (byte) 0xce,
-                (byte) 0xb4, (byte) 0x21, (byte) 0xbb, (byte) 0x61,
-                (byte) 0xb9, (byte) 0x1c, (byte) 0xbd, (byte) 0x4c,
-                (byte) 0x3e, (byte) 0x66, (byte) 0x25, (byte) 0x6c,
-                (byte) 0xe4, };
+        final byte[] key = { (byte) 0xdc, (byte) 0x90, (byte) 0x8d, (byte) 0xda, 
+				             (byte) 0x0b, (byte) 0x93, (byte) 0x44, (byte) 0xa9, 
+				             (byte) 0x53, (byte) 0x62, (byte) 0x9b, (byte) 0x73, 
+				             (byte) 0x38, (byte) 0x20, (byte) 0x77, (byte) 0x88, 
+				             (byte) 0x80, (byte) 0xf3, (byte) 0xce, (byte) 0xb4, 
+				             (byte) 0x21, (byte) 0xbb, (byte) 0x61, (byte) 0xb9, 
+				             (byte) 0x1c, (byte) 0xbd, (byte) 0x4c, (byte) 0x3e, 
+				             (byte) 0x66, (byte) 0x25, (byte) 0x6c, (byte) 0xe4, };
 
-        byte[] stream = tweetnacl.cryptoStreamSalsa20(4194304, nonce, key);
+        byte[]        stream = tweetnacl.cryptoStreamSalsa20(4194304, nonce, key);
         MessageDigest sha256 = MessageDigest.getInstance("SHA256");
-        byte[] hash = sha256.digest(stream);
+        byte[]        hash   = sha256.digest(stream);
 
         assertTrue("Invalid crypttext stream", Arrays.equals(HASH, hash));
     }
