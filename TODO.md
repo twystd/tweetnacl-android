@@ -12,3 +12,4 @@
 11. Check John Regehr's bug against NDK compiler
 12. Doxygen 
 13. Check zero padding
+14. Fix array copyRange in crypto_sign_open and reduce min version back to 8

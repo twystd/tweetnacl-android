@@ -3,6 +3,7 @@ package za.co.twyst.tweetnacl.test;
 import java.util.Arrays;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 
 public class TestCryptoX extends TweetNaClTest {
     // CONSTANTS
@@ -10,15 +11,7 @@ public class TestCryptoX extends TweetNaClTest {
     // UNIT TESTS
 
 //    public void testX() throws Exception {
-//        final byte[] key = { (byte) 0x1a, (byte) 0xcd, (byte) 0xbb, (byte) 0x79, 
-//                (byte) 0x3b, (byte) 0x03, (byte) 0x84, (byte) 0x93, 
-//                (byte) 0x46, (byte) 0x27, (byte) 0x47, (byte) 0x0d, 
-//                (byte) 0x79, (byte) 0x5c, (byte) 0x3d, (byte) 0x1d, 
-//                (byte) 0xd4, (byte) 0xd7, (byte) 0x9c, (byte) 0xea, 
-//                (byte) 0x59, (byte) 0xef, (byte) 0x98, (byte) 0x3f, 
-//                (byte) 0x29, (byte) 0x5b, (byte) 0x9b, (byte) 0x59, 
-//                (byte) 0x17, (byte) 0x9c, (byte) 0xbb, (byte) 0x28, 
-//                (byte) 0x3f, (byte) 0x60, (byte) 0xc7, (byte) 0x54, 
+//        final byte[] key = { (byte) 0x3f, (byte) 0x60, (byte) 0xc7, (byte) 0x54, 
 //                (byte) 0x1a, (byte) 0xfa, (byte) 0x76, (byte) 0xc0, 
 //                (byte) 0x19, (byte) 0xcf, (byte) 0x5a, (byte) 0xa8, 
 //                (byte) 0x2d, (byte) 0xcd, (byte) 0xb0, (byte) 0x88, 
@@ -34,7 +27,7 @@ public class TestCryptoX extends TweetNaClTest {
 //                    (byte) 0xc9, (byte) 0x48, (byte) 0x4e, (byte) 0x8a, 
 //                    (byte) 0x01, (byte) 0x8f, (byte) 0xa9, (byte) 0xe0, 
 //                    (byte) 0x73, (byte) 0x04, (byte) 0x2d, (byte) 0xf8, 
-//                    (byte) 0x8e, (byte) 0x3c, (byte) 0x56, };
+//                    (byte) 0x8e, (byte) 0x3c, (byte) 0x56 };
 //
 //final byte[] signed = { (byte) 0xbe, (byte) 0x71, (byte) 0xef, (byte) 0x48, 
 //                   (byte) 0x06, (byte) 0xcb, (byte) 0x04, (byte) 0x1d, 
@@ -59,23 +52,24 @@ public class TestCryptoX extends TweetNaClTest {
 //                   (byte) 0xc9, (byte) 0x48, (byte) 0x4e, (byte) 0x8a, 
 //                   (byte) 0x01, (byte) 0x8f, (byte) 0xa9, (byte) 0xe0, 
 //                   (byte) 0x73, (byte) 0x04, (byte) 0x2d, (byte) 0xf8, 
-//                   (byte) 0x8e, (byte) 0x3c, (byte) 0x56, }; 
-//
-//assertTrue("Invalid signature", Arrays.equals(signed, tweetnacl.cryptoSignX(message, key)));
+//                   (byte) 0x8e, (byte) 0x3c, (byte) 0x56, };
+//                   
+//assertTrue("Invalid message", Arrays.equals(message, tweetnacl.cryptoSignOpenX(signed, key)));
 //    }
 //
 //    public void testY() throws Exception {
 //        for (int i=0; i<1000; i++) {
-//            byte[] key     = new byte[TweetNaCl.SIGN_SECRETKEYBYTES];
-//            byte[] message = new byte[16384 + random.nextInt(16384)];
+//            KeyPair keypair = tweetnacl.cryptoSignKeyPair();
+//            byte[]  message = new byte[16384 + random.nextInt(16384)];
 //            
-//            random.nextBytes(key);
 //            random.nextBytes(message);
-//            
-//            byte[] p = tweetnacl.cryptoSign (message,key);
-//            byte[] q = tweetnacl.cryptoSignX(message,key);
+//
+//            byte[] signed = tweetnacl.cryptoSign    (message,keypair.secretKey);
+//            byte[] p      = tweetnacl.cryptoSignOpen(signed,keypair.publicKey);
+//            byte[] q      = tweetnacl.cryptoSignOpenX(signed,keypair.publicKey);
 //
 //            assertTrue("OOOOPS !",Arrays.equals(p,q));
+//            assertTrue("OOOOPS !",Arrays.equals(message,q));
 //        }
 //    }
 //
@@ -84,14 +78,14 @@ public class TestCryptoX extends TweetNaClTest {
 //        long DT2 = 0;
 //        
 //        for (int i=0; i<64; i++) {
-//            byte[] key     = new byte[TweetNaCl.SIGN_SECRETKEYBYTES];
-//            byte[] message = new byte[16384 + random.nextInt(16384)];
-//
-//            random.nextBytes(key);
+//            KeyPair keypair = tweetnacl.cryptoSignKeyPair();
+//            byte[]  message = new byte[16384 + random.nextInt(16384)];
+//            
 //            random.nextBytes(message);
 //
-//            byte[] p = new byte[0];
-//            byte[] q = new byte[0];
+//            byte[] signed = tweetnacl.cryptoSign(message,keypair.secretKey);
+//            byte[] p      = new byte[0];
+//            byte[] q      = new byte[0];
 //            long   start;
 //            long   dt;
 //            long   dt2;
@@ -99,14 +93,14 @@ public class TestCryptoX extends TweetNaClTest {
 //            start = System.currentTimeMillis();
 //            
 //            for (int j=0; j<1024; j++) {
-//                p = tweetnacl.cryptoSign(message,key);
+//                p = tweetnacl.cryptoSignOpen(signed,keypair.publicKey);
 //            }
 //            
 //            dt    = System.currentTimeMillis() - start;
 //            start = System.currentTimeMillis();
 //
 //            for (int j=0; j<1024; j++) {
-//                q = tweetnacl.cryptoSignX(message,key);
+//                q = tweetnacl.cryptoSignOpenX(signed,keypair.publicKey);
 //            }
 //
 //            dt2  = System.currentTimeMillis() - start;

@@ -28,6 +28,8 @@
 
 package za.co.twyst.tweetnacl;
 
+import java.util.Arrays;
+
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
@@ -210,8 +212,19 @@ public class TweetNaCl {
      */
     public static final int STREAM_SALSA20_NONCEBYTES = 8;
 
+    /**
+     * crypto_sign_BYTES. The number of bytes added to a message for a signature.
+     */
     public static final int SIGN_BYTES = 64;
+
+    /**
+     * crypto_sign_PUBLICKEYBYTES. The number of bytes in a signing key pair public key.
+     */
     public static final int SIGN_PUBLICKEYBYTES = 32;
+
+    /**
+     * crypto_sign_SECRETKEYBYTES. The number of bytes in a signing key pair secret key.
+     */
     public static final int SIGN_SECRETKEYBYTES = 64;
 
     public static final int VERIFY16_BYTES = 16;
@@ -245,8 +258,7 @@ public class TweetNaCl {
     private native int jniCryptoStreamSalsa20Xor (byte[] ciphertext, byte[] plaintext,  byte[] nonce, byte[] key);
     private native int jniCryptoSignKeyPair      (byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoSign             (byte[] signed,     byte[] message,    byte[] key);
-
-    private native int jniCryptoSignOpen(byte[] message, byte[] signed, byte[] publicKey);
+    private native int jniCryptoSignOpen         (byte[] message,    byte[] signed,     byte[] key);
 
     private native int jniCryptoVerify16(byte[] x, byte[] y);
 
@@ -1311,7 +1323,7 @@ public class TweetNaCl {
      *          message to encrypt
      *          
      * @param key
-     *          secret key to use to generate stream
+     *          secret key for signing
      *          
      * @return signed message
      * 
@@ -1347,36 +1359,47 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_sign_open.
+     * Wrapper function for <code>crypto_sign_open</code>.
+     * <p>
+     * Verifies a signed message against a public key.
      * 
      * @param signed
-     * @param publicKey
-     * 
+     *          signed message to verify
+     *          
+     * @param key
+     *          public key for message verification
+     *          
      * @return message
      * 
      * @throws VerifyException
+     *             Thrown if the wrapped <code>crypto_sign_open</code> returns anything other 
+     *             than 0.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>message</code> is <code>null</code>.
+     *             <li><code>key</code> is <code>null</code> or not exactly SIGN_PUBLICKEYBYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
-    public byte[] cryptoSignOpen(final byte[] signed, byte[] publicKey) throws VerifyException {
+    public byte[] cryptoSignOpen(final byte[] signed, byte[] key) throws VerifyException {
         // ... validate
 
-        if (signed == null) {
-            throw new IllegalArgumentException("Invalid 'signed message' - may not be null");
-        }
-
-        if ((publicKey == null) || (publicKey.length != SIGN_PUBLICKEYBYTES)) {
-            throw new IllegalArgumentException("Invalid 'public key' - must be " + SIGN_PUBLICKEYBYTES + " bytes");
-        }
+        validate(signed,"signed");
+        validate(key,   "key",SIGN_PUBLICKEYBYTES);
 
         // ... sign
 
-        byte[] message = new byte[signed.length - SIGN_BYTES];
+        byte[] message = new byte[signed.length];
         int rc;
 
-        if ((rc = jniCryptoSignOpen(message, signed, publicKey)) < 0) {
+        if ((rc = jniCryptoSignOpen(message,signed, key)) != 0) {
             throw new VerifyException("Error verifying message signature[" + Integer.toString(rc) + "]");
         }
 
-        return message;
+        return Arrays.copyOfRange(message,0,signed.length - SIGN_BYTES);
     }
 
     /**
