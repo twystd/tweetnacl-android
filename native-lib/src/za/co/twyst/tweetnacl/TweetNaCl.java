@@ -227,10 +227,17 @@ public class TweetNaCl {
      */
     public static final int SIGN_SECRETKEYBYTES = 64;
 
+    /**
+     * crypto_verify_16_BYTES. The number of bytes in a 'secret' for the crypto_verify_16
+     * function.
+     */
     public static final int VERIFY16_BYTES = 16;
-    public static final int VERIFY32_BYTES = 32;
 
-    private static final String INVALID_BYTE_ARRAY = "Invalid '%s' - must be %d bytes";
+    /**
+     * crypto_verify_32_BYTES. The number of bytes in a 'secret' for the crypto_verify_32
+     * function.
+     */
+    public static final int VERIFY32_BYTES = 32;
 
     // NATIVE METHODS
  
@@ -259,10 +266,8 @@ public class TweetNaCl {
     private native int jniCryptoSignKeyPair      (byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoSign             (byte[] signed,     byte[] message,    byte[] key);
     private native int jniCryptoSignOpen         (byte[] message,    byte[] signed,     byte[] key);
-
-    private native int jniCryptoVerify16(byte[] x, byte[] y);
-
-    private native int jniCryptoVerify32(byte[] x, byte[] y);
+    private native int jniCryptoVerify16         (byte[] x,          byte[] y);
+    private native int jniCryptoVerify32         (byte[] x,          byte[] y);
 
     // CLASS METHODS
 
@@ -1403,14 +1408,32 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_verify_16.
+     * Wrapper function for <code>crypto_verify_16</code>.
+     * <p>
+     * Compares two 'secrets' encoded as 16 byte arrays with a time independent of the content
+     * of the arrays.
      * 
      * @param x
+     *          'secret' x
+     *          
      * @param y
-     * 
-     * @return boolean
+     *          'secret' y
+     *          
+     * @return <code>true</code> if the two bytes arrays are identical, <code>false</code>
+     *         otherwise.
      * 
      * @throws VerifyException
+     *             Thrown if the wrapped <code>crypto_verify_16</code> returns anything other 
+     *             than 0 or -1.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>x</code> is <code>null</code> or not exactly VERIFY16_BYTES bytes.
+     *             <li><code>y</code> is <code>null</code> or not exactly VERIFY16_BYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
     public boolean cryptoVerify16(final byte[] x, byte[] y) throws VerifyException {
         // ... validate
@@ -1438,14 +1461,32 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for crypto_verify_32.
+     * Wrapper function for <code>crypto_verify_32</code>.
+     * <p>
+     * Compares two 'secrets' encoded as 32 byte arrays with a time independent of the content
+     * of the arrays.
      * 
      * @param x
+     *          'secret' x
+     *          
      * @param y
-     * 
-     * @return boolean
+     *          'secret' y
+     *          
+     * @return <code>true</code> if the two bytes arrays are identical, <code>false</code>
+     *         otherwise.
      * 
      * @throws VerifyException
+     *             Thrown if the wrapped <code>crypto_verify_16</code> returns anything other 
+     *             than 0 or -1.
+     * 
+     * @throws IllegalArgumentException
+     *             Thrown if:
+     *             <ul>
+     *             <li><code>x</code> is <code>null</code> or not exactly VERIFY32_BYTES bytes.
+     *             <li><code>y</code> is <code>null</code> or not exactly VERIFY23_BYTES bytes.
+     *             </ul>
+     * 
+     * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
     public boolean cryptoVerify32(final byte[] x, byte[] y) throws VerifyException {
         // ... validate
