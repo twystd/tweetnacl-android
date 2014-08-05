@@ -102,6 +102,34 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
     return (jint) rc;
 }
 
+jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxX(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
+	jboolean copied[2];
+	int      N = (*env)->GetArrayLength(env,message);
+	u8      *c = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
+	u8      *m = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
+	u8       n [crypto_box_NONCEBYTES];
+	u8       pk[crypto_box_PUBLICKEYBYTES];
+	u8       sk[crypto_box_SECRETKEYBYTES];
+	int      rc     = -2;
+
+	if (c && m) {
+	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
+	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
+	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
+
+		rc = crypto_box(c,m,N,n,pk,sk);
+	}
+
+	release(env,ciphertext,c,N,rc, copied[C]);
+	release(env,message,   m,N,YES,copied[M]);
+
+	memset(n, 0,crypto_box_NONCEBYTES);
+	memset(pk,0,crypto_box_PUBLICKEYBYTES);
+	memset(sk,0,crypto_box_SECRETKEYBYTES);
+
+    return (jint) rc;
+}
+
 /** jniCryptoBoxOpen
  *
  *  JNI wrapper function for crypto_box_open.

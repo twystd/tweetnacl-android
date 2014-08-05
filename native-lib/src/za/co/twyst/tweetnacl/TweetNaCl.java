@@ -28,6 +28,8 @@
 
 package za.co.twyst.tweetnacl;
 
+import java.util.Arrays;
+
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
@@ -77,6 +79,12 @@ public class TweetNaCl {
      * message.
      */
     public static final int BOX_ZEROBYTES = 32;
+
+    /**
+     * crypto_box_BOXZEROBYTES. The number of zero padding bytes for a crypto_box
+     * ciphertext.
+     */
+    public static final int BOX_BOXZEROBYTES = 16;
 
     /**
      * crypto_core_hsalsa20_OUTPUTBYTES. The number of bytes in the calculated
@@ -242,6 +250,7 @@ public class TweetNaCl {
     private native int jniRandomBytes            (byte[] bytes);
     private native int jniCryptoBoxKeyPair       (byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBox              (byte[] ciphertext, byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
+    private native int jniCryptoBoxX             (byte[] ciphertext, byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native int jniCryptoBoxOpen          (byte[] message,    byte[] ciphertext, byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native int jniCryptoBoxBeforeNM      (byte[] key,        byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBoxAfterNM       (byte[] ciphertext, byte[] message,    byte[] nonce, byte[] key);
@@ -283,6 +292,22 @@ public class TweetNaCl {
     private static void validate(byte[] array,String name) {
         if (array == null)
             throw new IllegalArgumentException(String.format("Invalid '%s' - may not be null",name));
+    }
+    
+    /** Validates a zero padded byte array, throwing an IllegalArgumentException if it is <code>null</code>
+     *  or does not have the correct number of zeroes.
+     */
+    private static void validatez(byte[] array,String name,int zeroes) {
+        if (array == null)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - may not be null",name));
+        
+        if (array.length < zeroes)
+            throw new IllegalArgumentException(String.format("Invalid '%s' - must be at least %d bytes",name,zeroes));
+        
+        for (int i=0; i<zeroes; i++) {
+            if (array[i] != 0)
+                throw new IllegalArgumentException(String.format("Invalid '%s' - must be padded with %d zero bytes",name,zeroes));
+        }
     }
 
     /** Validates a byte array, throwing an IllegalArgumentException if it is <code>null</code> or
@@ -403,10 +428,10 @@ public class TweetNaCl {
     public byte[] cryptoBox(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
         // ... validate
 
-        validate(message,  "message");
-        validate(nonce,    "nonce",    BOX_NONCEBYTES);
-        validate(publicKey,"publicKey",BOX_PUBLICKEYBYTES);
-        validate(secretKey,"secretKey",BOX_SECRETKEYBYTES);
+        validatez(message,  "message",  BOX_ZEROBYTES);
+        validate (nonce,    "nonce",    BOX_NONCEBYTES);
+        validate (publicKey,"publicKey",BOX_PUBLICKEYBYTES);
+        validate (secretKey,"secretKey",BOX_SECRETKEYBYTES);
 
         // ... encrypt
 
@@ -420,6 +445,33 @@ public class TweetNaCl {
         return ciphertext;
     }
 
+    public byte[] cryptoBoxX(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
+        // ... validate
+
+        validate(message,  "message");
+        validate(nonce,    "nonce",    BOX_NONCEBYTES);
+        validate(publicKey,"publicKey",BOX_PUBLICKEYBYTES);
+        validate(secretKey,"secretKey",BOX_SECRETKEYBYTES);
+
+        // ... encrypt
+
+        byte[] m          = new byte[message.length + BOX_ZEROBYTES];
+        byte[] c          = new byte[message.length + BOX_ZEROBYTES];
+        byte[] ciphertext = new byte[message.length + BOX_ZEROBYTES - BOX_BOXZEROBYTES];
+        int    rc;
+
+        Arrays.fill     (m,0,BOX_ZEROBYTES,(byte) 0x00);
+        System.arraycopy(message,0,m,BOX_ZEROBYTES,message.length);
+        
+        if ((rc = jniCryptoBoxX(c, m, nonce, publicKey, secretKey)) != 0) {
+            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
+        }
+
+        System.arraycopy(c,BOX_BOXZEROBYTES,ciphertext,0,ciphertext.length);
+        
+        return ciphertext;
+    }
+    
     /**
      * Wrapper function for <code>crypto_box_open</code>.
      * <p>
