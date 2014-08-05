@@ -633,29 +633,36 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject obje
 
 /** jniCryptoSignOpen
  *
+ *  This is the one function where using malloc/free performs fractionally better
+ *  than GetByteArrayElements. Allocating three arrays seems to be unavoidable
+ *  without returning message that is too long to the requester.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray signedm,jbyteArray key) {
-	jboolean copied[2];
+	jboolean copied;
 	int      rc    = -2;
 	int      N     = (*env)->GetArrayLength(env,signedm);
 	u64      mlen  = (*env)->GetArrayLength(env,message) - crypto_sign_BYTES;
-	u8      *sm    = (u8 *) (*env)->GetByteArrayElements(env,signedm,&copied[S]);
-	u8      *m     = (u8 *) (*env)->GetByteArrayElements(env,message,&copied[M]);
+	u8      *sm    = (u8 *) (*env)->GetByteArrayElements(env,signedm,&copied);
+	u8      *m     = (u8 *) malloc(N);
 	u8       pk[crypto_sign_PUBLICKEYBYTES];
 
 	if (sm && m) {
 		(*env)->GetByteArrayRegion(env,key,0,crypto_sign_PUBLICKEYBYTES,pk);
 
-		rc = crypto_sign_open(m,&mlen,sm,N,pk);
+		if ((rc = crypto_sign_open(m,&mlen,sm,N,pk)) == 0) {
+			(*env)->SetByteArrayRegion(env,message,0,mlen,m);
+		}
 	}
 
-	release(env,message,m, mlen,rc, copied[M]);
-	release(env,signedm,sm,N,   YES,copied[S]);
+	release(env,signedm,sm,N,YES,copied);
 
+	memset(m, 0,N);
 	memset(pk,0,crypto_sign_PUBLICKEYBYTES);
+	free   (m);
 
     return (jint) rc;
 }
+
 
 /** jniCryptoVerify16
  *

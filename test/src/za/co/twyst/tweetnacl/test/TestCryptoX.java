@@ -1,9 +1,9 @@
 package za.co.twyst.tweetnacl.test;
 
-import java.util.Arrays;
-
-import za.co.twyst.tweetnacl.TweetNaCl;
-import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
+//import java.util.Arrays;
+//
+//import za.co.twyst.tweetnacl.TweetNaCl;
+//import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 
 public class TestCryptoX extends TweetNaClTest {
     // CONSTANTS
@@ -20,7 +20,7 @@ public class TestCryptoX extends TweetNaClTest {
 //                (byte) 0xfb, (byte) 0x37, (byte) 0x9d, (byte) 0xab, 
 //                (byte) 0xc8, (byte) 0x44, (byte) 0xf3, (byte) 0x1a, };
 //
-//final byte[] message = { (byte) 0x7c, (byte) 0xf3, (byte) 0x4f, (byte) 0x75, 
+//        final byte[] message = { (byte) 0x7c, (byte) 0xf3, (byte) 0x4f, (byte) 0x75, 
 //                    (byte) 0xc3, (byte) 0xda, (byte) 0xc9, (byte) 0xa8, 
 //                    (byte) 0x04, (byte) 0xd0, (byte) 0xfc, (byte) 0xd0, 
 //                    (byte) 0x9e, (byte) 0xba, (byte) 0x9b, (byte) 0x29, 
@@ -54,7 +54,7 @@ public class TestCryptoX extends TweetNaClTest {
 //                   (byte) 0x73, (byte) 0x04, (byte) 0x2d, (byte) 0xf8, 
 //                   (byte) 0x8e, (byte) 0x3c, (byte) 0x56, };
 //                   
-//assertTrue("Invalid message", Arrays.equals(message, tweetnacl.cryptoSignOpenX(signed, key)));
+//      assertTrue("Invalid message", Arrays.equals(message, tweetnacl.cryptoSignOpenX(signed, key)));
 //    }
 //
 //    public void testY() throws Exception {
@@ -77,7 +77,7 @@ public class TestCryptoX extends TweetNaClTest {
 //        long DT  = 0;
 //        long DT2 = 0;
 //        
-//        for (int i=0; i<64; i++) {
+//        for (int i=0; i<16; i++) {
 //            KeyPair keypair = tweetnacl.cryptoSignKeyPair();
 //            byte[]  message = new byte[16384 + random.nextInt(16384)];
 //            
@@ -109,7 +109,7 @@ public class TestCryptoX extends TweetNaClTest {
 //
 //            assertTrue(Arrays.equals(p,q));            
 //
-//            android.util.Log.i(TAG,"DT: " + dt + "  " + dt2 + "  " + DT + "  " + DT2 + "  " + ((double) DT - (double) DT2)/(double) DT);
+//            android.util.Log.i(TAG,i + " DT: " + dt + "  " + dt2 + "  " + DT + "  " + DT2 + "  " + ((double) DT - (double) DT2)/(double) DT);
 //        }
 //
 //        android.util.Log.i(TAG,"DT/FINAL: " + DT + "  " + DT2);

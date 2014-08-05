@@ -29,7 +29,7 @@ Building (Eclipse/ADT)
 
 2. Alternatively invoke the Android NDK ndk-build script from the jni directory in the native-lib project
 
-3. To build the Benchmark project:
+3. To build the 'benchmark' project:
    - update the Android section of the project properties so that the android-support-v7-appcompat
      library project references the Android SDK extras/android/support/v7/appcompat project (or a copy
      thereof)
@@ -38,7 +38,7 @@ Building (Eclipse/ADT)
    - for the same (infinitely bizarre) reason you will quite probably have to restart Eclipse/ADT after
      updating the v4 support library to get the project to build cleanly
 
-4. The Test project manifest references the Benchmark project and should build correctly once the Benchmark
+4. The 'test' project manifest references the 'benchmark' project and should build correctly once the 'benchmark'
    project builds cleanly.
 
 Disclaimer
@@ -51,6 +51,8 @@ the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabili
 
 Notes
 -----
+1. There is a barely measureable (5%) but seemingly consistent performance improvement using 
+   GetByteArrayElements rather than GetByteArrayRegion.
 
 References
 ----------

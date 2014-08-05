@@ -19,13 +19,11 @@ public class TestCryptoVerify extends TweetNaClTest {
             random.nextBytes(x);
             random.nextBytes(y);
 
-            assertEquals("Invalid crypto_verify_16 result",
-                    Arrays.equals(x, y), tweetnacl.cryptoVerify16(x, y));
+            assertEquals("Invalid crypto_verify_16 result",Arrays.equals(x, y), tweetnacl.cryptoVerify16(x, y));
 
             y = x.clone();
 
-            assertTrue("Invalid crypto_verify_16 result",
-                    tweetnacl.cryptoVerify16(x, y));
+            assertTrue("Invalid crypto_verify_16 result",tweetnacl.cryptoVerify16(x, y));
 
             for (int j = 0; j < 16; j++) {
                 int ix = random.nextInt(16);
@@ -33,8 +31,7 @@ public class TestCryptoVerify extends TweetNaClTest {
 
                 y[ix] = b;
 
-                assertEquals("Invalid crypto_verify_16 result",
-                        Arrays.equals(x, y), tweetnacl.cryptoVerify16(x, y));
+                assertEquals("Invalid crypto_verify_16 result",Arrays.equals(x, y), tweetnacl.cryptoVerify16(x, y));
             }
         }
     }
@@ -51,13 +48,11 @@ public class TestCryptoVerify extends TweetNaClTest {
             random.nextBytes(x);
             random.nextBytes(y);
 
-            assertEquals("Invalid crypto_verify_32 result",
-                    Arrays.equals(x, y), tweetnacl.cryptoVerify32(x, y));
+            assertEquals("Invalid crypto_verify_32 result",Arrays.equals(x, y), tweetnacl.cryptoVerify32(x, y));
 
             y = x.clone();
 
-            assertTrue("Invalid crypto_verify_32 result",
-                    tweetnacl.cryptoVerify32(x, y));
+            assertTrue("Invalid crypto_verify_32 result",tweetnacl.cryptoVerify32(x, y));
 
             for (int j = 0; j < 16; j++) {
                 int ix = random.nextInt(32);
@@ -65,8 +60,7 @@ public class TestCryptoVerify extends TweetNaClTest {
 
                 y[ix] = b;
 
-                assertEquals("Invalid crypto_verify_32 result",
-                        Arrays.equals(x, y), tweetnacl.cryptoVerify32(x, y));
+                assertEquals("Invalid crypto_verify_32 result",Arrays.equals(x, y), tweetnacl.cryptoVerify32(x, y));
             }
         }
     }

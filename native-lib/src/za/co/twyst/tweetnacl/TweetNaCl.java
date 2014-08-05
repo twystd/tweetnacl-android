@@ -28,8 +28,6 @@
 
 package za.co.twyst.tweetnacl;
 
-import java.util.Arrays;
-
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
@@ -1366,7 +1364,12 @@ public class TweetNaCl {
     /**
      * Wrapper function for <code>crypto_sign_open</code>.
      * <p>
-     * Verifies a signed message against a public key.
+     * Verifies a signed message against a public key. Be aware that internally this method
+     * allocates an additional byte array the same length as the <code>message</code> for
+     * working space for crypto_sign_open.
+     * <p>
+     * The only way to really avoid the extra memory allocation is to return the allocated 
+     * byte array which is SIGN_BYTES too long. 
      * 
      * @param signed
      *          signed message to verify
@@ -1397,14 +1400,14 @@ public class TweetNaCl {
 
         // ... sign
 
-        byte[] message = new byte[signed.length];
+        byte[] message = new byte[signed.length - SIGN_BYTES];
         int rc;
 
         if ((rc = jniCryptoSignOpen(message,signed, key)) != 0) {
             throw new VerifyException("Error verifying message signature[" + Integer.toString(rc) + "]");
         }
 
-        return Arrays.copyOfRange(message,0,signed.length - SIGN_BYTES);
+        return message;
     }
 
     /**
