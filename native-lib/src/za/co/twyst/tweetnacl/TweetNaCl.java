@@ -28,8 +28,6 @@
 
 package za.co.twyst.tweetnacl;
 
-import java.util.Arrays;
-
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
@@ -250,7 +248,6 @@ public class TweetNaCl {
     private native int jniRandomBytes            (byte[] bytes);
     private native int jniCryptoBoxKeyPair       (byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBox              (byte[] ciphertext, byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
-    private native int jniCryptoBoxX             (byte[] ciphertext, byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native int jniCryptoBoxOpen          (byte[] message,    byte[] ciphertext, byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native int jniCryptoBoxBeforeNM      (byte[] key,        byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBoxAfterNM       (byte[] ciphertext, byte[] message,    byte[] nonce, byte[] key);
@@ -394,7 +391,8 @@ public class TweetNaCl {
      * Wrapper function for <code>crypto_box</code>.
      * <p>
      * Encrypts and authenticates the <code>message</code> using the <code>secretKey</code>, 
-     * <code>publicKey</code> and <code>nonce</code>.
+     * <code>publicKey</code> and <code>nonce</code>. The zero padding required by 
+     * <code>crypto_box</code> is added internally.
      *  
      * @param message
      *            byte array containing the message to be encrypted. May not be
@@ -428,26 +426,6 @@ public class TweetNaCl {
     public byte[] cryptoBox(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
         // ... validate
 
-        validatez(message,  "message",  BOX_ZEROBYTES);
-        validate (nonce,    "nonce",    BOX_NONCEBYTES);
-        validate (publicKey,"publicKey",BOX_PUBLICKEYBYTES);
-        validate (secretKey,"secretKey",BOX_SECRETKEYBYTES);
-
-        // ... encrypt
-
-        byte[] ciphertext = new byte[message.length];
-        int    rc;
-
-        if ((rc = jniCryptoBox(ciphertext, message, nonce, publicKey, secretKey)) != 0) {
-            throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
-        }
-
-        return ciphertext;
-    }
-
-    public byte[] cryptoBoxX(final byte[] message, final byte[] nonce, byte[] publicKey, byte[] secretKey) throws EncryptException {
-        // ... validate
-
         validate(message,  "message");
         validate(nonce,    "nonce",    BOX_NONCEBYTES);
         validate(publicKey,"publicKey",BOX_PUBLICKEYBYTES);
@@ -455,20 +433,13 @@ public class TweetNaCl {
 
         // ... encrypt
 
-        byte[] m          = new byte[message.length + BOX_ZEROBYTES];
-        byte[] c          = new byte[message.length + BOX_ZEROBYTES];
         byte[] ciphertext = new byte[message.length + BOX_ZEROBYTES - BOX_BOXZEROBYTES];
         int    rc;
 
-        Arrays.fill     (m,0,BOX_ZEROBYTES,(byte) 0x00);
-        System.arraycopy(message,0,m,BOX_ZEROBYTES,message.length);
-        
-        if ((rc = jniCryptoBoxX(c, m, nonce, publicKey, secretKey)) != 0) {
+        if ((rc = jniCryptoBox(ciphertext, message, nonce, publicKey, secretKey)) != 0) {
             throw new EncryptException("Error encrypting message [" + Integer.toString(rc) + "]");
         }
 
-        System.arraycopy(c,BOX_BOXZEROBYTES,ciphertext,0,ciphertext.length);
-        
         return ciphertext;
     }
     
