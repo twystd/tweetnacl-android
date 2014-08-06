@@ -255,12 +255,10 @@ private static final byte[] MESSAGE = { (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (
      * 
      */
     public void testCryptoBoxAfterNM() throws Exception {
-        byte[] key        = tweetnacl.cryptoBoxBeforeNM(BOBPK, ALICESK);
-        byte[] ciphertext = tweetnacl.cryptoBoxAfterNM(MESSAGEX, NONCE, key);
+        byte[] key        = tweetnacl.cryptoBoxBeforeNM(BOBPK,  ALICESK);
+        byte[] ciphertext = tweetnacl.cryptoBoxAfterNM (MESSAGE,NONCE,key);
 
-        for (int i = 16; i < CIPHERTEXTX.length; i++) {
-            assertEquals("Invalid byte " + i, (int) (CIPHERTEXTX[i] & 0x00ff), (int) (ciphertext[i] & 0x00ff));
-        }
+        assertTrue("Invalid ciphertext", Arrays.equals(CIPHERTEXT,ciphertext));
     }
 
     /**

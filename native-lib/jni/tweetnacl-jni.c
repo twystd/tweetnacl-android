@@ -187,26 +187,34 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
  *
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray key) {
-	jboolean copied[2];
-	int      rc = -2;
-	int      N  = (*env)->GetArrayLength(env,message);
-	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
-	u8       n[crypto_box_NONCEBYTES];
-	u8       k[crypto_box_BEFORENMBYTES];
+	int rc   = -2;
+	int mlen = (*env)->GetArrayLength(env,message);
+	int clen = (*env)->GetArrayLength(env,ciphertext);
+	int N    = mlen + crypto_box_ZEROBYTES;
+	u8 *m    = (u8 *) malloc(N);
+	u8 *c    = (u8 *) malloc(N);
+	u8  n[crypto_box_NONCEBYTES];
+	u8  k[crypto_box_BEFORENMBYTES];
 
 	if (m && c) {
-		(*env)->GetByteArrayRegion(env,nonce,0,crypto_box_NONCEBYTES,   n);
-		(*env)->GetByteArrayRegion(env,key,  0,crypto_box_BEFORENMBYTES,k);
+		memset(m,0,crypto_box_ZEROBYTES);
 
-		rc = crypto_box_afternm(c,m,N,n,k);
+	    (*env)->GetByteArrayRegion(env,message,0,mlen,&m[crypto_box_ZEROBYTES]);
+		(*env)->GetByteArrayRegion(env,nonce,  0,crypto_box_NONCEBYTES,   n);
+		(*env)->GetByteArrayRegion(env,key,    0,crypto_box_BEFORENMBYTES,k);
+
+		if ((rc = crypto_box_afternm(c,m,N,n,k)) == 0) {
+			(*env)->SetByteArrayRegion(env,ciphertext,0,clen,&c[crypto_box_BOXZEROBYTES]);
+		}
 	}
 
-	release(env,ciphertext,c,N,rc, copied[C]);
-	release(env,message,   m,N,YES,copied[M]);
-
+	memset(m,0,N);
+	memset(c,0,N);
 	memset(n,0,crypto_box_NONCEBYTES);
 	memset(k,0,crypto_box_BEFORENMBYTES);
+
+	free(c);
+	free(m);
 
     return (jint) rc;
 }

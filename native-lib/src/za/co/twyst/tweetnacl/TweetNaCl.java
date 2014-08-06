@@ -559,6 +559,8 @@ public class TweetNaCl {
      * BOX_NONCEBYTES byte nonce and a BOX_BEFORENMBYTES byte key and generates an
      * authenticated stream cipher. The first 32 bytes of the output are used for the MAC, 
      * the rest are XOR'd with the plaintext to encrypt it.
+     * <p>
+     * The zero padding required by <code>crypto_box<_afternm/code> is added internally.
      * 
      * @param message
      *            byte array containing the message to be encrypted. May not be
@@ -595,7 +597,7 @@ public class TweetNaCl {
 
         // ... encrypt
 
-        byte[] ciphertext = new byte[message.length];
+        byte[] ciphertext = new byte[message.length + BOX_ZEROBYTES - BOX_BOXZEROBYTES];
         int    rc;
 
         if ((rc = jniCryptoBoxAfterNM(ciphertext, message, nonce, key)) != 0) {
