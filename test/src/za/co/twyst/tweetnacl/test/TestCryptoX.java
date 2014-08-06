@@ -137,35 +137,31 @@ private static final byte[] KEY = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte
     // UNIT TESTS
 
 //    public void testX() throws Exception {
-//        byte[] ciphertext = tweetnacl.cryptoBoxY(MESSAGE, NONCE, BOBPK, ALICESK);
+//        byte[] message = tweetnacl.cryptoBoxOpenX(CIPHERTEXT, NONCE, ALICEPK, BOBSK);
 //
-//        assertEquals("AAAARGH",CIPHERTEXT.length,ciphertext.length);
-//        
-//        for (int i=0; i < CIPHERTEXT.length; i++) {
-//            assertEquals("Invalid byte " + i, (int) (CIPHERTEXT[i] & 0x00ff),(int) (ciphertext[i] & 0x00ff));
-//        }
-//
-//        assertTrue("OOOPS",Arrays.equals(CIPHERTEXT,ciphertext));
+//        assertTrue("OOOPS",Arrays.equals(MESSAGE,message));
 //    }
 //
 //    public void testY() throws Exception {
 //        for (int i=0; i<1024; i++) {
-//            KeyPair bob      = tweetnacl.cryptoBoxKeyPair();
-//            KeyPair alice    = tweetnacl.cryptoBoxKeyPair();
-//            byte[]  nonce    = new byte[TweetNaCl.BOX_NONCEBYTES];
-//            byte[]  message  = new byte[random.nextInt(16384)];
-//            byte[]  messagez = new byte[TweetNaCl.BOX_ZEROBYTES + message.length];
+//            KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
+//            KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
+//            byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
+//            byte[]  message = new byte[random.nextInt(16384)];
 //            
 //            random.nextBytes(nonce);
 //            random.nextBytes(message);
 //            
-//            Arrays.fill(messagez,(byte) 0x00);
-//            System.arraycopy(message,0,messagez,TweetNaCl.BOX_ZEROBYTES,message.length);
+//            byte[] ciphertext  = tweetnacl.cryptoBox (message,nonce,bob.publicKey,alice.secretKey);
+//            byte[] ciphertextz = new byte[ciphertext.length + TweetNaCl.BOX_BOXZEROBYTES];
+//            
+//            Arrays.fill(ciphertextz,(byte) 0);
+//            System.arraycopy(ciphertext,0,ciphertextz,TweetNaCl.BOX_BOXZEROBYTES,ciphertext.length);
 //
-//            byte[] p = tweetnacl.cryptoBox (messagez,nonce,bob.publicKey,alice.secretKey);
-//            byte[] q = tweetnacl.cryptoBoxY(message, nonce,bob.publicKey,alice.secretKey);
+//            byte[] p = tweetnacl.cryptoBoxOpen (ciphertextz,nonce,alice.publicKey,bob.secretKey);
+//            byte[] q = tweetnacl.cryptoBoxOpenX(ciphertext, nonce,alice.publicKey,bob.secretKey);
 //
-//            assertTrue("OOOOPS !",Arrays.equals(Arrays.copyOfRange(p,TweetNaCl.BOX_BOXZEROBYTES,p.length),q));
+//            assertTrue("OOOOPS !",Arrays.equals(Arrays.copyOfRange(p,TweetNaCl.BOX_ZEROBYTES,p.length),q));
 //        }
 //    }
 //
@@ -178,13 +174,15 @@ private static final byte[] KEY = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte
 //            KeyPair alice    = tweetnacl.cryptoBoxKeyPair();
 //            byte[]  nonce    = new byte[TweetNaCl.BOX_NONCEBYTES];
 //            byte[]  message  = new byte[random.nextInt(16384)];
-//            byte[]  messagez = new byte[TweetNaCl.BOX_ZEROBYTES + message.length];
 //
 //            random.nextBytes(nonce);
 //            random.nextBytes(message);
+//
+//            byte[] ciphertext  = tweetnacl.cryptoBox (message,nonce,bob.publicKey,alice.secretKey);
+//            byte[] ciphertextz = new byte[ciphertext.length + TweetNaCl.BOX_BOXZEROBYTES];
 //            
-//            Arrays.fill     (messagez,(byte) 0x00);
-//            System.arraycopy(message,0,messagez,TweetNaCl.BOX_ZEROBYTES,message.length);
+//            Arrays.fill(ciphertextz,(byte) 0);
+//            System.arraycopy(ciphertext,0,ciphertextz,TweetNaCl.BOX_BOXZEROBYTES,ciphertext.length);
 //
 //            byte[] p      = new byte[0];
 //            byte[] q      = new byte[0];
@@ -195,21 +193,21 @@ private static final byte[] KEY = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte
 //            start = System.currentTimeMillis();
 //            
 //            for (int j=0; j<1024; j++) {
-//                p =  tweetnacl.cryptoBox (messagez,nonce,bob.publicKey,alice.secretKey);
+//                p = tweetnacl.cryptoBoxOpen (ciphertextz,nonce,alice.publicKey,bob.secretKey);
 //            }
 //            
 //            dt    = System.currentTimeMillis() - start;
 //            start = System.currentTimeMillis();
 //
 //            for (int j=0; j<1024; j++) {
-//                q = tweetnacl.cryptoBoxY(message,nonce,bob.publicKey,alice.secretKey);
+//                q = tweetnacl.cryptoBoxOpenX(ciphertext,nonce,alice.publicKey,bob.secretKey);
 //            }
 //
 //            dt2  = System.currentTimeMillis() - start;
 //            DT  += dt;
 //            DT2 += dt2;
 //
-//            assertTrue("OOOOPS !",Arrays.equals(Arrays.copyOfRange(p,TweetNaCl.BOX_BOXZEROBYTES,p.length),q));
+//            assertTrue("OOOOPS !",Arrays.equals(Arrays.copyOfRange(p,TweetNaCl.BOX_ZEROBYTES,p.length),q));
 //
 //            android.util.Log.i(TAG,i + " DT: " + dt + "  " + dt2 + "  " + DT + "  " + DT2 + "  " + ((double) DT - (double) DT2)/(double) DT);
 //        }

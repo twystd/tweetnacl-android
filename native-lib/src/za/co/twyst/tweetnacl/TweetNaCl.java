@@ -447,7 +447,8 @@ public class TweetNaCl {
      * Wrapper function for <code>crypto_box_open</code>.
      * <p>
      * Verifies and decrypts the <code>ciphertext</code> using the <code>secretKey</code>,
-     * <code>publicKey</code>, and <code>nonce</code>. 
+     * <code>publicKey</code>, and <code>nonce</code>. The zero padding required by 
+     * <code>crypto_box</code> is added internally.
      * 
      * @param ciphertext
      *            byte array containing the ciphertext to be decrypted
@@ -488,9 +489,9 @@ public class TweetNaCl {
 
         // ... decrypt
 
-        byte[] message = new byte[ciphertext.length];
+        byte[] message = new byte[ciphertext.length - BOX_BOXZEROBYTES];
         int    rc;
-
+        
         if ((rc = jniCryptoBoxOpen(message, ciphertext, nonce, publicKey, secretKey)) != 0) {
             throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
         }

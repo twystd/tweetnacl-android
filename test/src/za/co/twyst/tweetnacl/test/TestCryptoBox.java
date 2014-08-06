@@ -235,11 +235,9 @@ private static final byte[] MESSAGE = { (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (
      * 
      */
     public void testBox2() throws Exception {
-        byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXTX, NONCE, ALICEPK, BOBSK);
+        byte[] message = tweetnacl.cryptoBoxOpen(CIPHERTEXT, NONCE, ALICEPK, BOBSK);
 
-        for (int i = 32; i < MESSAGEX.length; i++) {
-            assertEquals("Invalid byte " + i, (int) (MESSAGEX[i] & 0x00ff), (int) (message[i] & 0x00ff));
-        }
+        assertTrue("Invalid message",Arrays.equals(MESSAGE,message));
     }
 
     /**
@@ -288,14 +286,13 @@ private static final byte[] MESSAGE = { (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (
         for (int mlen = 0; mlen < ROUNDS; ++mlen) {
             TweetNaCl.KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
             TweetNaCl.KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
-            byte[]            message = new byte[mlen + TweetNaCl.BOX_ZEROBYTES];
+            byte[]            message = new byte[mlen];
             byte[]            nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
             byte[]            ciphertext;
             byte[]            plaintext;
 
             random.nextBytes(nonce);
             random.nextBytes(message);
-            Arrays.fill(message, 0, TweetNaCl.BOX_ZEROBYTES, (byte) 0);
 
             ciphertext = tweetnacl.cryptoBox    (message,   nonce,bob.publicKey,alice.secretKey);
             plaintext  = tweetnacl.cryptoBoxOpen(ciphertext,nonce,alice.publicKey, bob.secretKey);

@@ -75,11 +75,12 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
  *  succeed a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject object,jbyteArray ciphertext,jbyteArray message,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	int rc = -2;
-	int N  = (*env)->GetArrayLength(env,message);
-	int L  = (*env)->GetArrayLength(env,ciphertext);
-	u8 *m  = (u8 *) malloc(N + crypto_box_ZEROBYTES);
-	u8 *c  = (u8 *) malloc(N + crypto_box_ZEROBYTES);
+	int rc   = -2;
+	int mlen = (*env)->GetArrayLength(env,message);
+	int clen = (*env)->GetArrayLength(env,ciphertext);
+	int N    = mlen + crypto_box_ZEROBYTES;
+	u8 *m    = (u8 *) malloc(N);
+	u8 *c    = (u8 *) malloc(N);
 	u8  n [crypto_box_NONCEBYTES];
 	u8  pk[crypto_box_PUBLICKEYBYTES];
 	u8  sk[crypto_box_SECRETKEYBYTES];
@@ -87,18 +88,18 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
 	if (m && c) {
 		memset(m,0,crypto_box_ZEROBYTES);
 
-	    (*env)->GetByteArrayRegion(env,message,   0,N,&m[crypto_box_ZEROBYTES]);
+	    (*env)->GetByteArrayRegion(env,message,   0,mlen,&m[crypto_box_ZEROBYTES]);
 	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
 	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
 	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
 
-		if ((rc = crypto_box(c,m,N+crypto_box_ZEROBYTES,n,pk,sk)) == 0) {
-			(*env)->SetByteArrayRegion(env,ciphertext,0,L,&c[crypto_box_BOXZEROBYTES]);
+		if ((rc = crypto_box(c,m,N,n,pk,sk)) == 0) {
+			(*env)->SetByteArrayRegion(env,ciphertext,0,clen,&c[crypto_box_BOXZEROBYTES]);
 		}
 	}
 
-	memset(m, 0,N + crypto_box_ZEROBYTES);
-	memset(c, 0,N + crypto_box_ZEROBYTES);
+	memset(m, 0,N);
+	memset(c, 0,N);
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
 	memset(sk,0,crypto_box_SECRETKEYBYTES);
@@ -117,29 +118,37 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
  *  a lot more often than it will fail.
  */
 jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject object,jbyteArray message,jbyteArray ciphertext,jbyteArray nonce,jbyteArray publicKey,jbyteArray secretKey) {
-	jboolean copied[2];
-	int      rc = -2;
-	int      N  = (*env)->GetArrayLength(env,ciphertext);
-	u8      *c  = (u8 *) (*env)->GetByteArrayElements(env,ciphertext,&copied[C]);
-	u8      *m  = (u8 *) (*env)->GetByteArrayElements(env,message,   &copied[M]);
-	u8       n [crypto_box_NONCEBYTES];
-	u8       pk[crypto_box_PUBLICKEYBYTES];
-	u8       sk[crypto_box_SECRETKEYBYTES];
+	int rc   = -2;
+	int clen = (*env)->GetArrayLength(env,ciphertext);
+	int mlen = (*env)->GetArrayLength(env,message);
+	int N    = clen + crypto_box_BOXZEROBYTES;
+	u8 *c    = (u8 *) malloc(N);
+	u8 *m    = (u8 *) malloc(N);
+	u8  n [crypto_box_NONCEBYTES];
+	u8  pk[crypto_box_PUBLICKEYBYTES];
+	u8  sk[crypto_box_SECRETKEYBYTES];
 
-	if (c && m) {
+	if (m && c) {
+		memset(c,0,crypto_box_BOXZEROBYTES);
+
+	    (*env)->GetByteArrayRegion(env,ciphertext,0,clen,&c[crypto_box_BOXZEROBYTES]);
 	    (*env)->GetByteArrayRegion(env,nonce,     0,crypto_box_NONCEBYTES,n);
 	    (*env)->GetByteArrayRegion(env,publicKey, 0,crypto_box_PUBLICKEYBYTES,pk);
 	    (*env)->GetByteArrayRegion(env,secretKey, 0,crypto_box_SECRETKEYBYTES,sk);
 
-		rc = crypto_box_open(m,c,N,n,pk,sk);
+		if ((rc = crypto_box_open(m,c,N,n,pk,sk)) == 0) {
+			(*env)->SetByteArrayRegion(env,message,0,mlen,&m[crypto_box_ZEROBYTES]);
+		}
 	}
 
-	release(env,message,   m,N,rc, copied[M]);
-	release(env,ciphertext,c,N,YES,copied[C]);
-
+	memset(c, 0,N);
+	memset(m, 0,N);
 	memset(n, 0,crypto_box_NONCEBYTES);
 	memset(pk,0,crypto_box_PUBLICKEYBYTES);
 	memset(sk,0,crypto_box_SECRETKEYBYTES);
+
+	free(m);
+	free(c);
 
     return (jint) rc;
 }
