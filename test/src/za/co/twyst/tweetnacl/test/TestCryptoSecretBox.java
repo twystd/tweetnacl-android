@@ -16,15 +16,7 @@ public class TestCryptoSecretBox extends TweetNaClTest {
      * 
      */
     public void testCryptoSecretBox() throws Exception {
-        final byte[] plaintext = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5,
+        final byte[] plaintext = { (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5,
                                    (byte) 0x3c, (byte) 0x81, (byte) 0xf2, (byte) 0xd5,
                                    (byte) 0xcf, (byte) 0x14, (byte) 0x13, (byte) 0x16,
                                    (byte) 0xeb, (byte) 0xeb, (byte) 0x0c, (byte) 0x7b,
@@ -58,11 +50,7 @@ public class TestCryptoSecretBox extends TweetNaClTest {
                                    (byte) 0x76, (byte) 0x38, (byte) 0x48, (byte) 0x64,
                                    (byte) 0x5e, (byte) 0x07, (byte) 0x05 };
 
-        final byte[] crypttext = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0xf3, (byte) 0xff, (byte) 0xc7, (byte) 0x70,
+        final byte[] crypttext = { (byte) 0xf3, (byte) 0xff, (byte) 0xc7, (byte) 0x70,
                                    (byte) 0x3f, (byte) 0x94, (byte) 0x00, (byte) 0xe5,
                                    (byte) 0x2a, (byte) 0x7d, (byte) 0xfb, (byte) 0x4b,
                                    (byte) 0x3d, (byte) 0x33, (byte) 0x05, (byte) 0xd9,
@@ -235,19 +223,18 @@ public class TestCryptoSecretBox extends TweetNaClTest {
         Random random = new Random();
 
         for (int mlen = 0; mlen < ROUNDS; ++mlen) {
-            byte[] key = new byte[TweetNaCl.SECRETBOX_KEYBYTES];
-            byte[] nonce = new byte[TweetNaCl.SECRETBOX_NONCEBYTES];
-            byte[] message = new byte[mlen + TweetNaCl.SECRETBOX_ZEROBYTES];
+            byte[] key     = new byte[TweetNaCl.SECRETBOX_KEYBYTES];
+            byte[] nonce   = new byte[TweetNaCl.SECRETBOX_NONCEBYTES];
+            byte[] message = new byte[mlen];
             byte[] ciphertext;
             byte[] plaintext;
 
             random.nextBytes(key);
             random.nextBytes(nonce);
             random.nextBytes(message);
-            Arrays.fill(message, 0, TweetNaCl.SECRETBOX_ZEROBYTES, (byte) 0);
 
-            ciphertext = tweetnacl.cryptoSecretBox(message, nonce, key);
-            plaintext = tweetnacl.cryptoSecretBoxOpen(ciphertext, nonce, key);
+            ciphertext = tweetnacl.cryptoSecretBox    (message, nonce, key);
+            plaintext  = tweetnacl.cryptoSecretBoxOpen(ciphertext, nonce, key);
 
             assertTrue("Bad decryption", Arrays.equals(message, plaintext));
         }
@@ -263,7 +250,7 @@ public class TestCryptoSecretBox extends TweetNaClTest {
         for (int mlen = 0; mlen < ROUNDS; ++mlen) {
             byte[] key = new byte[TweetNaCl.SECRETBOX_KEYBYTES];
             byte[] nonce = new byte[TweetNaCl.SECRETBOX_NONCEBYTES];
-            byte[] message = new byte[mlen + TweetNaCl.SECRETBOX_ZEROBYTES];
+            byte[] message = new byte[mlen];
             byte[] ciphertext;
             byte[] plaintext;
             int caught = 0;
@@ -271,7 +258,6 @@ public class TestCryptoSecretBox extends TweetNaClTest {
             random.nextBytes(key);
             random.nextBytes(nonce);
             random.nextBytes(message);
-            Arrays.fill(message, 0, TweetNaCl.BOX_ZEROBYTES, (byte) 0);
 
             ciphertext = tweetnacl.cryptoSecretBox(message, nonce, key);
 

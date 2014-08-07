@@ -1020,7 +1020,8 @@ public class TweetNaCl {
     /**
      * Wrapper function for <code>crypto_secretbox</code>.
      * <p>
-     * Encrypts and authenticates a message using the supplied secret key and nonce.
+     * Encrypts and authenticates a message using the supplied secret key and nonce. The 
+     * zero padding required by <code>crypto_secretbox</code> is added internally.
      * 
      * @param message
      *          message to be encrypted and authenticated
@@ -1055,8 +1056,8 @@ public class TweetNaCl {
         validate(key,    "key",  SECRETBOX_KEYBYTES);
 
         // ... invoke
-
-        byte[] ciphertext = new byte[message.length];
+        
+        byte[] ciphertext = new byte[message.length + SECRETBOX_BOXZEROBYTES];
         int rc;
 
         if ((rc = jniCryptoSecretBox(ciphertext, message, nonce, key)) != 0) {
@@ -1065,7 +1066,7 @@ public class TweetNaCl {
 
         return ciphertext;
     }
-
+    
     /**
      * Wrapper function for <code>crypto_secretbox_open</code>.
      * <p>
