@@ -252,7 +252,6 @@ public class TweetNaCl {
     private native int jniCryptoBoxBeforeNM      (byte[] key,        byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBoxAfterNM       (byte[] ciphertext, byte[] message,    byte[] nonce, byte[] key);
     private native int jniCryptoBoxOpenAfterNM   (byte[] ciphertext, byte[] message,    byte[] nonce, byte[] key);
-    private native int jniCryptoBoxOpenAfterNM2  (byte[] ciphertext, byte[] message,    byte[] nonce, byte[] key);
     private native int jniCryptoCoreHSalsa20     (byte[] out,        byte[] in,         byte[] key,   byte[] constant);
     private native int jniCryptoCoreSalsa20      (byte[] out,        byte[] in,         byte[] key,   byte[] constant);
     private native int jniCryptoHash             (byte[] hash,       byte[] message);
@@ -448,7 +447,7 @@ public class TweetNaCl {
      * <p>
      * Verifies and decrypts the <code>ciphertext</code> using the <code>secretKey</code>,
      * <code>publicKey</code>, and <code>nonce</code>. The zero padding required by 
-     * <code>crypto_box</code> is added internally.
+     * <code>crypto_box_open</code> is added internally.
      * 
      * @param ciphertext
      *            byte array containing the ciphertext to be decrypted
@@ -559,8 +558,9 @@ public class TweetNaCl {
      * BOX_NONCEBYTES byte nonce and a BOX_BEFORENMBYTES byte key and generates an
      * authenticated stream cipher. The first 32 bytes of the output are used for the MAC, 
      * the rest are XOR'd with the plaintext to encrypt it.
-     * <p>
-     * The zero padding required by <code>crypto_box<_afternm/code> is added internally.
+     * </p><p>
+     * The zero padding required by <code>crypto_box_afternm</code> is added internally.
+     * </p>
      * 
      * @param message
      *            byte array containing the message to be encrypted. May not be
@@ -574,7 +574,7 @@ public class TweetNaCl {
      * 
      * @return Byte array with the encrypted message.
      * 
-     * @throws Exception
+     * @throws EncryptException
      *             Thrown if the wrapped <code>crypto_box_afternm</code> returns anything other 
      *             than 0.
      * 
@@ -614,6 +614,8 @@ public class TweetNaCl {
      * takes a BOX_NONCEBYTES byte nonce and a BOX_BEFORENMBYTES byte key and generates an
      * authenticated stream cipher. The first 32 bytes of the output are used for the MAC, 
      * the rest are XOR'd with the ciphertext to decrypt it.
+     * <p>
+     * The zero padding required by <code>crypto_box_open_afternm</code> is added internally.
      * 
      * @param ciphertext
      *            byte array containing the encrypted message to be encrypted.
@@ -626,8 +628,8 @@ public class TweetNaCl {
      * 
      * @return Byte array with the encrypted message.
      * 
-     * @throws Exception
-     *             Thrown if the wrapped <code>crypto_box_afternm</code> returns anything other 
+     * @throws DecryptException
+     *             Thrown if the wrapped <code>crypto_box_open_afternm</code> returns anything other 
      *             than 0.
      * 
      * @throws IllegalArgumentException
@@ -649,7 +651,7 @@ public class TweetNaCl {
 
         // ... decrypt
 
-        byte[] message = new byte[ciphertext.length];
+        byte[] message = new byte[ciphertext.length - BOX_BOXZEROBYTES];
         int    rc;
 
         if ((rc = jniCryptoBoxOpenAfterNM(message, ciphertext, nonce, key)) != 0) {
@@ -658,7 +660,7 @@ public class TweetNaCl {
 
         return message;
     }
-    
+
     /**
      * Wrapper function for <code>crypto_core_hsalsa20</code>.
      * <p>
@@ -781,7 +783,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/hash.html">http://nacl.cr.yp.to/hash.html</a>
      */
-    public byte[] cryptoHash(final byte[] message) throws EncryptException {
+    public byte[] cryptoHash(final byte[] message) throws Exception {
         // ... validate
 
         validate(message,"message");
@@ -792,7 +794,7 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoHash(hash, message)) != 0) {
-            throw new EncryptException("Error calculating message hash [" + Integer.toString(rc) + "]");
+            throw new Exception("Error calculating message hash [" + Integer.toString(rc) + "]");
         }
 
         return hash;
@@ -808,8 +810,10 @@ public class TweetNaCl {
      *          current hash 'state'. Seemingly initialised to the initialisation vector for the first
      *          block in a stream and thereafter the 'state' returned from a previous call to crypto_hash_blocks.
      * 
-     * @return block
+     * @param blocks
      *          byte array with length a multiple of HASHBLOCKS_BLOCKBYTES to add to the hash.
+     * 
+     * @return HASHBLOCKS_STATEBYTES byte array with the message hash.
      * 
      * @throws Exception
      *             Thrown if the wrapped <code>crypto_hash_blocks</code> returns anything other 
@@ -827,8 +831,8 @@ public class TweetNaCl {
     public byte[] cryptoHashBlocks(final byte[] state, final byte[] blocks) throws Exception {
         // ... validate
 
-        validate (state,"state", HASHBLOCKS_STATEBYTES);
-        validatem(blocks,"block",HASHBLOCKS_BLOCKBYTES);
+        validate (state,"state",  HASHBLOCKS_STATEBYTES);
+        validatem(blocks,"blocks",HASHBLOCKS_BLOCKBYTES);
 
         // ... invoke
 
@@ -1029,7 +1033,7 @@ public class TweetNaCl {
      *          
      * @return ciphertext with prepended message authenticator
      * 
-     * @throws Exception
+     * @throws EncryptException
      *             Thrown if the wrapped <code>crypto_secretbox</code> returns anything other 
      *             than 0.
      * 
@@ -1078,7 +1082,7 @@ public class TweetNaCl {
      *          
      * @return decrypted message
      * 
-     * @throws Exception
+     * @throws DecryptException
      *             Thrown if the wrapped <code>crypto_secretbox_open</code> returns anything other 
      *             than 0.
      * 
@@ -1182,7 +1186,7 @@ public class TweetNaCl {
      *          
      * @return ciphertext
      * 
-     * @throws Exception
+     * @throws EncryptException
      *             Thrown if the wrapped <code>crypto_stream_xor</code> returns anything other 
      *             than 0.
      * 
@@ -1232,7 +1236,7 @@ public class TweetNaCl {
      *          
      * @return 'stream' byte array
      * 
-     * @throws Exception
+     * @throws EncryptException
      *             Thrown if the wrapped <code>crypto_stream_salsa20</code> returns anything other 
      *             than 0.
      * 
@@ -1286,7 +1290,7 @@ public class TweetNaCl {
      *          
      * @return ciphertext
      * 
-     * @throws Exception
+     * @throws EncryptException
      *             Thrown if the wrapped <code>crypto_stream_salsa20_xor</code> returns anything other 
      *             than 0.
      * 
@@ -1300,7 +1304,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/stream.html</a>
      */
-    public byte[] cryptoStreamSalsa20Xor(final byte[] message, final byte[] nonce, final byte[] key)throws EncryptException {
+    public byte[] cryptoStreamSalsa20Xor(final byte[] message, final byte[] nonce, final byte[] key) throws EncryptException {
         // ... validate
 
         validate(message,"message");
