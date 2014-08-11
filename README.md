@@ -57,16 +57,16 @@ Notes
 References
 ----------
 
-1. [TweetNaCl][tweetnacl]
-2. [TweetNaCl: A crypto library in 100 tweets] [tweetnacl-pdf]
-3. [Cryptography in NaCl] [nacl-pdf]
-4. [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
-5. [NaCl: Cryptography for the Internet][slides]
-6. [On NaCl: Undefined Behaviour][ciawof]
-7. [Safe, Efficient, and Portable Rotate in C/C++][regehr]
-8. [StackOveflow:Is there a replacement for /dev/random on Android JNI][stackoverflow]
-9. [Issue 42265:Android empties the entropy pool, resulting in blocking, user perceived lag/poor performance][issue]
-10.[Android Developer's Blog:Some SecureRandom Thoughts][android]
+1.  [TweetNaCl][tweetnacl]
+2.  [TweetNaCl: A crypto library in 100 tweets] [tweetnacl-pdf]
+3.  [Cryptography in NaCl] [nacl-pdf]
+4.  [TweetNaCl: How cr.yp.to’s developers got carried away by the carry bit][carrybitbug]
+5.  [NaCl: Cryptography for the Internet][slides]
+6.  [On NaCl: Undefined Behaviour][ciawof]
+7.  [Safe, Efficient, and Portable Rotate in C/C++][regehr]
+8.  [StackOveflow:Is there a replacement for /dev/random on Android JNI][stackoverflow]
+9.  [Issue 42265:Android empties the entropy pool, resulting in blocking, user perceived lag/poor performance][issue]
+10. [Android Developer's Blog:Some SecureRandom Thoughts][android]
 
 
 [tweetnacl]:     http://tweetnacl.cr.yp.to
