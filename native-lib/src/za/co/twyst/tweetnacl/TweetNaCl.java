@@ -1070,7 +1070,8 @@ public class TweetNaCl {
     /**
      * Wrapper function for <code>crypto_secretbox_open</code>.
      * <p>
-     * Verifies and decrypts the ciphertext using the supplied secret key and nonce.
+     * Verifies and decrypts the ciphertext using the supplied secret key and nonce. The 
+     * zero padding required by <code>crypto_secretbox</code> is added internally.
      * 
      * @param ciphertext
      *          encrypted message to be verified and decrypted
@@ -1106,14 +1107,14 @@ public class TweetNaCl {
 
         // ... invoke
 
-        byte[] plaintext = new byte[ciphertext.length];
-        int rc;
+        byte[] message = new byte[ciphertext.length - SECRETBOX_BOXZEROBYTES];
+        int    rc;
 
-        if ((rc = jniCryptoSecretBoxOpen(plaintext, ciphertext, nonce, key)) != 0) {
+        if ((rc = jniCryptoSecretBoxOpen(message, ciphertext, nonce, key)) != 0) {
             throw new DecryptException("Error decrypting message [" + Integer.toString(rc) + "]");
         }
 
-        return plaintext;
+        return message;
     }
 
     /**

@@ -112,15 +112,7 @@ public class TestCryptoSecretBox extends TweetNaClTest {
      * 
      */
     public void testCryptoSecretBoxOpen() throws Exception {
-        final byte[] plaintext = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                   (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5,
+        final byte[] plaintext = { (byte) 0xbe, (byte) 0x07, (byte) 0x5f, (byte) 0xc5,
                                    (byte) 0x3c, (byte) 0x81, (byte) 0xf2, (byte) 0xd5,
                                    (byte) 0xcf, (byte) 0x14, (byte) 0x13, (byte) 0x16,
                                    (byte) 0xeb, (byte) 0xeb, (byte) 0x0c, (byte) 0x7b,
@@ -154,11 +146,7 @@ public class TestCryptoSecretBox extends TweetNaClTest {
                                    (byte) 0x76, (byte) 0x38, (byte) 0x48, (byte) 0x64,
                                    (byte) 0x5e, (byte) 0x07, (byte) 0x05 };
 
-        final byte[] ciphertext = { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                                    (byte) 0xf3, (byte) 0xff, (byte) 0xc7, (byte) 0x70,
+        final byte[] ciphertext = { (byte) 0xf3, (byte) 0xff, (byte) 0xc7, (byte) 0x70,
                                     (byte) 0x3f, (byte) 0x94, (byte) 0x00, (byte) 0xe5,
                                     (byte) 0x2a, (byte) 0x7d, (byte) 0xfb, (byte) 0x4b,
                                     (byte) 0x3d, (byte) 0x33, (byte) 0x05, (byte) 0xd9,
