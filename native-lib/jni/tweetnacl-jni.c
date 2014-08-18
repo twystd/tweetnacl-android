@@ -30,23 +30,6 @@ void release(JNIEnv *env,jbyteArray jbytes,u8 *bytes,u64 N,int discard,jboolean 
 	}
 }
 
-/** jniRandomBytes
- *
- */
-void Java_za_co_twyst_tweetnacl_TweetNaCl_jniRandomBytes(JNIEnv *env,jobject object,jbyteArray bytes) {
-     int  N = (*env)->GetArrayLength(env,bytes);
- 	 u64  l = (u64) N;
- 	 u8  *b = (u8 *) malloc(N);
- 	 int  i;
-
-	 randombytes(b,l);
-
-     (*env)->SetByteArrayRegion(env,bytes,0,N,b);
-
-     memset(b,0,N);
-     free  (b);
-}
-
 /** jniCryptoBoxKeyPair
  *
  */

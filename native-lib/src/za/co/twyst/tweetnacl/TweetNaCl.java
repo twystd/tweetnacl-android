@@ -28,8 +28,12 @@
 
 package za.co.twyst.tweetnacl;
 
+import za.co.twyst.tweetnacl.exceptions.AuthException;
 import za.co.twyst.tweetnacl.exceptions.DecryptException;
 import za.co.twyst.tweetnacl.exceptions.EncryptException;
+import za.co.twyst.tweetnacl.exceptions.HashException;
+import za.co.twyst.tweetnacl.exceptions.KeyPairException;
+import za.co.twyst.tweetnacl.exceptions.SignException;
 import za.co.twyst.tweetnacl.exceptions.VerifyException;
 
 /**
@@ -245,7 +249,6 @@ public class TweetNaCl {
 
     // NATIVE METHODS
  
-    private native int jniRandomBytes            (byte[] bytes);
     private native int jniCryptoBoxKeyPair       (byte[] publicKey,  byte[] secretKey);
     private native int jniCryptoBox              (byte[] ciphertext, byte[] message,    byte[] nonce,byte[] publicKey,byte[] secretKey);
     private native int jniCryptoBoxOpen          (byte[] message,    byte[] ciphertext, byte[] nonce,byte[] publicKey,byte[] secretKey);
@@ -344,29 +347,6 @@ public class TweetNaCl {
     }
 
     /**
-     * Wrapper function for <code>randombytes</code>.
-     * <p>
-     * The <code>randombytes</code> function is not part of the TweetNaCl API
-     * but is exposed here for test purposes.
-     * <p>
-     * 
-     * @param bytes
-     *            byte array to fill with random bytes.
-     * 
-     * @throws IllegalArgumentException
-     *             Thrown if <code>bytes</code> is <code>null</code>.
-     */
-    public void randomBytes(final byte[] bytes) {
-        // ... validate
-
-        validate(bytes,"bytes");
-
-        // ... fill with random bytes
-
-        jniRandomBytes(bytes);
-    }
-
-    /**
      * Wrapper function for crypto_box_keypair.
      * <p>
      * Randomly generates a secret key and a corresponding public key. It
@@ -375,13 +355,20 @@ public class TweetNaCl {
      * 
      * @return KeyPair initialised with a crypto_box public/private key pair.
      * 
+     * @throws KeyPairException
+     *             Thrown if the wrapped <code>crypto_box_keypair</code> function returns anything 
+     *             other than 0.
+     * 
      * @see <a href="http://nacl.cr.yp.to/box.html">http://nacl.cr.yp.to/box.html</a>
      */
-    public KeyPair cryptoBoxKeyPair() {
+    public KeyPair cryptoBoxKeyPair() throws KeyPairException {
         byte[] publicKey = new byte[BOX_PUBLICKEYBYTES];
         byte[] secretKey = new byte[BOX_SECRETKEYBYTES];
+        int    rc;
 
-        jniCryptoBoxKeyPair(publicKey, secretKey);
+        if ((rc = jniCryptoBoxKeyPair(publicKey, secretKey)) != 0) {
+            throw new KeyPairException("Error generating key pair [" + Integer.toString(rc) + "]");
+        }
 
         return new KeyPair(publicKey, secretKey);
     }
@@ -771,7 +758,7 @@ public class TweetNaCl {
      * 
      * @return HASH_BYTES byte array with the message hash.
      * 
-     * @throws Exception
+     * @throws HashException
      *             Thrown if the wrapped <code>crypto_hash</code> returns anything other 
      *             than 0.
      * 
@@ -783,7 +770,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/hash.html">http://nacl.cr.yp.to/hash.html</a>
      */
-    public byte[] cryptoHash(final byte[] message) throws Exception {
+    public byte[] cryptoHash(final byte[] message) throws HashException {
         // ... validate
 
         validate(message,"message");
@@ -794,7 +781,7 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoHash(hash, message)) != 0) {
-            throw new Exception("Error calculating message hash [" + Integer.toString(rc) + "]");
+            throw new HashException("Error calculating message hash [" + Integer.toString(rc) + "]");
         }
 
         return hash;
@@ -815,7 +802,7 @@ public class TweetNaCl {
      * 
      * @return HASHBLOCKS_STATEBYTES byte array with the message hash.
      * 
-     * @throws Exception
+     * @throws HashException
      *             Thrown if the wrapped <code>crypto_hash_blocks</code> returns anything other 
      *             than 0.
      * 
@@ -828,7 +815,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/hash.html">http://nacl.cr.yp.to/hash.html</a>
      */
-    public byte[] cryptoHashBlocks(final byte[] state, final byte[] blocks) throws Exception {
+    public byte[] cryptoHashBlocks(final byte[] state, final byte[] blocks) throws HashException {
         // ... validate
 
         validate (state,"state",  HASHBLOCKS_STATEBYTES);
@@ -840,7 +827,7 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoHashBlocks(hash,blocks)) != 0) {
-            throw new Exception("Error calculating message hash [" + Integer.toString(rc) + "]");
+            throw new HashException("Error calculating message hash [" + Integer.toString(rc) + "]");
         }
 
         return hash;
@@ -859,7 +846,7 @@ public class TweetNaCl {
      * 
      * @return ONETIMEAUTH_BYTES bytes array containing the authenticator for the message.
      * 
-     * @throws Exception
+     * @throws AuthException
      *             Thrown if the wrapped <code>crypto_onetimeauth</code> returns anything other 
      *             than 0.
      * 
@@ -872,7 +859,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/onetimeauth.html</a>
      */
-    public byte[] cryptoOneTimeAuth(final byte[] message, final byte[] key) throws Exception {
+    public byte[] cryptoOneTimeAuth(final byte[] message, final byte[] key) throws AuthException {
         // ... validate
 
         validate(message,"message");
@@ -884,7 +871,7 @@ public class TweetNaCl {
         int    rc;
 
         if ((rc = jniCryptoOneTimeAuth(authorisation, message, key)) != 0) {
-            throw new Exception("Error calculating one time auth [" + Integer.toString(rc) + "]");
+            throw new AuthException("Error calculating one time auth [" + Integer.toString(rc) + "]");
         }
 
         return authorisation;
@@ -1331,7 +1318,7 @@ public class TweetNaCl {
      * 
      * @return Signing key pair
      * 
-     * @throws Exception
+     * @throws KeyPairException
      *             Thrown if the wrapped <code>crypto_sign_keypair</code> returns anything other 
      *             than 0.
      * 
@@ -1343,7 +1330,7 @@ public class TweetNaCl {
         int rc;
 
         if ((rc = jniCryptoSignKeyPair(publicKey, secretKey)) != 0) {
-            throw new Exception("Error generating signing keypair [" + Integer.toString(rc) + "]");
+            throw new KeyPairException("Error generating signing keypair [" + Integer.toString(rc) + "]");
         }
 
         return new KeyPair(publicKey, secretKey);
@@ -1362,7 +1349,7 @@ public class TweetNaCl {
      *          
      * @return signed message
      * 
-     * @throws Exception
+     * @throws SignException
      *             Thrown if the wrapped <code>crypto_sign</code> returns anything other 
      *             than 0.
      * 
@@ -1375,7 +1362,7 @@ public class TweetNaCl {
      * 
      * @see <a href="http://nacl.cr.yp.to/onetimeauth.html">http://nacl.cr.yp.to/sign.html</a>
      */
-    public byte[] cryptoSign(final byte[] message, byte[] key) throws Exception {
+    public byte[] cryptoSign(final byte[] message, byte[] key) throws SignException {
         // ... validate
 
         validate(message,"message");
@@ -1387,7 +1374,7 @@ public class TweetNaCl {
         int rc;
 
         if ((rc = jniCryptoSign(signed, message, key)) != 0) {
-            throw new Exception("Error signing message [" + Integer.toString(rc) + "]");
+            throw new SignException("Error signing message [" + Integer.toString(rc) + "]");
         }
 
         return signed;
