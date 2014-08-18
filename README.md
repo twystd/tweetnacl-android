@@ -1,4 +1,4 @@
-tweetnacl-android: version 0.0
+tweetnacl-android: version 0.5
 
 # TweetNaCl - Android NDK port
 

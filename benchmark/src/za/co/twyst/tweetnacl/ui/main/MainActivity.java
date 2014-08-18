@@ -1,13 +1,11 @@
-package za.co.twyst.tweetnacl;
+package za.co.twyst.tweetnacl.ui.main;
 
+import za.co.twyst.tweetnacl.R;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 public class MainActivity extends ActionBarActivity 
        { // CONSTANTS
@@ -29,7 +27,7 @@ public class MainActivity extends ActionBarActivity
 
 	                 if (state == null) 
 	                    { getSupportFragmentManager().beginTransaction()
-	                                                 .add(R.id.container, new PlaceholderFragment())
+	                                                 .add(R.id.container, new MainMenuFragment())
 	                                                 .commit();
 	                    }
 	               }
@@ -52,19 +50,10 @@ public class MainActivity extends ActionBarActivity
 		
 	              return super.onOptionsItemSelected(item);
 	            }
-
-	     // HANDLERS
-         
-	     // INNER CLASSES
-
-	     public static class PlaceholderFragment extends Fragment 
-	            { public PlaceholderFragment() 
-	                     {
-	                     }
-
-	              @Override
-	              public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle state) 
-	                     { return inflater.inflate(R.layout.fragment_main,container,false);
-	                     }
-	            }
+	     
+	     // EVENT HANDLERS
+	     
+	     public void onCryptoBox(View view) {
+	         
+	     }
        }
