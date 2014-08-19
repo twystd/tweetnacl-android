@@ -1,10 +1,12 @@
 package za.co.twyst.tweetnacl.ui.main;
 
-import za.co.twyst.tweetnacl.R;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import za.co.twyst.tweetnacl.R;
 
 public class MainActivity extends ActionBarActivity 
        { // CONSTANTS
@@ -24,9 +26,15 @@ public class MainActivity extends ActionBarActivity
 		
 	                 setContentView(R.layout.activity_mainx);
 	                 
-	                 MainMenuFragment fragment = (MainMenuFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+	                 MainMenuFragment menu    = (MainMenuFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+	                 Fragment         summary = new SummaryFragment();
 
-	                 fragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
+	                 menu.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
+	                 
+	                 getSupportFragmentManager().beginTransaction()
+	                                            .replace(R.id.container,summary)
+	                                            .commit();
+
 	               }
 
 	     // EVENT HANDLERS
