@@ -1,6 +1,7 @@
 package za.co.twyst.tweetnacl.ui.main;
 
 import za.co.twyst.tweetnacl.R;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,13 +22,11 @@ public class MainActivity extends ActionBarActivity
 	     protected void onCreate(Bundle state) 
 	               { super.onCreate(state);
 		
-	                 setContentView(R.layout.activity_main);
+	                 setContentView(R.layout.activity_mainx);
+	                 
+	                 MainMenuFragment fragment = (MainMenuFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
-	                 if (state == null) 
-	                    { getSupportFragmentManager().beginTransaction()
-	                                                 .add(R.id.container, new MainMenuFragment())
-	                                                 .commit();
-	                    }
+	                 fragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
 	               }
 
 	     // EVENT HANDLERS
