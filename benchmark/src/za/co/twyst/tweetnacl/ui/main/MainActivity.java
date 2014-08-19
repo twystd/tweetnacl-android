@@ -3,8 +3,6 @@ package za.co.twyst.tweetnacl.ui.main;
 import za.co.twyst.tweetnacl.R;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends ActionBarActivity 
@@ -32,28 +30,32 @@ public class MainActivity extends ActionBarActivity
 	                    }
 	               }
 
-	     @Override
-	     public boolean onCreateOptionsMenu(Menu menu) 
-	            { getMenuInflater().inflate(R.menu.main, menu);
-	             
-	              return true;
-	            }
-
-	     @Override
-	     public boolean onOptionsItemSelected(MenuItem item) 
-	            { int id = item.getItemId();
-		
-	              switch(id)
-	                    { case R.id.action_settings: 
-	                           return true;
-	                    }
-		
-	              return super.onOptionsItemSelected(item);
-	            }
-	     
 	     // EVENT HANDLERS
 	     
 	     public void onCryptoBox(View view) {
-	         
 	     }
-       }
+         
+         public void onCryptoCore(View view) {
+         }
+         
+         public void onCryptoHash(View view) {
+         }
+         
+         public void onCryptoOneTimeAuth(View view) {
+         }
+         
+         public void onCryptoScalarMult(View view) {
+         }
+         
+         public void onCryptoSecretBox(View view) {
+         }
+         
+         public void onCryptoStream(View view) {
+         }
+         
+         public void onCryptoSign(View view) {
+         }
+         
+         public void onCryptoVerify(View view) {
+         }
+}

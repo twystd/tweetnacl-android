@@ -1,16 +1,18 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
- <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
- </style>
-
- <style name="AppTheme" parent="AppBaseTheme">
- </style>
+ <style name="AppBaseTheme" parent="Theme.AppCompat.Light" />
+ <style name="AppTheme"     parent="AppBaseTheme"          />
 
  <!-- BUTTONS -->
  
  <style name="ButtonBase">
+  <item name="android:background">@drawable/button</item>    
+  <item name="android:layout_width">match_parent</item>
+  <item name="android:layout_height">wrap_content</item>
+  <item name="android:layout_marginTop">4dp</item>
+  <item name="android:layout_marginBottom">4dp</item>
   <item name="android:textSize">13sp</item>    
- </style>
+  </style>
  
  <style name="Button" parent="ButtonBase" />
  
