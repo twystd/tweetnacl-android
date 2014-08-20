@@ -6,7 +6,7 @@
  <!-- BUTTONS -->
  
  <style name="ButtonBase">
-  <item name="android:background">@drawable/button</item>    
+  <item name="android:background">#ffe0e0e0</item>    
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">wrap_content</item>
   <item name="android:layout_marginTop">4dp</item>
