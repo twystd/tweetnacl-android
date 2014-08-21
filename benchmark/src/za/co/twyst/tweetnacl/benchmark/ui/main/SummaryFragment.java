@@ -1,4 +1,4 @@
-package za.co.twyst.tweetnacl.ui.main;
+package za.co.twyst.tweetnacl.benchmark.ui.main;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import za.co.twyst.tweetnacl.R;
+import za.co.twyst.tweetnacl.benchmark.R;
 
 public class SummaryFragment extends Fragment {
 

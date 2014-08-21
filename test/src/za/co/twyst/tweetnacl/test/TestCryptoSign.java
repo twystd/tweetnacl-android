@@ -139,7 +139,7 @@ public class TestCryptoSign extends TweetNaClTest {
      */
     public void testED25519() throws Exception {
         Context        context = getContext();
-        BufferedReader reader  = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(za.co.twyst.tweetnacl.R.raw.sign)));
+        BufferedReader reader  = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(za.co.twyst.tweetnacl.benchmark.R.raw.sign)));
         String         line;
 
         try {

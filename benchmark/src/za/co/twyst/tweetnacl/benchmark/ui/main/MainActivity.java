@@ -1,4 +1,4 @@
-package za.co.twyst.tweetnacl.ui.main;
+package za.co.twyst.tweetnacl.benchmark.ui.main;
 
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import za.co.twyst.tweetnacl.R;
+import za.co.twyst.tweetnacl.benchmark.R;
 
 public class MainActivity extends ActionBarActivity 
        { // CONSTANTS
