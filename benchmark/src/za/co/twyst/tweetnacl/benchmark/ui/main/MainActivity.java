@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity
 	     protected void onCreate(Bundle state) 
 	               { super.onCreate(state);
 		
-	                 setContentView(R.layout.activity_mainx);
+	                 setContentView(R.layout.activity_main);
 	                 
                      final Fragment         summary = new SummaryFragment ();
                      final MainMenuFragment menu    = new MainMenuFragment();

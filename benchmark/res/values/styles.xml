@@ -3,6 +3,30 @@
  <style name="AppBaseTheme" parent="Theme.AppCompat.Light" />
  <style name="AppTheme"     parent="AppBaseTheme"          />
 
+ <!-- GRID -->
+ 
+ <style name="LabelBase">
+  <item name="android:layout_width">wrap_content</item> 
+  <item name="android:layout_height">wrap_content</item>
+  <item name="android:layout_marginRight">8dp</item>
+  <item name="android:textColor">#ff202020</item>
+  <item name="android:textSize">12sp</item>
+ </style>
+
+ <style name="Label" parent="LabelBase" />
+ 
+ <style name="CellBase">
+  <item name="android:background">#ffffffff</item>
+  <item name="android:layout_width">match_parent</item> 
+  <item name="android:layout_height">wrap_content</item>
+  <item name="android:padding">1dp</item>
+  <item name="android:gravity">center</item>
+  <item name="android:textColor">#ff000000</item>
+  <item name="android:textSize">12sp</item>
+ </style>
+ 
+ <style name="Cell" parent="CellBase" />
+ 
  <!-- BUTTONS -->
  
  <style name="ButtonBase">
