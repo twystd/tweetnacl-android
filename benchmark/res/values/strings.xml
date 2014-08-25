@@ -3,6 +3,8 @@
 <resources>
  <string name="application">TweetNaCl</string>
  <string name="ok">OK</string>
+ <string name="run">Run</string>
+ 
  <string name="summary">Summary</string>
  <string name="crypto_box">crypto_box</string>
  <string name="crypto_core">crypto_core</string>
@@ -13,6 +15,8 @@
  <string name="crypto_stream">crypto_stream</string>
  <string name="crypto_sign">crypto_sign</string>
  <string name="crypto_verify">crypto_verify</string>
+
+ <string name="label_ops">OPS/s:</string>
  
  <string name="tweetnacl">tweetnacl</string>
  <string name="tweetnaclz">tweetnacl/Z</string>

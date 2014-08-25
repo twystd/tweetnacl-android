@@ -22,7 +22,6 @@ public class MainActivity extends ActionBarActivity
          
          // INSTANCE VARIABLES
          
-//       private TweetNaCl tweetNaCl = new TweetNaCl();
          private DrawerLayout          drawer;
          private ActionBarDrawerToggle toggle;
     
@@ -108,6 +107,8 @@ public class MainActivity extends ActionBarActivity
              getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.content,fragment)
                                         .commit();
+             
+             drawer.closeDrawer(GravityCompat.START);
          }
 	     
 	     public void onCryptoBox(View view) {
@@ -116,6 +117,8 @@ public class MainActivity extends ActionBarActivity
 	         getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.content,fragment)
                                         .commit();
+	         
+             drawer.closeDrawer(GravityCompat.START);
 	     }
          
          public void onCryptoCore(View view) {
