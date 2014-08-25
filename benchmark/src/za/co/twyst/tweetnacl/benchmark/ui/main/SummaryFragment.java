@@ -23,8 +23,20 @@ public class SummaryFragment extends Fragment {
                                            R.string.crypto_verify
                                          };
     
-    private static final int[] COLUMNS = { R.string.tweetnacl, R.string.tweetnaclz };
+    private static final int[] COLUMNS = { R.string.tweetnacl, 
+                                           // R.string.tweetnaclz 
+                                         };
 
+    // CLASS METHODS
+    
+    /** Factory constructor for SummaryFragment that ensures correct fragment
+     *  initialisation.
+     *  
+     * @return Initialised SummaryFragment or <code>null</code>.
+     */
+    public static Fragment newFragment() {
+        return new SummaryFragment();
+    }
 
     // *** Fragment ***
     
@@ -42,5 +54,4 @@ public class SummaryFragment extends Fragment {
         
         return root;
     }
-
 }

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
 
 public class MainActivity extends ActionBarActivity 
        { // CONSTANTS
@@ -33,9 +34,9 @@ public class MainActivity extends ActionBarActivity
 		
 	                 setContentView(R.layout.activity_main);
 	                 
-                     final Fragment         summary = new SummaryFragment ();
-                     final MainMenuFragment menu    = new MainMenuFragment();
-                     final ActionBar        bar     = getSupportActionBar();
+                     final Fragment  summary = SummaryFragment.newFragment ();
+                     final Fragment  menu    = MainMenuFragment.newFragment();
+                     final ActionBar bar     = getSupportActionBar();
 
                      drawer = (DrawerLayout) findViewById(R.id.container);
                      toggle = new ActionBarDrawerToggle(this,
@@ -100,8 +101,21 @@ public class MainActivity extends ActionBarActivity
 	            }
 	     
 	     // EVENT HANDLERS
+         
+         public void onSummary(View view) {
+             Fragment fragment = SummaryFragment.newFragment();
+             
+             getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.content,fragment)
+                                        .commit();
+         }
 	     
 	     public void onCryptoBox(View view) {
+	         Fragment fragment = CryptoBoxFragment.newFragment();
+	         
+	         getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.content,fragment)
+                                        .commit();
 	     }
          
          public void onCryptoCore(View view) {
@@ -127,4 +141,16 @@ public class MainActivity extends ActionBarActivity
          
          public void onCryptoVerify(View view) {
          }
+         
+         // INTERNAL
+         
+//         @Override
+//         public void onNavigationDrawerItemSelected(int position) {
+//             // update the main content by replacing fragments
+//             FragmentManager fragmentManager = getSupportFragmentManager();
+//             fragmentManager.beginTransaction()
+//                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+//                     .commit();
+//         }
+
 }

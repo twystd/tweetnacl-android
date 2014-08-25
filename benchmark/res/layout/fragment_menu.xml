@@ -12,6 +12,11 @@
                android:layout_height="wrap_content">
  
   <Button style="@style/Button"
+          android:id="@+id/summary"
+          android:onClick="onSummary"
+          android:text="@string/summary" />
+     
+  <Button style="@style/Button"
           android:id="@+id/crypto_box"
           android:onClick="onCryptoBox"
           android:text="@string/crypto_box" />
