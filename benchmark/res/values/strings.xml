@@ -16,7 +16,9 @@
  <string name="crypto_sign">crypto_sign</string>
  <string name="crypto_verify">crypto_verify</string>
 
- <string name="label_ops">OPS/s:</string>
+ <string name="label_size">Message size:</string>
+ <string name="label_loops">Loops:</string>
+ <string name="label_ops">Throughput:</string>
  
  <string name="tweetnacl">tweetnacl</string>
  <string name="tweetnaclz">tweetnacl/Z</string>

@@ -15,16 +15,50 @@
              android:layout_above="@+id/run">
   <RelativeLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-  
-   <TextView android:id="@+id/label_ops"
+
+   <TextView android:id="@+id/label_size"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_marginRight="4dp"
              android:layout_alignParentTop="true"
              android:layout_alignParentLeft="true"
              android:singleLine="true"
+             android:text="@string/label_size" /> 
+             
+   <TextView android:id="@+id/label_loops"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginRight="4dp"
+             android:layout_below="@+id/label_size"
+             android:layout_alignParentLeft="true"
+             android:singleLine="true"
+             android:text="@string/label_loops" /> 
+   
+   <TextView android:id="@+id/label_ops"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginRight="4dp"
+             android:layout_below="@+id/label_loops"
+             android:layout_alignParentLeft="true"
+             android:singleLine="true"
              android:text="@string/label_ops" /> 
   
+   <TextView android:id="@+id/size"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignBaseline="@+id/label_size"
+             android:layout_toRightOf="@+id/label_size"
+             android:singleLine="true"
+             android:text="" /> 
+  
+   <TextView android:id="@+id/loops"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignBaseline="@+id/label_loops"
+             android:layout_toRightOf="@+id/label_loops"
+             android:singleLine="true"
+             android:text="" /> 
+   
    <TextView android:id="@+id/ops"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"

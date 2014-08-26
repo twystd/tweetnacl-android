@@ -15,6 +15,7 @@ import android.widget.TextView;
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.util.Util;
 
 public class CryptoBoxFragment extends Fragment {
     // CONSTANTS
@@ -83,7 +84,7 @@ public class CryptoBoxFragment extends Fragment {
         if (ops != null) {
             if (view != null) {
                 if ((operations = (TextView) view.findViewById(R.id.ops)) != null) {
-                    operations.setText(String.format("%.2f",ops.doubleValue()));
+                    operations.setText(String.format("%s/s",Util.format(ops.longValue(),true)));
                 }
             }
             
@@ -119,13 +120,16 @@ public class CryptoBoxFragment extends Fragment {
                 byte[]  message = new byte[16384];
                 byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
                 long    start   = System.currentTimeMillis();
+                long    bytes   = 0;
                 
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
+                    
+                      bytes += message.length;
                     }
                 
                 long   dt  = System.currentTimeMillis() - start;
-                double ops = 1000.0 * (double) loops/(double) dt;
+                double ops = 1000.0 * (double) bytes/(double) dt;
                 
                 return ops;
                 
