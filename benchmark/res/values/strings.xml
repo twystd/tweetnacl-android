@@ -18,7 +18,10 @@
 
  <string name="label_size">Message size:</string>
  <string name="label_loops">Loops:</string>
- <string name="label_ops">Throughput:</string>
+ <string name="label_current">Current:</string>
+ <string name="label_average">Average:</string>
+ <string name="label_min">Min:</string>
+ <string name="label_max">Max:</string>
  
  <string name="tweetnacl">tweetnacl</string>
  <string name="tweetnaclz">tweetnacl/Z</string>

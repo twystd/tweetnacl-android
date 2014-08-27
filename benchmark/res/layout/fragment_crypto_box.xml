@@ -11,7 +11,7 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content">
  
-  <Button style="@style/Button"
+  <Button style="@style/RunButton"
           android:id="@+id/ok"
           android:onClick="onOk"
           android:text="@string/ok" />

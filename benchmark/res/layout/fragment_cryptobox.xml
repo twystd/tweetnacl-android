@@ -15,58 +15,95 @@
              android:layout_above="@+id/run">
   <RelativeLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-
-   <TextView android:id="@+id/label_size"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginRight="4dp"
-             android:layout_alignParentTop="true"
+      
+   <!-- MESSAGE SIZE -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_size"
+             android:layout_alignBaseline="@+id/size"
              android:layout_alignParentLeft="true"
-             android:singleLine="true"
              android:text="@string/label_size" /> 
-             
-   <TextView android:id="@+id/label_loops"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginRight="4dp"
-             android:layout_below="@+id/label_size"
-             android:layout_alignParentLeft="true"
-             android:singleLine="true"
-             android:text="@string/label_loops" /> 
-   
-   <TextView android:id="@+id/label_ops"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginRight="4dp"
-             android:layout_below="@+id/label_loops"
-             android:layout_alignParentLeft="true"
-             android:singleLine="true"
-             android:text="@string/label_ops" /> 
-  
-   <TextView android:id="@+id/size"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignBaseline="@+id/label_size"
+
+   <EditText style="@style/Field"
+             android:id="@+id/size"
+             android:layout_alignParentTop="true"
              android:layout_toRightOf="@+id/label_size"
-             android:singleLine="true"
-             android:text="" /> 
-  
-   <TextView android:id="@+id/loops"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignBaseline="@+id/label_loops"
-             android:layout_toRightOf="@+id/label_loops"
-             android:singleLine="true"
+             android:inputType="number"
+             android:digits="0123456789"
              android:text="" /> 
    
-   <TextView android:id="@+id/ops"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignBaseline="@+id/label_ops"
-             android:layout_toRightOf="@+id/label_ops"
-             android:singleLine="true"
+   <!-- LOOPS -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_loops"
+             android:layout_alignBaseline="@+id/loops"
+             android:layout_alignLeft="@+id/label_size"
+             android:text="@string/label_loops" /> 
+  
+   <EditText style="@style/Field"
+             android:id="@+id/loops"
+             android:layout_alignLeft="@+id/size"
+             android:layout_below="@+id/size"
+             android:inputType="number"
+             android:digits="0123456789"
              android:text="" /> 
-             
+
+   <!-- CURRENT -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_current"
+             android:layout_alignBaseline="@+id/current"
+             android:layout_alignLeft="@+id/label_size"
+             android:text="@string/label_current" /> 
+   
+   <TextView style="@style/Value"
+             android:id="@+id/current"
+             android:layout_below="@+id/loops"
+             android:layout_alignLeft="@+id/size"
+             android:text="" /> 
+
+   <!-- AVERAGE -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_average"
+             android:layout_alignBaseline="@+id/average"
+             android:layout_alignLeft="@+id/label_size"
+             android:text="@string/label_average" /> 
+   
+   <TextView style="@style/Value"
+             android:id="@+id/average"
+             android:layout_below="@+id/current"
+             android:layout_alignLeft="@+id/size"
+             android:text="" /> 
+
+   <!-- MIN -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_min"
+             android:layout_alignBaseline="@+id/min"
+             android:layout_alignLeft="@+id/label_size"
+             android:text="@string/label_min" /> 
+   
+   <TextView style="@style/Value"
+             android:id="@+id/min"
+             android:layout_below="@+id/average"
+             android:layout_alignLeft="@+id/size"
+             android:text="" /> 
+
+   <!-- MAX -->
+   
+   <TextView style="@style/Label"
+             android:id="@+id/label_max"
+             android:layout_alignBaseline="@+id/max"
+             android:layout_alignLeft="@+id/label_size"
+             android:text="@string/label_max" /> 
+   
+   <TextView style="@style/Value"
+             android:id="@+id/max"
+             android:layout_below="@+id/min"
+             android:layout_alignLeft="@+id/size"
+             android:text="" /> 
+   
    </RelativeLayout>             
  </ScrollView>
 
