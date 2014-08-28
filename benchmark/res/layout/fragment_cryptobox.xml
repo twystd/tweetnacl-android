@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:groupbox="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
                 android:background="#ffffffff"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -13,95 +14,129 @@
              android:layout_height="match_parent"
              android:layout_alignParentTop="true"
              android:layout_above="@+id/run">
-  <RelativeLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
+  <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
       
-   <!-- MESSAGE SIZE -->
-   
-   <TextView style="@style/Label"
-             android:id="@+id/label_size"
-             android:layout_alignBaseline="@+id/size"
-             android:layout_alignParentLeft="true"
-             android:text="@string/label_size" /> 
+   <!-- SETUP -->
 
-   <EditText style="@style/Field"
-             android:id="@+id/size"
-             android:layout_alignParentTop="true"
-             android:layout_toRightOf="@+id/label_size"
-             android:inputType="number"
-             android:digits="0123456789"
-             android:text="" /> 
+   <za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox
+       style="@style/GroupBox"
+       android:id="@+id/setup"
+       android:layout_alignParentTop="true"
+       groupbox:label="Setup">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+       
+     <!-- MESSAGE SIZE -->
    
-   <!-- LOOPS -->
+     <TextView style="@style/Label"
+               android:id="@+id/label_size"
+               android:layout_alignBaseline="@+id/size"
+               android:layout_alignParentLeft="true"
+               android:text="@string/label_size" /> 
+
+     <EditText style="@style/Field"
+               android:id="@+id/size"
+               android:layout_alignParentTop="true"
+               android:layout_toRightOf="@+id/label_size"
+               android:inputType="number"
+               android:digits="0123456789"
+               android:text="" /> 
    
-   <TextView style="@style/Label"
-             android:id="@+id/label_loops"
-             android:layout_alignBaseline="@+id/loops"
-             android:layout_alignLeft="@+id/label_size"
-             android:text="@string/label_loops" /> 
+     <!-- LOOPS -->
+   
+     <TextView style="@style/Label"
+               android:id="@+id/label_loops"
+               android:layout_alignBaseline="@+id/loops"
+               android:layout_toLeftOf="@+id/loops"
+               android:text="@string/label_loops" /> 
   
-   <EditText style="@style/Field"
-             android:id="@+id/loops"
-             android:layout_alignLeft="@+id/size"
-             android:layout_below="@+id/size"
-             android:inputType="number"
-             android:digits="0123456789"
-             android:text="" /> 
+     <EditText style="@style/Field"
+               android:id="@+id/loops"
+               android:layout_alignParentTop="true"
+               android:layout_alignParentRight="true"
+               android:inputType="number"
+               android:digits="0123456789"
+               android:text="" />
+    </RelativeLayout>
+   </za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox> 
 
    <!-- CURRENT -->
    
    <TextView style="@style/Label"
              android:id="@+id/label_current"
-             android:layout_alignBaseline="@+id/current"
-             android:layout_alignLeft="@+id/label_size"
+             android:layout_alignBaseline="@+id/encrypt_current"
+             android:layout_alignParentLeft="true"
              android:text="@string/label_current" /> 
    
    <TextView style="@style/Value"
-             android:id="@+id/current"
-             android:layout_below="@+id/loops"
-             android:layout_alignLeft="@+id/size"
+             android:id="@+id/encrypt_current"
+             android:layout_below="@+id/setup"
+             android:layout_toRightOf="@+id/label_current"
              android:text="" /> 
-
+   
+   <TextView style="@style/Value"
+             android:id="@+id/decrypt_current"
+             android:layout_below="@+id/setup"
+             android:layout_toRightOf="@+id/encrypt_current"
+             android:text="" /> 
+   
    <!-- AVERAGE -->
    
    <TextView style="@style/Label"
              android:id="@+id/label_average"
-             android:layout_alignBaseline="@+id/average"
-             android:layout_alignLeft="@+id/label_size"
+             android:layout_alignBaseline="@+id/encrypt_average"
+             android:layout_alignLeft="@+id/label_current"
              android:text="@string/label_average" /> 
    
    <TextView style="@style/Value"
-             android:id="@+id/average"
-             android:layout_below="@+id/current"
-             android:layout_alignLeft="@+id/size"
+             android:id="@+id/encrypt_average"
+             android:layout_below="@+id/encrypt_current"
+             android:layout_alignLeft="@+id/encrypt_current"
              android:text="" /> 
-
+   
+   <TextView style="@style/Value"
+             android:id="@+id/decrypt_average"
+             android:layout_below="@+id/decrypt_current"
+             android:layout_alignLeft="@+id/decrypt_current"
+             android:text="" /> 
+   
    <!-- MIN -->
    
    <TextView style="@style/Label"
              android:id="@+id/label_min"
-             android:layout_alignBaseline="@+id/min"
-             android:layout_alignLeft="@+id/label_size"
+             android:layout_alignBaseline="@+id/encrypt_min"
+             android:layout_alignLeft="@+id/label_average"
              android:text="@string/label_min" /> 
    
    <TextView style="@style/Value"
-             android:id="@+id/min"
-             android:layout_below="@+id/average"
-             android:layout_alignLeft="@+id/size"
+             android:id="@+id/encrypt_min"
+             android:layout_below="@+id/encrypt_average"
+             android:layout_alignLeft="@+id/encrypt_average"
              android:text="" /> 
-
+   
+   <TextView style="@style/Value"
+             android:id="@+id/decrypt_min"
+             android:layout_below="@+id/decrypt_average"
+             android:layout_alignLeft="@+id/decrypt_average"
+             android:text="" /> 
+   
    <!-- MAX -->
    
    <TextView style="@style/Label"
              android:id="@+id/label_max"
-             android:layout_alignBaseline="@+id/max"
-             android:layout_alignLeft="@+id/label_size"
+             android:layout_alignBaseline="@+id/encrypt_max"
+             android:layout_alignLeft="@+id/label_min"
              android:text="@string/label_max" /> 
    
    <TextView style="@style/Value"
-             android:id="@+id/max"
-             android:layout_below="@+id/min"
-             android:layout_alignLeft="@+id/size"
+             android:id="@+id/encrypt_max"
+             android:layout_below="@+id/encrypt_min"
+             android:layout_alignLeft="@+id/encrypt_min"
+             android:text="" /> 
+   
+   <TextView style="@style/Value"
+             android:id="@+id/decrypt_max"
+             android:layout_below="@+id/decrypt_min"
+             android:layout_alignLeft="@+id/decrypt_min"
              android:text="" /> 
    
    </RelativeLayout>             

@@ -3,6 +3,32 @@
  <style name="AppBaseTheme" parent="Theme.AppCompat.Light" />
  <style name="AppTheme"     parent="AppBaseTheme"          />
 
+ <!-- GROUPBOX -->
+
+ <style name="GroupBoxBase">
+  <item name="android:layout_width">match_parent</item> 
+  <item name="android:layout_height">wrap_content</item>
+  <item name="android:layout_marginTop">8dp</item>
+  <item name="android:layout_marginBottom">8dp</item>
+  <item name="android:layout_marginLeft">0dp</item>
+  <item name="android:layout_marginRight">0dp</item>
+  <item name="android:paddingTop">16dp</item>
+  <item name="android:paddingBottom">12dp</item>
+  <item name="android:paddingLeft">12dp</item>
+  <item name="android:paddingRight">12dp</item>
+  <item name="labelColour">@color/groupbox_label</item>
+  <item name="labelTextSize">12sp</item>
+  <item name="labelMarginLeft">16dp</item>
+  <item name="labelMarginRight">16dp</item>
+  <item name="labelPaddingLeft">4dp</item>
+  <item name="labelPaddingRight">4dp</item>
+  <item name="cornerRadius">8dp</item>
+  <item name="strokeWidth">1dp</item>
+  <item name="strokeColour">@color/groupbox_border</item>    
+ </style>
+ 
+ <style name="GroupBox" parent="GroupBoxBase" />
+   
  <!-- GRID -->
  
  <style name="CellLabelBase">

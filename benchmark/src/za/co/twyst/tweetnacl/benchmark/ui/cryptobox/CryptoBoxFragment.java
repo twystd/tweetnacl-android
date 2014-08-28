@@ -28,10 +28,8 @@ public class CryptoBoxFragment extends Fragment {
     
     // INSTANCE VARIABLES
     
-    private long minimum = Long.MAX_VALUE;
-    private long maximum = Long.MIN_VALUE;
-    private long bytes   = 0;
-    private long dt      = 0;
+    private Measured encryption = new Measured();
+    private Measured decryption = new Measured();
     
     // CLASS METHODS
 
@@ -91,7 +89,7 @@ public class CryptoBoxFragment extends Fragment {
         }
     }
 
-    private void done(Result result) {
+    private void done(Result encrypt,Result decrypt) {
         View view = getView();
         View windmill;
 
@@ -104,29 +102,36 @@ public class CryptoBoxFragment extends Fragment {
         }
         
         // ... update benchmarks
+        
+        encryption.update(encrypt.bytes,encrypt.dt);
+        decryption.update(decrypt.bytes,decrypt.dt);
 
-        if (result != null) {
-            if (view != null) {
-                TextView current = (TextView) view.findViewById(R.id.current);
-                TextView average = (TextView) view.findViewById(R.id.average);
-                TextView min     = (TextView) view.findViewById(R.id.min);
-                TextView max     = (TextView) view.findViewById(R.id.max);
+        if (view != null) {
+            // ... update encryption results
+            
+            { TextView current = (TextView) view.findViewById(R.id.encrypt_current);
+              TextView average = (TextView) view.findViewById(R.id.encrypt_average);
+              TextView min     = (TextView) view.findViewById(R.id.encrypt_min);
+              TextView max     = (TextView) view.findViewById(R.id.encrypt_max);
 
-                bytes  += result.bytes;
-                dt     += result.duration;
-
-                long throughput = 1000 * result.bytes/result.duration;
-                long mean       = 1000 * bytes/dt;
-                
-                minimum = Math.min(minimum,throughput);
-                maximum = Math.max(maximum,throughput);
-
-                current.setText(String.format("%s/s",Util.format(throughput,true)));
-                average.setText(String.format("%s/s",Util.format(mean,      true)));
-                min.setText    (String.format("%s/s",Util.format(minimum,   true)));
-                max.setText    (String.format("%s/s",Util.format(maximum,   true)));
+              current.setText(String.format("%s/s",Util.format(encryption.throughput,true)));
+              average.setText(String.format("%s/s",Util.format(encryption.mean,      true)));
+              min.setText    (String.format("%s/s",Util.format(encryption.minimum,   true)));
+              max.setText    (String.format("%s/s",Util.format(encryption.maximum,   true)));
             }
             
+            // ... update decryption results
+            
+            { TextView current = (TextView) view.findViewById(R.id.decrypt_current);
+              TextView average = (TextView) view.findViewById(R.id.decrypt_average);
+              TextView min     = (TextView) view.findViewById(R.id.decrypt_min);
+              TextView max     = (TextView) view.findViewById(R.id.decrypt_max);
+
+              current.setText(String.format("%s/s",Util.format(decryption.throughput,true)));
+              average.setText(String.format("%s/s",Util.format(decryption.mean,      true)));
+              min.setText    (String.format("%s/s",Util.format(decryption.minimum,   true)));
+              max.setText    (String.format("%s/s",Util.format(decryption.maximum,   true)));
+            }
         }
     }
     
@@ -134,15 +139,33 @@ public class CryptoBoxFragment extends Fragment {
     
     private static class Result { 
         private final long bytes;
-        private final long duration;
+        private final long dt;
               
-        private Result(long bytes,long duration) {
-            this.bytes    = bytes;
-            this.duration = duration;
+        private Result(long bytes,long dt) {
+            this.bytes = bytes;
+            this.dt    = dt;
         }
     }
-    
-    private static class RunTask extends AsyncTask<Void,Void,Result> {
+
+    private static class Measured { 
+        public long mean;
+        public long throughput;
+        private long minimum = Long.MAX_VALUE;
+        private long maximum = Long.MIN_VALUE;
+        private long bytes   = 0;
+        private long dt      = 0;
+        
+        private void update(long bytes,long dt) {
+            this.bytes     += bytes;
+            this.dt        += dt;
+            this.throughput = 1000 * bytes/dt;
+            this.mean       = 1000 * this.bytes/this.dt;
+            this.minimum    = Math.min(minimum,throughput);
+            this.maximum    = Math.max(maximum,throughput);
+        }
+    }
+
+    private static class RunTask extends AsyncTask<Void,Void,Result[]> {
         private final WeakReference<CryptoBoxFragment> reference;
         private final int                              bytes;
         private final int                              loops;
@@ -164,24 +187,48 @@ public class CryptoBoxFragment extends Fragment {
         }
 
         @Override
-        protected Result doInBackground(Void... params) {
+        protected Result[] doInBackground(Void... params) {
             try {
+                // ... initialise
+                
                 KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
                 KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
                 byte[]  message = new byte[bytes];
                 byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
-                long    start   = System.currentTimeMillis();
-                long    total   = 0;
+                byte[]  crypttext;
+                long    start;
+                long    total;
                 
+                // ... crypto_box
+
+                start = System.currentTimeMillis();
+                total = 0;
+
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
                     
                       total += message.length;
                     }
                 
-                long   dt = System.currentTimeMillis() - start;
+                Result encrypt = new Result(total,System.currentTimeMillis() - start);
                 
-                return new Result(total,dt);
+                // ... crypto_box_open
+                
+                crypttext = tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
+                start     = System.currentTimeMillis();
+                total     = 0;
+                
+                for (int i=0; i<loops; i++)
+                    { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
+                  
+                      total += message.length;
+                    }
+
+                Result decrypt = new Result(total,System.currentTimeMillis() - start);
+
+                // ... done
+                
+                return new Result[] { encrypt,decrypt };
                 
             } catch(Throwable x) {
             }
@@ -190,11 +237,11 @@ public class CryptoBoxFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(Result result) {
+        protected void onPostExecute(Result[] result) {
             CryptoBoxFragment fragment = reference.get();
             
             if (fragment != null) {
-                fragment.done(result);
+                fragment.done(result[0],result[1]);
             }
         }
     }
