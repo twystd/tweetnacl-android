@@ -50,7 +50,6 @@ public class SummaryFragment extends Fragment {
         grid.setRowLabels   (ROWS,   inflater,R.layout.label,R.id.textview);
         grid.setColumnLabels(COLUMNS,inflater,R.layout.value,R.id.textview);
         grid.setValues      (ROWS.length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
-
         
         return root;
     }

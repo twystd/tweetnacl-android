@@ -22,10 +22,18 @@
  <string name="label_average">Average:</string>
  <string name="label_min">Min:</string>
  <string name="label_max">Max:</string>
- 
+
  <string name="tweetnacl">tweetnacl</string>
  <string name="tweetnaclz">tweetnacl/Z</string>
  <string name="tweetnaclj">tweetnacl/J</string>
+
+ <string name="results_measured">Measured:</string>
+ <string name="results_average">Average:</string>
+ <string name="results_min">Min:</string>
+ <string name="results_max">Max:</string>
+
+ <string name="column_encrypt">Encrypt</string>
+ <string name="column_decrypt">Decrypt</string>
  
  <string name="navigation_drawer_open">Open navigation drawer</string>
  <string name="navigation_drawer_close">Close navigation drawer</string>

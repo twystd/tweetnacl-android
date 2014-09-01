@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:groupbox="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
+                xmlns:grid="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
                 android:background="#ffffffff"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -59,85 +60,21 @@
     </RelativeLayout>
    </za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox> 
 
-   <!-- CURRENT -->
+   <!-- RESULTS -->
    
-   <TextView style="@style/Label"
-             android:id="@+id/label_current"
-             android:layout_alignBaseline="@+id/encrypt_current"
-             android:layout_alignParentLeft="true"
-             android:text="@string/label_current" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/encrypt_current"
-             android:layout_below="@+id/setup"
-             android:layout_toRightOf="@+id/label_current"
-             android:text="" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/decrypt_current"
-             android:layout_below="@+id/setup"
-             android:layout_toRightOf="@+id/encrypt_current"
-             android:text="" /> 
-   
-   <!-- AVERAGE -->
-   
-   <TextView style="@style/Label"
-             android:id="@+id/label_average"
-             android:layout_alignBaseline="@+id/encrypt_average"
-             android:layout_alignLeft="@+id/label_current"
-             android:text="@string/label_average" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/encrypt_average"
-             android:layout_below="@+id/encrypt_current"
-             android:layout_alignLeft="@+id/encrypt_current"
-             android:text="" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/decrypt_average"
-             android:layout_below="@+id/decrypt_current"
-             android:layout_alignLeft="@+id/decrypt_current"
-             android:text="" /> 
-   
-   <!-- MIN -->
-   
-   <TextView style="@style/Label"
-             android:id="@+id/label_min"
-             android:layout_alignBaseline="@+id/encrypt_min"
-             android:layout_alignLeft="@+id/label_average"
-             android:text="@string/label_min" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/encrypt_min"
-             android:layout_below="@+id/encrypt_average"
-             android:layout_alignLeft="@+id/encrypt_average"
-             android:text="" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/decrypt_min"
-             android:layout_below="@+id/decrypt_average"
-             android:layout_alignLeft="@+id/decrypt_average"
-             android:text="" /> 
-   
-   <!-- MAX -->
-   
-   <TextView style="@style/Label"
-             android:id="@+id/label_max"
-             android:layout_alignBaseline="@+id/encrypt_max"
-             android:layout_alignLeft="@+id/label_min"
-             android:text="@string/label_max" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/encrypt_max"
-             android:layout_below="@+id/encrypt_min"
-             android:layout_alignLeft="@+id/encrypt_min"
-             android:text="" /> 
-   
-   <TextView style="@style/Value"
-             android:id="@+id/decrypt_max"
-             android:layout_below="@+id/decrypt_min"
-             android:layout_alignLeft="@+id/decrypt_min"
-             android:text="" /> 
+  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid
+      android:id="@+id/grid"
+      android:background="@drawable/grid"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      android:layout_marginLeft="0dp"
+      android:layout_marginRight="0dp"
+      android:layout_below="@+id/setup"
+      android:layout_centerHorizontal="true" 
+      grid:verticalSpacing="2dp"
+      grid:horizontalSpacing="2dp" />
    
    </RelativeLayout>             
  </ScrollView>

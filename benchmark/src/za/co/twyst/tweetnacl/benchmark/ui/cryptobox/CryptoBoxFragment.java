@@ -11,20 +11,31 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
-public class CryptoBoxFragment extends Fragment {
+public class CryptoBoxFragment extends CryptoFragment {
     // CONSTANTS
 
     @SuppressWarnings("unused")
     private static final String TAG          = CryptoBoxFragment.class.getSimpleName();
     private static final int    MESSAGE_SIZE = 16384;
     private static final int    LOOPS        = 1024;
+    
+    private static final int[] ROWS    = { R.string.results_measured,
+                                           R.string.results_average,
+                                           R.string.results_min,
+                                           R.string.results_max
+                                         };
+
+    private static final int[] COLUMNS = { R.string.column_encrypt, 
+                                           R.string.column_decrypt 
+                                         };
+
     
     // INSTANCE VARIABLES
     
@@ -50,9 +61,20 @@ public class CryptoBoxFragment extends Fragment {
         final EditText size  = (EditText) root.findViewById(R.id.size); 
         final EditText loops = (EditText) root.findViewById(R.id.loops); 
         final Button   run   = (Button) root.findViewById(R.id.run);
+        final Grid     grid  = (Grid) root.findViewById(R.id.grid);
+
+        // ... initialise default setup
         
         size.setText (Integer.toString(MESSAGE_SIZE));
         loops.setText(Integer.toString(LOOPS));
+
+        // ... initialise grid
+        
+        grid.setRowLabels   (ROWS,   inflater,R.layout.label,R.id.textview);
+        grid.setColumnLabels(COLUMNS,inflater,R.layout.value,R.id.textview);
+        grid.setValues      (ROWS.length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
+        
+        // ... attach handlers
         
         run.setOnClickListener(new OnClickListener()
                                    { @Override
@@ -106,32 +128,19 @@ public class CryptoBoxFragment extends Fragment {
         encryption.update(encrypt.bytes,encrypt.dt);
         decryption.update(decrypt.bytes,decrypt.dt);
 
+
         if (view != null) {
-            // ... update encryption results
+            Grid grid = (Grid) view.findViewById(R.id.grid);
             
-            { TextView current = (TextView) view.findViewById(R.id.encrypt_current);
-              TextView average = (TextView) view.findViewById(R.id.encrypt_average);
-              TextView min     = (TextView) view.findViewById(R.id.encrypt_min);
-              TextView max     = (TextView) view.findViewById(R.id.encrypt_max);
-
-              current.setText(String.format("%s/s",Util.format(encryption.throughput,true)));
-              average.setText(String.format("%s/s",Util.format(encryption.mean,      true)));
-              min.setText    (String.format("%s/s",Util.format(encryption.minimum,   true)));
-              max.setText    (String.format("%s/s",Util.format(encryption.maximum,   true)));
-            }
+            grid.setValue(0,0,String.format("%s/s",Util.format(encryption.throughput,true)));
+            grid.setValue(1,0,String.format("%s/s",Util.format(encryption.mean,      true)));
+            grid.setValue(2,0,String.format("%s/s",Util.format(encryption.minimum,   true)));
+            grid.setValue(3,0,String.format("%s/s",Util.format(encryption.maximum,   true)));
             
-            // ... update decryption results
-            
-            { TextView current = (TextView) view.findViewById(R.id.decrypt_current);
-              TextView average = (TextView) view.findViewById(R.id.decrypt_average);
-              TextView min     = (TextView) view.findViewById(R.id.decrypt_min);
-              TextView max     = (TextView) view.findViewById(R.id.decrypt_max);
-
-              current.setText(String.format("%s/s",Util.format(decryption.throughput,true)));
-              average.setText(String.format("%s/s",Util.format(decryption.mean,      true)));
-              min.setText    (String.format("%s/s",Util.format(decryption.minimum,   true)));
-              max.setText    (String.format("%s/s",Util.format(decryption.maximum,   true)));
-            }
+            grid.setValue(0,1,String.format("%s/s",Util.format(decryption.throughput,true)));
+            grid.setValue(1,1,String.format("%s/s",Util.format(decryption.mean,      true)));
+            grid.setValue(2,1,String.format("%s/s",Util.format(decryption.minimum,   true)));
+            grid.setValue(3,1,String.format("%s/s",Util.format(decryption.maximum,   true)));
         }
     }
     
