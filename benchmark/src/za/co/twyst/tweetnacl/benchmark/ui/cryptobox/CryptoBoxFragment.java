@@ -15,6 +15,8 @@ import android.widget.EditText;
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.entity.Measurement.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
@@ -51,6 +53,13 @@ public class CryptoBoxFragment extends CryptoFragment {
      */
     public static Fragment newFragment() {
         return new CryptoBoxFragment();
+    }
+    
+    /** Pretty formats a throughput value.
+     * 
+     */
+    private static String format(long throughput) {
+        return String.format("%s/s",Util.format(throughput,true));
     }
 
     // *** Fragment ***
@@ -132,16 +141,21 @@ public class CryptoBoxFragment extends CryptoFragment {
         if (view != null) {
             Grid grid = (Grid) view.findViewById(R.id.grid);
             
-            grid.setValue(0,0,String.format("%s/s",Util.format(encryption.throughput,true)));
-            grid.setValue(1,0,String.format("%s/s",Util.format(encryption.mean,      true)));
-            grid.setValue(2,0,String.format("%s/s",Util.format(encryption.minimum,   true)));
-            grid.setValue(3,0,String.format("%s/s",Util.format(encryption.maximum,   true)));
+            grid.setValue(0,0,format(encryption.throughput));
+            grid.setValue(1,0,format(encryption.mean));
+            grid.setValue(2,0,format(encryption.minimum));
+            grid.setValue(3,0,format(encryption.maximum));
             
-            grid.setValue(0,1,String.format("%s/s",Util.format(decryption.throughput,true)));
-            grid.setValue(1,1,String.format("%s/s",Util.format(decryption.mean,      true)));
-            grid.setValue(2,1,String.format("%s/s",Util.format(decryption.minimum,   true)));
-            grid.setValue(3,1,String.format("%s/s",Util.format(decryption.maximum,   true)));
+            grid.setValue(0,1,format(decryption.throughput));
+            grid.setValue(1,1,format(decryption.mean));
+            grid.setValue(2,1,format(decryption.minimum));
+            grid.setValue(3,1,format(decryption.maximum));
         }
+        
+        // ... update global measurements
+        
+        this.measured(new Measurement(TYPE.CRYPTO_BOX,     format(encryption.mean)),
+                      new Measurement(TYPE.CRYPTO_BOX_OPEN,format(decryption.mean)));
     }
     
     // INNER CLASSES

@@ -1,5 +1,8 @@
 package za.co.twyst.tweetnacl.benchmark.ui.main;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -12,148 +15,149 @@ import android.view.MenuItem;
 import android.view.View;
 
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
-public class MainActivity extends ActionBarActivity 
-       { // CONSTANTS
+public class MainActivity extends ActionBarActivity implements CryptoFragment.Owner { 
+    // CONSTANTS
     
-         @SuppressWarnings("unused")
-         private static final String TAG = MainActivity.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG = MainActivity.class.getSimpleName();
          
-         // INSTANCE VARIABLES
+    // INSTANCE VARIABLES
          
-         private DrawerLayout          drawer;
-         private ActionBarDrawerToggle toggle;
-    
-	     // *** ActionBarActivity ***
+    private DrawerLayout                      drawer;
+    private ActionBarDrawerToggle             toggle;
+    private Map<Measurement.TYPE,Measurement> measurements = new HashMap<Measurement.TYPE,Measurement>();
+        
+    // *** ActionBarActivity ***
 
-	     @Override
-	     protected void onCreate(Bundle state) 
-	               { super.onCreate(state);
+    @Override
+    protected void onCreate(Bundle state) { 
+        super.onCreate(state);
 		
-	                 setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 	                 
-                     final Fragment  summary = SummaryFragment.newFragment ();
-                     final Fragment  menu    = MainMenuFragment.newFragment();
-                     final ActionBar bar     = getSupportActionBar();
+        final Fragment  summary = SummaryFragment.newFragment (measurements.values());
+        final Fragment  menu    = MainMenuFragment.newFragment();
+        final ActionBar bar     = getSupportActionBar();
 
-                     drawer = (DrawerLayout) findViewById(R.id.container);
-                     toggle = new ActionBarDrawerToggle(this,
-                                                        drawer,
-                                                        R.drawable.ic_drawer,
-                                                        R.string.navigation_drawer_open,
-                                                        R.string.navigation_drawer_close) 
-                                  { @Override
-                                    public void onDrawerClosed(View view) 
-                                           { super.onDrawerClosed(view);
+        drawer = (DrawerLayout) findViewById(R.id.container);
+        toggle = new ActionBarDrawerToggle(this,
+                                           drawer,
+                                           R.drawable.ic_drawer,
+                                           R.string.navigation_drawer_open,
+                                           R.string.navigation_drawer_close) { 
+            @Override
+            public void onDrawerClosed(View view) { 
+                super.onDrawerClosed(view);
                                               
-//                                           getActionBar().setTitle(mTitle);
-                                             supportInvalidateOptionsMenu(); 
-                                           }
+                supportInvalidateOptionsMenu(); 
+            }
 
-                                    @Override
-                                    public void onDrawerOpened(View view)
-                                           { super.onDrawerOpened(view);
+            @Override
+            public void onDrawerOpened(View view) { 
+                super.onDrawerOpened(view);
                                               
-//                                           getActionBar().setTitle(mDrawerTitle);
-                                             supportInvalidateOptionsMenu(); 
-                                           }
-                                  };
-
-                     drawer.setDrawerShadow  (R.drawable.drawer_shadow, GravityCompat.START);
-                     drawer.setDrawerListener(toggle);
-                     drawer.openDrawer       (GravityCompat.START);
+                supportInvalidateOptionsMenu(); 
+            }
+        };
+                                  
+        drawer.setDrawerShadow  (R.drawable.drawer_shadow, GravityCompat.START);
+        drawer.setDrawerListener(toggle);
+        drawer.openDrawer       (GravityCompat.START);
                      
-                     bar.setNavigationMode         (ActionBar.NAVIGATION_MODE_STANDARD);
-                     bar.setDisplayShowTitleEnabled(true);
-                     bar.setDisplayHomeAsUpEnabled (true);
-                     bar.setHomeButtonEnabled      (true);
+        bar.setNavigationMode         (ActionBar.NAVIGATION_MODE_STANDARD);
+        bar.setDisplayShowTitleEnabled(true);
+        bar.setDisplayHomeAsUpEnabled (true);
+        bar.setHomeButtonEnabled      (true);
 	                 
-	                 getSupportFragmentManager().beginTransaction()
-	                                            .replace(R.id.content,summary)
-                                                .replace(R.id.drawer, menu)
-	                                            .commit();
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.content,summary)
+                                   .replace(R.id.drawer, menu)
+                                   .commit();
 
-	               }
+    }
 	     
-	     @Override
-	     protected void onPostCreate(Bundle state) 
-	               { super.onPostCreate(state);
+    @Override
+    protected void onPostCreate(Bundle state) { 
+        super.onPostCreate(state);
 
-	                 toggle.syncState();
-	               }
+        toggle.syncState();
+    }
 	     
-	     @Override
-	     public void onConfigurationChanged(Configuration config)
-	            { super.onConfigurationChanged(config);
+    @Override
+    public void onConfigurationChanged(Configuration config) { 
+        super.onConfigurationChanged(config);
 	         
-	              toggle.onConfigurationChanged(config);
-	            }
+        toggle.onConfigurationChanged(config);
+    }
 
-	     @Override
-	     public boolean onOptionsItemSelected(MenuItem item)
-	            { if (toggle.onOptionsItemSelected(item)) 
-	                 { return true;
-	                 }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
 
-	              return super.onOptionsItemSelected(item);
-	            }
+        return super.onOptionsItemSelected(item);
+    }
 	     
-	     // EVENT HANDLERS
+    // EVENT HANDLERS
          
-         public void onSummary(View view) {
-             Fragment fragment = SummaryFragment.newFragment();
+    public void onSummary(View view) {
+        Fragment fragment = SummaryFragment.newFragment(measurements.values());
              
-             getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content,fragment)
-                                        .commit();
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.content,fragment)
+                                   .commit();
              
-             drawer.closeDrawer(GravityCompat.START);
-         }
+        drawer.closeDrawer(GravityCompat.START);
+    }
 	     
-	     public void onCryptoBox(View view) {
-	         Fragment fragment = CryptoBoxFragment.newFragment();
-	         
-	         getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content,fragment)
-                                        .commit();
-	         
-             drawer.closeDrawer(GravityCompat.START);
-	     }
-         
-         public void onCryptoCore(View view) {
-         }
-         
-         public void onCryptoHash(View view) {
-         }
-         
-         public void onCryptoOneTimeAuth(View view) {
-         }
-         
-         public void onCryptoScalarMult(View view) {
-         }
-         
-         public void onCryptoSecretBox(View view) {
-         }
-         
-         public void onCryptoStream(View view) {
-         }
-         
-         public void onCryptoSign(View view) {
-         }
-         
-         public void onCryptoVerify(View view) {
-         }
-         
-         // INTERNAL
-         
-//         @Override
-//         public void onNavigationDrawerItemSelected(int position) {
-//             // update the main content by replacing fragments
-//             FragmentManager fragmentManager = getSupportFragmentManager();
-//             fragmentManager.beginTransaction()
-//                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-//                     .commit();
-//         }
+    public void onCryptoBox(View view) {
+        Fragment fragment = CryptoBoxFragment.newFragment();
 
+        getSupportFragmentManager().beginTransaction()
+        .replace(R.id.content,fragment)
+        .commit();
+
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void onCryptoCore(View view) {
+    }
+
+    public void onCryptoHash(View view) {
+    }
+
+    public void onCryptoOneTimeAuth(View view) {
+    }
+
+    public void onCryptoScalarMult(View view) {
+    }
+
+    public void onCryptoSecretBox(View view) {
+    }
+
+    public void onCryptoStream(View view) {
+    }
+
+    public void onCryptoSign(View view) {
+    }
+
+    public void onCryptoVerify(View view) {
+    }
+
+    // *** CryptoFragment.Owner ***
+    
+    @Override
+    public void measured(Measurement... measurments) {
+        if (measurements != null) {
+            for (Measurement measurement: measurments) {
+                measurements.put(measurement.type,measurement);
+            }
+        }
+    }
 }
