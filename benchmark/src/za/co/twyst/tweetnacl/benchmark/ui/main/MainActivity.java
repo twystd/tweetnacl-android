@@ -103,9 +103,23 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
 
         return super.onOptionsItemSelected(item);
     }
-	     
+
+    @Override
+    public void onBackPressed() {
+//        int N = getSupportFragmentManager().getBackStackEntryCount();
+//
+//        if (N == 0) {
+//            if (!drawer.isDrawerOpen(GravityCompat.START)) {
+//                drawer.openDrawer(GravityCompat.START);
+//                return;
+//            }
+//        }
+        
+        super.onBackPressed();
+    }   
+
     // EVENT HANDLERS
-         
+
     public void onSummary(View view) {
         Fragment fragment = SummaryFragment.newFragment(measurements.values());
              
@@ -122,6 +136,7 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
                                        .replace(R.id.content,fragment)
+                                       .addToBackStack("summary")
                                        .commit();
 
             drawer.closeDrawer(GravityCompat.START);
