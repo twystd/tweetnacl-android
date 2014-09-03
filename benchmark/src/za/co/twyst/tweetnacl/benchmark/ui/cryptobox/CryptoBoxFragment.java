@@ -15,8 +15,8 @@ import android.widget.EditText;
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement.TYPE;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
@@ -92,7 +92,8 @@ public class CryptoBoxFragment extends CryptoFragment {
                                                  { int _size  = Integer.parseInt(size.getText ().toString());
                                                    int _loops = Integer.parseInt(loops.getText().toString());
                                                    
-                                                   run(_size,_loops);
+                                                   hideKeyboard(size,loops);
+                                                   run         (_size,_loops);
                                                  }
                                               catch(Throwable x)
                                                  { // TODO
@@ -154,8 +155,8 @@ public class CryptoBoxFragment extends CryptoFragment {
         
         // ... update global measurements
         
-        this.measured(new Measurement(TYPE.CRYPTO_BOX,     format(encryption.mean)),
-                      new Measurement(TYPE.CRYPTO_BOX_OPEN,format(decryption.mean)));
+        this.measured(new Benchmark(TYPE.CRYPTO_BOX,     format(encryption.mean)),
+                      new Benchmark(TYPE.CRYPTO_BOX_OPEN,format(decryption.mean)));
     }
     
     // INNER CLASSES

@@ -5,6 +5,9 @@
  <color name="background_header">#ff436eb4</color>    
  <color name="groupbox_label">#ff436eb4</color>    
  <color name="groupbox_border">#ff436eb4</color>    
- <color name="button_background">#ff436eb4</color>    
+ <color name="grid_border">#ff436eb4</color>    
+ <color name="grid">#40436eb4</color>    
+ <color name="button_border">#ff436eb4</color>    
+ <color name="button">#40436eb4</color>    
  <color name="button_text">#ffffffff</color>    
 </resources>

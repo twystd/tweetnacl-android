@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 
 public class BenchmarkAdapter extends BaseAdapter
        { // CONSTANTS

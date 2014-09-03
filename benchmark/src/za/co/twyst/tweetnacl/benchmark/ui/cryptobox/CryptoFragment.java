@@ -3,10 +3,13 @@ package za.co.twyst.tweetnacl.benchmark.ui.cryptobox;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 
 /** Abstract base class for crypto_xxx fragments. Defines the Owner interface
  *  used to update the summary result page.
@@ -36,13 +39,29 @@ public abstract class CryptoFragment extends Fragment {
     
     // UTILITY METHODS
     
+    /** Hides keyboard for an EditText field
+     * 
+     */
+    public void hideKeyboard(EditText... fields) { 
+        try { 
+            Context            context = getActivity();
+            InputMethodManager imm     = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            for (EditText field: fields) {
+                  imm.hideSoftInputFromWindow(field.getWindowToken(),0);
+            }
+        } catch(Throwable x) { 
+            Log.w(TAG,"Error hiding keyboard",x);
+        }
+    }
+
     /** Updates the containing activity with the measurement.
      * 
      * @param measurement 
      *            New measurement to add to global results. Ignored if
      *            <code>null</code>.        
      */
-    protected void measured(Measurement... measurements) {
+    protected void measured(Benchmark... measurements) {
         Owner owner;
 
         if (measurements != null) {
@@ -55,6 +74,6 @@ public abstract class CryptoFragment extends Fragment {
     // INNER CLASSES
     
     public interface Owner {
-        public void measured(Measurement... measurments);
+        public void measured(Benchmark... measurments);
     }
 }

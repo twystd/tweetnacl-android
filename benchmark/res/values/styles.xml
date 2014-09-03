@@ -3,6 +3,20 @@
  <style name="AppBaseTheme" parent="Theme.AppCompat.Light" />
  <style name="AppTheme"     parent="AppBaseTheme"          />
 
+ <!-- PAGE -->
+ 
+ <style name="PageBase">
+  <item name="android:background">#ffffffff</item>
+  <item name="android:layout_width">match_parent</item>
+  <item name="android:layout_height">match_parent</item>
+  <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
+  <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+  <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+  <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+ </style>
+ 
+ <style name="Page" parent="PageBase" />
+ 
  <!-- GROUPBOX -->
 
  <style name="GroupBoxBase">
@@ -79,7 +93,13 @@
   </style>
  
  <style name="Label" parent="LabelBase" />
-
+ 
+ <style name="LoopsLabel" parent="Label">
+  <item name="android:layout_alignBaseline">@id/loops</item>
+  <item name="android:layout_toLeftOf">@+id/loops</item>
+  <item name="android:text">@string/label_loops</item>
+ </style>
+ 
  <style name="ValueBase">
   <item name="android:layout_width">wrap_content</item>
   <item name="android:layout_height">wrap_content</item>
@@ -87,6 +107,7 @@
   <item name="android:layout_marginBottom">4dp</item>
   <item name="android:layout_marginRight">4dp</item>
   <item name="android:singleLine">true</item>
+  <item name="android:ellipsize">end</item>
   <item name="android:textSize">13sp</item>    
   <item name="android:textStyle">italic</item>    
   </style>
@@ -94,7 +115,7 @@
  <style name="Value" parent="ValueBase" />
  
  <style name="FieldBase">
-  <item name="android:background">#ffe0e0e0</item>    
+  <item name="android:background">@drawable/background_field</item>    
   <item name="android:layout_width">wrap_content</item>
   <item name="android:layout_height">wrap_content</item>
   <item name="android:layout_marginTop">4dp</item>
@@ -104,13 +125,37 @@
   <item name="android:paddingLeft">8dp</item>
   <item name="android:paddingRight">8dp</item>
   <item name="android:singleLine">true</item>
+  <item name="android:ellipsize">end</item>
   <item name="android:textSize">13sp</item>    
   </style>
  
  <style name="Field" parent="FieldBase" />
+
+ <style name="Loops" parent="Field">
+  <item name="android:layout_alignParentTop">true</item>
+  <item name="android:layout_alignParentRight">true</item>
+  <item name="android:inputType">number</item>
+  <item name="android:digits">0123456789</item>
+ </style>
+ 
+ <style name="GridBase">
+  <item name="android:background">@drawable/background_grid</item>
+  <item name="android:layout_width">match_parent</item>
+  <item name="android:layout_height">wrap_content</item>
+  <item name="android:layout_marginTop">12dp</item>
+  <item name="android:layout_marginBottom">12dp</item>
+  <item name="android:layout_marginLeft">0dp</item>
+  <item name="android:layout_marginRight">0dp</item>
+  <item name="android:layout_below">@+id/setup</item>
+  <item name="android:layout_centerHorizontal">true</item>
+  <item name="verticalSpacing">2dp</item>
+  <item name="horizontalSpacing">2dp</item>
+ </style>
+ 
+ <style name="Grid" parent="GridBase" />
  
  <style name="RunButtonBase">
-  <item name="android:background">#ffe0e0e0</item>    
+  <item name="android:background">@drawable/background_button</item>    
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">wrap_content</item>
   <item name="android:layout_marginTop">4dp</item>

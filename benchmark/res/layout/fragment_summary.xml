@@ -14,7 +14,7 @@
 
   <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid
       android:id="@+id/grid"
-      android:background="@drawable/grid"
+      android:background="@drawable/background_grid"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="12dp"

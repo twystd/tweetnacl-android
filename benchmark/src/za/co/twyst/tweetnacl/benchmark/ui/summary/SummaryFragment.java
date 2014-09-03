@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
-import static za.co.twyst.tweetnacl.benchmark.entity.Measurement.TYPE;
+import static za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 
 public class SummaryFragment extends Fragment {
     // CONSTANTS
@@ -22,6 +22,7 @@ public class SummaryFragment extends Fragment {
     private static final String TAG_MEASUREMENTS = "measurements";
     
     private static final int[] ROWS    = { R.string.crypto_box,
+                                           R.string.crypto_box_open,
                                            R.string.crypto_core,
                                            R.string.crypto_hash,
                                            R.string.crypto_onetimeauth,
@@ -47,12 +48,12 @@ public class SummaryFragment extends Fragment {
      *  
      * @return Initialised SummaryFragment or <code>null</code>.
      */
-    public static Fragment newFragment(Collection<Measurement> measurements) {
+    public static Fragment newFragment(Collection<Benchmark> measurements) {
         if (measurements != null) {
             Fragment fragment = new SummaryFragment();
             Bundle   bundle   = new Bundle();
             
-            bundle.putParcelableArray(TAG_MEASUREMENTS,measurements.toArray(new Measurement[0]));
+            bundle.putParcelableArray(TAG_MEASUREMENTS,measurements.toArray(new Benchmark[0]));
             fragment.setArguments    (bundle);
             
             return fragment;
@@ -66,7 +67,7 @@ public class SummaryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         Bundle        bundle       = getArguments();
-        Measurement[] measurements = (Measurement[]) bundle.getParcelableArray(TAG_MEASUREMENTS);
+        Benchmark[] measurements = (Benchmark[]) bundle.getParcelableArray(TAG_MEASUREMENTS);
         
         View root = inflater.inflate(R.layout.fragment_summary,container,false);
         Grid grid = (Grid) root.findViewById(R.id.grid);
@@ -79,7 +80,7 @@ public class SummaryFragment extends Fragment {
         
         // ... displays measured values
         
-        for(Measurement measurement: measurements) {
+        for(Benchmark measurement: measurements) {
             for (int row=0; row<ROW.length; row++) {
                 if (measurement.type == ROW[row]) {
                     grid.setValue(row,0,measurement.value);

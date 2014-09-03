@@ -1,13 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:groupbox="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
                 xmlns:grid="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
-                android:background="#ffffffff"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin">
+                style="@style/Page">
  
  <!-- CONTENT -->
  
@@ -23,7 +17,7 @@
        style="@style/GroupBox"
        android:id="@+id/setup"
        android:layout_alignParentTop="true"
-       groupbox:label="Setup">
+       groupbox:label="@string/setup">
     <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
        
      <!-- MESSAGE SIZE -->
@@ -44,39 +38,17 @@
    
      <!-- LOOPS -->
    
-     <TextView style="@style/Label"
-               android:id="@+id/label_loops"
-               android:layout_alignBaseline="@+id/loops"
-               android:layout_toLeftOf="@+id/loops"
-               android:text="@string/label_loops" /> 
-  
-     <EditText style="@style/Field"
-               android:id="@+id/loops"
-               android:layout_alignParentTop="true"
-               android:layout_alignParentRight="true"
-               android:inputType="number"
-               android:digits="0123456789"
-               android:text="" />
+     <TextView style="@style/LoopsLabel" android:id="@+id/label_loops" /> 
+     <EditText style="@style/Loops"      android:id="@+id/loops"       />
+     
     </RelativeLayout>
    </za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox> 
 
    <!-- RESULTS -->
    
-  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid
-      android:id="@+id/grid"
-      android:background="@drawable/grid"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"
-      android:layout_marginLeft="0dp"
-      android:layout_marginRight="0dp"
-      android:layout_below="@+id/setup"
-      android:layout_centerHorizontal="true" 
-      grid:verticalSpacing="2dp"
-      grid:horizontalSpacing="2dp" />
+  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid style="@style/Grid" android:id="@+id/grid" />
    
-   </RelativeLayout>             
+  </RelativeLayout>            
  </ScrollView>
 
  <Button style="@style/RunButton"
@@ -87,15 +59,6 @@
  
  <!--  WINDMILL -->
  
- <RelativeLayout android:id="@+id/windmill"
-                 android:background="#40808080"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:visibility="gone">
-  <ProgressBar android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_centerInParent="true" 
-               android:indeterminateOnly="true" />
- </RelativeLayout>
+ <include layout="@layout/windmill" android:id="@+id/windmill" />
  
 </RelativeLayout>

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /** Container class for a performance measurement.
  * 
  */
-public class Measurement implements Parcelable {
+public class Benchmark implements Parcelable {
     // CONSTANTS
     
     public enum TYPE { 
@@ -41,7 +41,7 @@ public class Measurement implements Parcelable {
     /** Initialises the measurement values.
      * 
      */
-    public Measurement(TYPE type,String value) {
+    public Benchmark(TYPE type,String value) {
         // ... validate
         
         if (type == null) {
@@ -67,18 +67,18 @@ public class Measurement implements Parcelable {
         parcel.writeString(value);
     }
     
-    public static final Parcelable.Creator<Measurement> CREATOR = new Parcelable.Creator<Measurement>() {
+    public static final Parcelable.Creator<Benchmark> CREATOR = new Parcelable.Creator<Benchmark>() {
         @Override
-        public Measurement createFromParcel(Parcel parcel) { 
+        public Benchmark createFromParcel(Parcel parcel) { 
             int    type  = parcel.readInt();
             String value = parcel.readString();
             
-            return new Measurement(TYPE.parse(type),value);
+            return new Benchmark(TYPE.parse(type),value);
         }
 
         @Override
-        public Measurement[] newArray(int size) {
-            return new Measurement[size];
+        public Benchmark[] newArray(int size) {
+            return new Benchmark[size];
         }
     };
 }

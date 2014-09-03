@@ -4,9 +4,11 @@
  <string name="application">TweetNaCl</string>
  <string name="ok">OK</string>
  <string name="run">Run</string>
+ <string name="setup">Setup</string>
  
  <string name="summary">Summary</string>
  <string name="crypto_box">crypto_box</string>
+ <string name="crypto_box_open">crypto_box_open</string>
  <string name="crypto_core">crypto_core</string>
  <string name="crypto_hash">crypto_hash</string>
  <string name="crypto_onetimeauth">crypto_onetimeauth</string>

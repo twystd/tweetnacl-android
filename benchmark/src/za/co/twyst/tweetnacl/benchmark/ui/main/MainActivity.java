@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Measurement;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
          
     private DrawerLayout                      drawer;
     private ActionBarDrawerToggle             toggle;
-    private Map<Measurement.TYPE,Measurement> measurements = new HashMap<Measurement.TYPE,Measurement>();
+    private Map<Benchmark.TYPE,Benchmark> measurements = new HashMap<Benchmark.TYPE,Benchmark>();
         
     // *** ActionBarActivity ***
 
@@ -119,11 +119,13 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
     public void onCryptoBox(View view) {
         Fragment fragment = CryptoBoxFragment.newFragment();
 
-        getSupportFragmentManager().beginTransaction()
-        .replace(R.id.content,fragment)
-        .commit();
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                                       .replace(R.id.content,fragment)
+                                       .commit();
 
-        drawer.closeDrawer(GravityCompat.START);
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 
     public void onCryptoCore(View view) {
@@ -153,9 +155,9 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
     // *** CryptoFragment.Owner ***
     
     @Override
-    public void measured(Measurement... measurments) {
+    public void measured(Benchmark... measurments) {
         if (measurements != null) {
-            for (Measurement measurement: measurments) {
+            for (Benchmark measurement: measurments) {
                 measurements.put(measurement.type,measurement);
             }
         }
