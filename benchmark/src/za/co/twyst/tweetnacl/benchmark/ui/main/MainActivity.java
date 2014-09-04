@@ -20,7 +20,7 @@ import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
-public class MainActivity extends ActionBarActivity implements CryptoFragment.Owner { 
+public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,CryptoFragment.Owner { 
     // CONSTANTS
     
     @SuppressWarnings("unused")
@@ -106,14 +106,14 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
 
     @Override
     public void onBackPressed() {
-//        int N = getSupportFragmentManager().getBackStackEntryCount();
-//
-//        if (N == 0) {
+        int N = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (N == 0) {
 //            if (!drawer.isDrawerOpen(GravityCompat.START)) {
 //                drawer.openDrawer(GravityCompat.START);
 //                return;
 //            }
-//        }
+        }
         
         super.onBackPressed();
     }   
@@ -165,6 +165,34 @@ public class MainActivity extends ActionBarActivity implements CryptoFragment.Ow
     }
 
     public void onCryptoVerify(View view) {
+    }
+
+    // *** MainMenuFragment.Owner ***
+    
+    @Override
+    public void clicked(MENUITEM item) {
+        Fragment fragment = null;
+        
+        switch(item) {
+            case SUMMARY:
+                fragment = SummaryFragment.newFragment(measurements.values());
+                break;
+                 
+            case CRYPTO_BOX:
+                fragment = CryptoBoxFragment.newFragment();
+                break;
+        }
+
+        // ... replace fragments
+        
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                                       .replace(R.id.content,fragment)
+                                       .addToBackStack(null)
+                                       .commit();
+             
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 
     // *** CryptoFragment.Owner ***

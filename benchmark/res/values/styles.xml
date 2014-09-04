@@ -69,16 +69,15 @@
  
  <!-- MENU ITEMS -->
  
- <style name="MenuButtonBase">
+ <style name="MenuItemBase">
   <item name="android:background">#ffe0e0e0</item>    
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">wrap_content</item>
-  <item name="android:layout_marginTop">4dp</item>
-  <item name="android:layout_marginBottom">4dp</item>
-  <item name="android:textSize">13sp</item>    
+  <item name="android:paddingTop">4dp</item>
+  <item name="android:paddingBottom">4dp</item>
   </style>
  
- <style name="MenuButton" parent="MenuButtonBase" />
+ <style name="MenuItem" parent="MenuItemBase" />
 
  <!-- BENCHMARK PAGES -->
  
