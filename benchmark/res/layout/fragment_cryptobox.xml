@@ -51,6 +51,16 @@
   </RelativeLayout>            
  </ScrollView>
 
+ <ProgressBar style="@android:style/Widget.ProgressBar.Horizontal"
+              android:id="@+id/progressbar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_above="@+id/run"
+              android:layout_centerInParent="true"
+              android:progressDrawable="@drawable/bar"
+              android:max="1000" 
+              android:visibility="invisible" />
+ 
  <Button style="@style/RunButton"
          android:id="@+id/run"
          android:layout_alignParentBottom="true"

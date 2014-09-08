@@ -67,6 +67,8 @@ References
 8.  [StackOveflow:Is there a replacement for /dev/random on Android JNI][stackoverflow]
 9.  [Issue 42265:Android empties the entropy pool, resulting in blocking, user perceived lag/poor performance][issue]
 10. [Android Developer's Blog:Some SecureRandom Thoughts][android]
+11. [How to zero a buffer][daemonology]
+12. [Zeroing buffers is insufficient][daemonology2]
 
 
 [tweetnacl]:     http://tweetnacl.cr.yp.to
@@ -79,3 +81,5 @@ References
 [stackoverflow]: https://stackoverflow.com/questions/13055491/is-there-a-replacement-for-dev-random-on-android-jni
 [issue]:         https://code.google.com/p/android/issues/detail?id=42265
 [android]:       http://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html
+[daemonology]:   http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html
+[daemonology2]:  http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html
