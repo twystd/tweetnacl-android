@@ -1,9 +1,12 @@
 package za.co.twyst.tweetnacl.benchmark.ui.summary;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,6 @@ import static za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 public class SummaryFragment extends Fragment {
     // CONSTANTS
     
-    @SuppressWarnings("unused")
     private static final String TAG              = SummaryFragment.class.getSimpleName();
     private static final String TAG_MEASUREMENTS = "measurements";
     
@@ -40,7 +42,11 @@ public class SummaryFragment extends Fragment {
     private static final TYPE[] ROW = { TYPE.CRYPTO_BOX,
                                         TYPE.CRYPTO_BOX_OPEN
                                       };
-                                                     
+
+    // INSTANCE VARIABLES
+    
+    private WeakReference<Owner> owner = new WeakReference<Owner>(null);
+
     // CLASS METHODS
     
     /** Factory constructor for SummaryFragment that ensures correct fragment
@@ -65,8 +71,20 @@ public class SummaryFragment extends Fragment {
     // *** Fragment ***
     
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        try {
+            this.owner = new WeakReference<Owner>((Owner) activity);
+        } catch(Throwable x) {
+            Log.w(TAG, "Error assigning 'owner' activity",x);
+        }
+    }
+    
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        Bundle        bundle       = getArguments();
+        Bundle      bundle       = getArguments();
         Benchmark[] measurements = (Benchmark[]) bundle.getParcelableArray(TAG_MEASUREMENTS);
         
         View root = inflater.inflate(R.layout.fragment_summary,container,false);
@@ -86,9 +104,36 @@ public class SummaryFragment extends Fragment {
                     grid.setValue(row,0,measurement.value);
                 }
             }
-            
         }
         
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        Owner owner = this.owner.get();
+
+        if (owner != null) {
+            Benchmark[] measurements = owner.benchmarks();
+            View        root         = getView();
+            Grid        grid         = (Grid) root.findViewById(R.id.grid);
+            
+            for(Benchmark measurement: measurements) {
+                for (int row=0; row<ROW.length; row++) {
+                    if (measurement.type == ROW[row]) {
+                        grid.setValue(row,0,measurement.value);
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    // INNER CLASSES
+
+    public interface Owner {
+        public Benchmark[] benchmarks();
     }
 }

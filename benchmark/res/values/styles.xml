@@ -69,8 +69,8 @@
   <item name="android:background">@drawable/background_menuitem</item>    
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">wrap_content</item>
-  <item name="android:paddingTop">4dp</item>
-  <item name="android:paddingBottom">4dp</item>
+  <item name="android:paddingTop">6dp</item>
+  <item name="android:paddingBottom">6dp</item>
   </style>
  
  <style name="MenuItem" parent="MenuItemBase" />

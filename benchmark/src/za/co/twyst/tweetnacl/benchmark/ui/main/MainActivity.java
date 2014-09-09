@@ -20,7 +20,9 @@ import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
-public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,CryptoFragment.Owner { 
+public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
+                                                               SummaryFragment.Owner,
+                                                               CryptoFragment.Owner { 
     // CONSTANTS
     
     @SuppressWarnings("unused")
@@ -120,53 +122,6 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
 
     // EVENT HANDLERS
 
-    public void onSummary(View view) {
-        Fragment fragment = SummaryFragment.newFragment(measurements.values());
-             
-        getSupportFragmentManager().beginTransaction()
-                                   .replace(R.id.content,fragment)
-                                   .commit();
-             
-        drawer.closeDrawer(GravityCompat.START);
-    }
-	     
-    public void onCryptoBox(View view) {
-        Fragment fragment = CryptoBoxFragment.newFragment();
-
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                                       .replace(R.id.content,fragment)
-                                       .addToBackStack("summary")
-                                       .commit();
-
-            drawer.closeDrawer(GravityCompat.START);
-        }
-    }
-
-    public void onCryptoCore(View view) {
-    }
-
-    public void onCryptoHash(View view) {
-    }
-
-    public void onCryptoOneTimeAuth(View view) {
-    }
-
-    public void onCryptoScalarMult(View view) {
-    }
-
-    public void onCryptoSecretBox(View view) {
-    }
-
-    public void onCryptoStream(View view) {
-    }
-
-    public void onCryptoSign(View view) {
-    }
-
-    public void onCryptoVerify(View view) {
-    }
-
     // *** MainMenuFragment.Owner ***
     
     @Override
@@ -193,6 +148,13 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
              
             drawer.closeDrawer(GravityCompat.START);
         }
+    }
+
+    // *** SummaryFragment.Owner ***
+    
+    @Override
+    public Benchmark[] benchmarks() {
+        return measurements.values().toArray(new Benchmark[0]);
     }
 
     // *** CryptoFragment.Owner ***

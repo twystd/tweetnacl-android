@@ -12,7 +12,10 @@
  <color name="button_border">#ff436eb4</color>    
  <color name="button_text">#ffffffff</color>    
  
+ <color name="menu">#ffffffff</color>    
+ <color name="menu_border">#80436eb4</color>    
+ 
  <color name="menuitem">#40436eb4</color>    
- <color name="menuitem_border">#ff436eb4</color>    
+ <color name="menuitem_border">#00436eb4</color>    
  <color name="menuitem_text">#ff436eb4</color>    
 </resources>
