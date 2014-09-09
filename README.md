@@ -45,7 +45,8 @@ Disclaimer
 ----------
 The JNI wrapper has been kept as 'thin' as possible to avoid compromising the careful design
 and coding of the original TweetNaCl implementation. However, cryptography being what it is, 
-the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities. So ....
+the wrapper may have (entirely inadvertently) introduced non-obvious vulnerabilities (for 
+instance [How to zero a buffer][daemonology]). So ....
 
 **USE ENTIRELY AT YOUR OWN RISK !**
 
@@ -69,7 +70,7 @@ References
 10. [Android Developer's Blog:Some SecureRandom Thoughts][android]
 11. [How to zero a buffer][daemonology]
 12. [Zeroing buffers is insufficient][daemonology2]
-
+13. [How to zero a buffer: Erratum][daemonology3]
 
 [tweetnacl]:     http://tweetnacl.cr.yp.to
 [tweetnacl-pdf]: http://tweetnacl.cr.yp.to/tweetnacl-20131229.pdf
@@ -82,4 +83,5 @@ References
 [issue]:         https://code.google.com/p/android/issues/detail?id=42265
 [android]:       http://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html
 [daemonology]:   http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html
-[daemonology2]:  http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html
+[daemonology2]:  http://www.daemonology.net/blog/2014-09-06-zeroing-buffers-is-insufficient.html
+[daemonology3]:  http://www.daemonology.net/blog/2014-09-05-erratum.html

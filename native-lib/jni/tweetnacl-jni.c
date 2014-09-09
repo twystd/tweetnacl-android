@@ -30,6 +30,18 @@ void release(JNIEnv *env,jbyteArray jbytes,u8 *bytes,u64 N,int discard,jboolean 
 	}
 }
 
+// Ref. http://www.daemonology.net/blog/2014-09-05-erratum.html
+//
+// (seemingly not guaranteed to zero the memory in the face of
+//  compiler optimizations, but John Regehr thinks it probably
+//  will in most cases, so...)
+
+static void * (* const volatile memset_ptr)(void *, int, size_t) = memset;
+
+static void secure_memzero(void * p, size_t len) {
+	(memset_ptr)(p, 0, len);
+}
+
 /** jniCryptoBoxKeyPair
  *
  */
@@ -44,8 +56,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxKeyPair(JNIEnv *env,jobjec
 		(*env)->SetByteArrayRegion(env,secretKey,0,crypto_box_SECRETKEYBYTES,sk);
 	}
 
-    memset(pk,0,crypto_box_PUBLICKEYBYTES);
-    memset(sk,0,crypto_box_SECRETKEYBYTES);
+    secure_memzero(pk,crypto_box_PUBLICKEYBYTES);
+    secure_memzero(sk,crypto_box_SECRETKEYBYTES);
 
     return (jint) rc;
 }
@@ -81,11 +93,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBox(JNIEnv *env,jobject objec
 		}
 	}
 
-	memset(m, 0,N);
-	memset(c, 0,N);
-	memset(n, 0,crypto_box_NONCEBYTES);
-	memset(pk,0,crypto_box_PUBLICKEYBYTES);
-	memset(sk,0,crypto_box_SECRETKEYBYTES);
+	secure_memzero(m, N);
+	secure_memzero(c, N);
+	secure_memzero(n, crypto_box_NONCEBYTES);
+	secure_memzero(pk,crypto_box_PUBLICKEYBYTES);
+	secure_memzero(sk,crypto_box_SECRETKEYBYTES);
 
 	free(c);
 	free(m);
@@ -124,11 +136,11 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpen(JNIEnv *env,jobject o
 		}
 	}
 
-	memset(c, 0,N);
-	memset(m, 0,N);
-	memset(n, 0,crypto_box_NONCEBYTES);
-	memset(pk,0,crypto_box_PUBLICKEYBYTES);
-	memset(sk,0,crypto_box_SECRETKEYBYTES);
+	secure_memzero(c, N);
+	secure_memzero(m, N);
+	secure_memzero(n, crypto_box_NONCEBYTES);
+	secure_memzero(pk,crypto_box_PUBLICKEYBYTES);
+	secure_memzero(sk,crypto_box_SECRETKEYBYTES);
 
 	free(m);
 	free(c);
@@ -154,9 +166,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxBeforeNM(JNIEnv *env,jobje
 		(*env)->SetByteArrayRegion(env,key,0,crypto_box_BEFORENMBYTES,k);
 	}
 
-	memset(k, 0,crypto_box_BEFORENMBYTES);
-	memset(pk,0,crypto_box_PUBLICKEYBYTES);
-	memset(sk,0,crypto_box_SECRETKEYBYTES);
+	secure_memzero(k, crypto_box_BEFORENMBYTES);
+	secure_memzero(pk,crypto_box_PUBLICKEYBYTES);
+	secure_memzero(sk,crypto_box_SECRETKEYBYTES);
 
     return (jint) rc;
 }
@@ -191,10 +203,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxAfterNM(JNIEnv *env,jobjec
 		}
 	}
 
-	memset(m,0,N);
-	memset(c,0,N);
-	memset(n,0,crypto_box_NONCEBYTES);
-	memset(k,0,crypto_box_BEFORENMBYTES);
+	secure_memzero(m,N);
+	secure_memzero(c,N);
+	secure_memzero(n,crypto_box_NONCEBYTES);
+	secure_memzero(k,crypto_box_BEFORENMBYTES);
 
 	free(c);
 	free(m);
@@ -231,10 +243,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoBoxOpenAfterNM(JNIEnv *env,jo
 		}
 	}
 
-	memset(c,0,N);
-	memset(m,0,N);
-	memset(n,0,crypto_box_NONCEBYTES);
-	memset(k,0,crypto_box_BEFORENMBYTES);
+	secure_memzero(c,N);
+	secure_memzero(m,N);
+	secure_memzero(n,crypto_box_NONCEBYTES);
+	secure_memzero(k,crypto_box_BEFORENMBYTES);
 
 	free(m);
 	free(c);
@@ -261,10 +273,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreHSalsa20(JNIEnv *env,jobj
 		(*env)->SetByteArrayRegion(env,out,0,crypto_core_hsalsa20_OUTPUTBYTES,o);
 	}
 
-	memset(o,0,crypto_core_hsalsa20_OUTPUTBYTES);
-	memset(i,0,crypto_core_hsalsa20_INPUTBYTES);
-	memset(k,0,crypto_core_hsalsa20_KEYBYTES);
-	memset(c,0,crypto_core_hsalsa20_CONSTBYTES);
+	secure_memzero(o,crypto_core_hsalsa20_OUTPUTBYTES);
+	secure_memzero(i,crypto_core_hsalsa20_INPUTBYTES);
+	secure_memzero(k,crypto_core_hsalsa20_KEYBYTES);
+	secure_memzero(c,crypto_core_hsalsa20_CONSTBYTES);
 
     return (jint) rc;
 }
@@ -288,10 +300,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoCoreSalsa20(JNIEnv *env,jobje
 		(*env)->SetByteArrayRegion(env,out,0,crypto_core_salsa20_OUTPUTBYTES,o);
 	}
 
-	memset(o,0,crypto_core_salsa20_OUTPUTBYTES);
-	memset(i,0,crypto_core_salsa20_INPUTBYTES);
-	memset(k,0,crypto_core_salsa20_KEYBYTES);
-	memset(c,0,crypto_core_salsa20_CONSTBYTES);
+	secure_memzero(o,crypto_core_salsa20_OUTPUTBYTES);
+	secure_memzero(i,crypto_core_salsa20_INPUTBYTES);
+	secure_memzero(k,crypto_core_salsa20_KEYBYTES);
+	secure_memzero(c,crypto_core_salsa20_CONSTBYTES);
 
     return (jint) rc;
 }
@@ -312,8 +324,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoHash(JNIEnv *env,jobject obje
 		}
 	}
 
-	release(env,message,m,N,YES,copied);
-	memset (h,0,crypto_hash_BYTES);
+	release       (env,message,m,N,YES,copied);
+	secure_memzero(h,crypto_hash_BYTES);
 
     return (jint) rc;
 }
@@ -359,8 +371,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuth(JNIEnv *env,jobje
 
 	release(env,message,m,N,YES,copied);
 
-    memset(k,0,crypto_onetimeauth_KEYBYTES);
-    memset(a,0,crypto_onetimeauth_BYTES);
+	secure_memzero(k,crypto_onetimeauth_KEYBYTES);
+	secure_memzero(a,crypto_onetimeauth_BYTES);
 
     return (jint) rc;
 }
@@ -385,8 +397,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoOneTimeAuthVerify(JNIEnv *env
 
 	release(env,message,m,N,YES,copied);
 
-	memset(k,0,crypto_onetimeauth_KEYBYTES);
-	memset(a,0,crypto_onetimeauth_BYTES);
+	secure_memzero(k,crypto_onetimeauth_KEYBYTES);
+	secure_memzero(a,crypto_onetimeauth_BYTES);
 
 	return (jint) rc;
 }
@@ -406,8 +418,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMultBase(JNIEnv *env,jo
 		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_BYTES,q);
 	}
 
-	memset(n,0,crypto_scalarmult_SCALARBYTES);
-	memset(q,0,crypto_scalarmult_BYTES);
+	secure_memzero(n,crypto_scalarmult_SCALARBYTES);
+	secure_memzero(q,crypto_scalarmult_BYTES);
 
     return (jint) rc;
 }
@@ -429,9 +441,9 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoScalarMult(JNIEnv *env,jobjec
 		(*env)->SetByteArrayRegion(env,Q,0,crypto_scalarmult_BYTES,q);
 	}
 
-	memset(n,0,crypto_scalarmult_SCALARBYTES);
-	memset(p,0,crypto_scalarmult_BYTES);
-	memset(q,0,crypto_scalarmult_BYTES);
+	secure_memzero(n,crypto_scalarmult_SCALARBYTES);
+	secure_memzero(p,crypto_scalarmult_BYTES);
+	secure_memzero(q,crypto_scalarmult_BYTES);
 
     return (jint) rc;
 }
@@ -461,10 +473,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBox(JNIEnv *env,jobject
 		}
 	}
 
-	memset(m,0,N);
-	memset(c,0,N);
-	memset(n,0,crypto_secretbox_NONCEBYTES);
-	memset(k,0,crypto_secretbox_KEYBYTES);
+	secure_memzero(m,N);
+	secure_memzero(c,N);
+	secure_memzero(n,crypto_secretbox_NONCEBYTES);
+	secure_memzero(k,crypto_secretbox_KEYBYTES);
 
 	free(c);
 	free(m);
@@ -497,10 +509,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSecretBoxOpen(JNIEnv *env,job
 	    }
 	}
 
-	memset(m,0,N);
-	memset(c,0,N);
-	memset(n,0,crypto_secretbox_NONCEBYTES);
-	memset(k,0,crypto_secretbox_KEYBYTES);
+	secure_memzero(m,N);
+	secure_memzero(c,N);
+	secure_memzero(n,crypto_secretbox_NONCEBYTES);
+	secure_memzero(k,crypto_secretbox_KEYBYTES);
 
 	free(m);
 	free(c);
@@ -528,8 +540,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStream(JNIEnv *env,jobject ob
 
 	release(env,stream,c,N,rc,copied);
 
-	memset(n,0,crypto_stream_NONCEBYTES);
-	memset(k,0,crypto_stream_KEYBYTES);
+	secure_memzero(n,crypto_stream_NONCEBYTES);
+	secure_memzero(k,crypto_stream_KEYBYTES);
 
     return (jint) rc;
 }
@@ -556,8 +568,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamXor(JNIEnv *env,jobject
 	release(env,ciphertext,c,N,rc, copied[C]);
 	release(env,message,   m,N,YES,copied[M]);
 
-	memset(n,0,crypto_stream_NONCEBYTES);
-	memset(k,0,crypto_stream_KEYBYTES);
+	secure_memzero(n,crypto_stream_NONCEBYTES);
+	secure_memzero(k,crypto_stream_KEYBYTES);
 
     return (jint) rc;
 }
@@ -582,8 +594,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20(JNIEnv *env,job
 
 	release(env,stream,c,N,rc,copied);
 
-	memset(n,0,crypto_stream_salsa20_NONCEBYTES);
-	memset(k,0,crypto_stream_salsa20_KEYBYTES);
+	secure_memzero(n,crypto_stream_salsa20_NONCEBYTES);
+	secure_memzero(k,crypto_stream_salsa20_KEYBYTES);
 
     return (jint) rc;
 }
@@ -610,8 +622,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoStreamSalsa20Xor(JNIEnv *env,
 	release(env,ciphertext,c,N,rc, copied[C]);
 	release(env,message,   m,N,YES,copied[M]);
 
-	memset(n,0,crypto_stream_salsa20_NONCEBYTES);
-	memset(k,0,crypto_stream_salsa20_KEYBYTES);
+	secure_memzero(n,crypto_stream_salsa20_NONCEBYTES);
+	secure_memzero(k,crypto_stream_salsa20_KEYBYTES);
 
     return (jint) rc;
 }
@@ -630,8 +642,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignKeyPair(JNIEnv *env,jobje
 		(*env)->SetByteArrayRegion(env,secretKey,0,crypto_sign_SECRETKEYBYTES,sk);
 	}
 
-	memset(pk,0,crypto_sign_PUBLICKEYBYTES);
-	memset(sk,0,crypto_sign_SECRETKEYBYTES);
+	secure_memzero(pk,crypto_sign_PUBLICKEYBYTES);
+	secure_memzero(sk,crypto_sign_SECRETKEYBYTES);
 
     return (jint) rc;
 }
@@ -657,7 +669,7 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSign(JNIEnv *env,jobject obje
 	release(env,signedm,sm,smlen,rc, copied[S]);
 	release(env,message,m, N,    YES,copied[M]);
 
-    memset(sk,0,crypto_sign_SECRETKEYBYTES);
+	secure_memzero(sk,crypto_sign_SECRETKEYBYTES);
 
     return (jint) rc;
 }
@@ -687,9 +699,10 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoSignOpen(JNIEnv *env,jobject 
 
 	release(env,signedm,sm,N,YES,copied);
 
-	memset(m, 0,N);
-	memset(pk,0,crypto_sign_PUBLICKEYBYTES);
-	free   (m);
+	secure_memzero(m, N);
+	secure_memzero(pk,crypto_sign_PUBLICKEYBYTES);
+
+	free(m);
 
     return (jint) rc;
 }
@@ -707,8 +720,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoVerify16(JNIEnv *env,jobject 
 
 	int rc = crypto_verify_16(x,y);
 
-	memset(x,0,crypto_verify_16_BYTES);
-	memset(y,0,crypto_verify_16_BYTES);
+	secure_memzero(x,crypto_verify_16_BYTES);
+	secure_memzero(y,crypto_verify_16_BYTES);
 
     return (jint) rc;
 }
@@ -725,8 +738,8 @@ jint Java_za_co_twyst_tweetnacl_TweetNaCl_jniCryptoVerify32(JNIEnv *env,jobject 
 
 	int rc = crypto_verify_32(x,y);
 
-	memset(x,0,crypto_verify_32_BYTES);
-	memset(y,0,crypto_verify_32_BYTES);
+	secure_memzero(x,crypto_verify_32_BYTES);
+	secure_memzero(y,crypto_verify_32_BYTES);
 
     return (jint) rc;
 }
