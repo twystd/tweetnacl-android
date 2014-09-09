@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:groupbox="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
-                xmlns:grid="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
                 style="@style/Page">
  
  <!-- CONTENT -->
@@ -8,7 +7,11 @@
  <ScrollView android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:layout_alignParentTop="true"
-             android:layout_above="@+id/run">
+             android:layout_above="@+id/run"
+             android:paddingTop="@dimen/activity_vertical_margin"
+             android:paddingBottom="@dimen/activity_vertical_margin"
+             android:paddingLeft="@dimen/activity_horizontal_margin"
+             android:paddingRight="@dimen/activity_horizontal_margin">
   <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
       
    <!-- SETUP -->
@@ -55,20 +58,28 @@
               android:id="@+id/progressbar"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/activity_horizontal_margin"
+              android:layout_marginRight="@dimen/activity_horizontal_margin"
+              android:layout_marginBottom="4dp"
               android:layout_above="@+id/run"
               android:layout_centerInParent="true"
               android:progressDrawable="@drawable/bar"
               android:max="1000" 
+              android:minHeight="8dp"
+              android:maxHeight="12dp"
               android:visibility="invisible" />
  
  <Button style="@style/RunButton"
          android:id="@+id/run"
+         android:layout_marginLeft="@dimen/activity_horizontal_margin"
+         android:layout_marginRight="@dimen/activity_horizontal_margin"
+         android:layout_marginBottom="@dimen/activity_vertical_margin"
          android:layout_alignParentBottom="true"
          android:layout_centerHorizontal="true" 
          android:text="@string/run" />
  
  <!--  WINDMILL -->
  
- <include layout="@layout/windmill" android:id="@+id/windmill" />
+ <include layout="@layout/windmill" android:id="@+id/busy" />
  
 </RelativeLayout>

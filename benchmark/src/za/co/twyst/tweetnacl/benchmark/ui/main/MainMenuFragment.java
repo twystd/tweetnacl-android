@@ -59,8 +59,6 @@ public class MainMenuFragment extends Fragment {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent,View view,int position,long id) {
-                Log.i("TRACE","onItemClick");
-                
                 MENUITEM item    = (MENUITEM) adapter.getItem(position);
                 Owner    handler = owner.get();
                 

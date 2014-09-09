@@ -9,10 +9,6 @@
   <item name="android:background">#ffffffff</item>
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">match_parent</item>
-  <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
-  <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
-  <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
-  <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
  </style>
  
  <style name="Page" parent="PageBase" />
@@ -70,7 +66,7 @@
  <!-- MENU ITEMS -->
  
  <style name="MenuItemBase">
-  <item name="android:background">#ffe0e0e0</item>    
+  <item name="android:background">@drawable/background_menuitem</item>    
   <item name="android:layout_width">match_parent</item>
   <item name="android:layout_height">wrap_content</item>
   <item name="android:paddingTop">4dp</item>

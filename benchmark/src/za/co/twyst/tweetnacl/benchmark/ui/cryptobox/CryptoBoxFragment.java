@@ -72,7 +72,7 @@ public class CryptoBoxFragment extends CryptoFragment {
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
-        final ProgressBar bar = (ProgressBar) root.findViewById(R.id.progressbar);
+        final ProgressBar bar   = (ProgressBar) root.findViewById(R.id.progressbar);
 
         // ... initialise default setup
         
@@ -108,18 +108,18 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     // INTERNAL
     
-    private void run(int bytes,int loops,ProgressBar windmill) {
-        new RunTask(this,windmill,bytes,loops).execute();
+    private void run(int bytes,int loops,ProgressBar bar) {
+        new RunTask(this,bar,bytes,loops).execute();
     }
     
     private void busy() {
         View view;
-        View windmill;
+        View busy;
         View bar;
         
         if ((view = getView()) != null) {
-            if ((windmill = view.findViewById(R.id.windmill)) != null) {
-                windmill.setVisibility(View.VISIBLE);
+            if ((busy = view.findViewById(R.id.busy)) != null) {
+                busy.setVisibility(View.VISIBLE);
             }
             
             if ((bar = view.findViewById(R.id.progressbar)) != null) {
@@ -130,14 +130,14 @@ public class CryptoBoxFragment extends CryptoFragment {
 
     private void done(Result encrypt,Result decrypt) {
         View view = getView();
-        View windmill;
+        View busy;
         View bar;
 
         // ... hide windmill
         
         if (view != null) {
-            if ((windmill = view.findViewById(R.id.windmill)) != null) {
-                windmill.setVisibility(View.GONE);
+            if ((busy = view.findViewById(R.id.busy)) != null) {
+                busy.setVisibility(View.GONE);
             }
             
             if ((bar = view.findViewById(R.id.progressbar)) != null) {
@@ -203,29 +203,29 @@ public class CryptoBoxFragment extends CryptoFragment {
 
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
         private final WeakReference<CryptoBoxFragment> reference;
-        private final WeakReference<ProgressBar>       windmill;
+        private final WeakReference<ProgressBar>       bar;
         private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoBoxFragment fragment,ProgressBar windmill,int bytes,int loops) {
+        private RunTask(CryptoBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
             this.reference = new WeakReference<CryptoBoxFragment>(fragment);
-            this.windmill  = new WeakReference<ProgressBar>(windmill);
+            this.bar       = new WeakReference<ProgressBar>(bar);
             this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
         @Override
         protected void onPreExecute() {
-            CryptoBoxFragment fragment = reference.get();
-            ProgressBar       bar      = windmill.get();
-            
-            if (bar != null) {
-                bar.setProgress(0);
-            }
+            CryptoBoxFragment fragment = this.reference.get();
+            ProgressBar       bar      = this.bar.get();
 
             if (fragment != null) {
                 fragment.busy();
+            }
+
+            if (bar != null) {
+                bar.setProgress(0);
             }
         }
 
@@ -241,16 +241,19 @@ public class CryptoBoxFragment extends CryptoFragment {
                 byte[]  crypttext;
                 long    start;
                 long    total;
+                int     progress;
                 
                 // ... crypto_box
 
-                start = System.currentTimeMillis();
-                total = 0;
+                start    = System.currentTimeMillis();
+                total    = 0;
+                progress = 0;
 
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
                     
                       total += message.length;
+                      publishProgress(++progress);
                     }
                 
                 Result encrypt = new Result(total,System.currentTimeMillis() - start);
@@ -265,7 +268,7 @@ public class CryptoBoxFragment extends CryptoFragment {
                     { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
                   
                       total += message.length;
-                      publishProgress(i);
+                      publishProgress(++progress);
                     }
 
                 Result decrypt = new Result(total,System.currentTimeMillis() - start);
@@ -283,10 +286,10 @@ public class CryptoBoxFragment extends CryptoFragment {
         @Override
         protected void onProgressUpdate(Integer... values) {
             int         progress = values[0];
-            ProgressBar bar      = windmill.get();
+            ProgressBar bar      = this.bar.get();
             
             if (bar != null) {
-                bar.setProgress(1000*progress/loops);
+                bar.setProgress(1000*progress/(2*loops));
             }
         }
 

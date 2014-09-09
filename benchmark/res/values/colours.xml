@@ -4,10 +4,15 @@
  <color name="background_page">#fff0f0f0</color>    
  <color name="background_header">#ff436eb4</color>    
  <color name="groupbox_label">#ff436eb4</color>    
- <color name="groupbox_border">#ff436eb4</color>    
+ <color name="groupbox_border">#ff436eb4</color> 
  <color name="grid_border">#ff436eb4</color>    
  <color name="grid">#40436eb4</color>    
- <color name="button_border">#ff436eb4</color>    
+ 
  <color name="button">#40436eb4</color>    
+ <color name="button_border">#ff436eb4</color>    
  <color name="button_text">#ffffffff</color>    
+ 
+ <color name="menuitem">#40436eb4</color>    
+ <color name="menuitem_border">#ff436eb4</color>    
+ <color name="menuitem_text">#ff436eb4</color>    
 </resources>
