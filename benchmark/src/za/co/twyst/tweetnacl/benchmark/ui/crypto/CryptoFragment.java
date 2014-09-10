@@ -1,4 +1,4 @@
-package za.co.twyst.tweetnacl.benchmark.ui.cryptobox;
+package za.co.twyst.tweetnacl.benchmark.ui.crypto;
 
 import java.lang.ref.WeakReference;
 

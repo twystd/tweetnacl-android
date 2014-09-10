@@ -16,8 +16,9 @@ import android.view.View;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
-import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.cryptobox.CryptoBoxFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoBoxFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoCoreFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
 public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
@@ -129,6 +130,7 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         Fragment fragment = null;
         
         switch(item) {
+        
             case SUMMARY:
                 fragment = SummaryFragment.newFragment(measurements.values());
                 break;
@@ -136,6 +138,10 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
             case CRYPTO_BOX:
                 fragment = CryptoBoxFragment.newFragment();
                 break;
+                
+            case CRYPTO_CORE:
+               fragment = CryptoCoreFragment.newFragment();
+               break;
         }
 
         // ... replace fragments

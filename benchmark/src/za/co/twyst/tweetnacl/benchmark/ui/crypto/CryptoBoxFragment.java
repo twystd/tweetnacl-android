@@ -1,6 +1,7 @@
-package za.co.twyst.tweetnacl.benchmark.ui.cryptobox;
+package za.co.twyst.tweetnacl.benchmark.ui.crypto;
 
 import java.lang.ref.WeakReference;
+import java.util.Random;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -234,6 +235,7 @@ public class CryptoBoxFragment extends CryptoFragment {
             try {
                 // ... initialise
                 
+                Random  random  = new Random();
                 KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
                 KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
                 byte[]  message = new byte[bytes];
@@ -242,6 +244,8 @@ public class CryptoBoxFragment extends CryptoFragment {
                 long    start;
                 long    total;
                 int     progress;
+                
+                random.nextBytes(message);
                 
                 // ... crypto_box
 

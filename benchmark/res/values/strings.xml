@@ -9,7 +9,8 @@
  <string name="summary">Summary</string>
  <string name="crypto_box">crypto_box</string>
  <string name="crypto_box_open">crypto_box_open</string>
- <string name="crypto_core">crypto_core</string>
+ <string name="crypto_core_hsalsa20">crypto_core_hsalsa20</string>
+ <string name="crypto_core_salsa20">crypto_core_salsa20</string>
  <string name="crypto_hash">crypto_hash</string>
  <string name="crypto_onetimeauth">crypto_onetimeauth</string>
  <string name="crypto_scalarmult">crypto_scalarmult</string>
@@ -36,8 +37,12 @@
 
  <string name="column_encrypt">Encrypt</string>
  <string name="column_decrypt">Decrypt</string>
+ <string name="column_hsalsa20">HSalsa20</string>
+ <string name="column_salsa20">Salsa20t</string>
  
  <string name="navigation_drawer_open">Open navigation drawer</string>
  <string name="navigation_drawer_close">Close navigation drawer</string>
+ <string name="menuitem_crypto_box">crypto_box</string>
+ <string name="menuitem_crypto_core">crypto_core</string>
  
 </resources>
