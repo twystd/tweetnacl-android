@@ -1,6 +1,8 @@
 package za.co.twyst.tweetnacl.benchmark.ui.main;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.ui.widgets.Lozenge;
 
 public class MenuAdapter extends BaseAdapter {
     // CONSTANTS
@@ -18,14 +21,18 @@ public class MenuAdapter extends BaseAdapter {
     
     // INSTANCE VARIABLES
     
-    private Context        context;
-    private LayoutInflater inflater;
+    private final Context        context;
+    private final LayoutInflater inflater;
+    private final Drawable[]     background;
     
     // CONSTRUCTOR
     
     public MenuAdapter(Fragment fragment) {
-        this.context  = fragment.getActivity();
-        this.inflater = fragment.getActivity().getLayoutInflater();
+        this.context    = fragment.getActivity();
+        this.inflater   = fragment.getActivity().getLayoutInflater();
+        this.background = new Drawable[] { new ShapeDrawable(new Lozenge(false)),
+                                           new ShapeDrawable(new Lozenge(true))
+                                         };
     }
     
     // *** BaseAdapter ***
@@ -46,6 +53,16 @@ public class MenuAdapter extends BaseAdapter {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position % background.length;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return background.length;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         MENUITEM item = MENUITEM.values()[position];
         View     view = convertView;
@@ -60,7 +77,8 @@ public class MenuAdapter extends BaseAdapter {
             holder = (Holder) view.getTag();
         }
         
-        holder.initialise(item);
+        holder.initialise (item);
+        view.setBackground(background[position % background.length]);
         
         return view;
     }
