@@ -36,8 +36,8 @@ public class CryptoBoxFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_encrypt, 
-                                           R.string.column_decrypt 
+    private static final int[] COLUMNS = { R.string.column_box, 
+                                           R.string.column_box_open 
                                          };
 
     
@@ -184,24 +184,6 @@ public class CryptoBoxFragment extends CryptoFragment {
         }
     }
 
-    private static class Measured { 
-        public long mean;
-        public long throughput;
-        private long minimum = Long.MAX_VALUE;
-        private long maximum = Long.MIN_VALUE;
-        private long bytes   = 0;
-        private long dt      = 0;
-        
-        private void update(long bytes,long dt) {
-            this.bytes     += bytes;
-            this.dt        += dt;
-            this.throughput = 1000 * bytes/dt;
-            this.mean       = 1000 * this.bytes/this.dt;
-            this.minimum    = Math.min(minimum,throughput);
-            this.maximum    = Math.max(maximum,throughput);
-        }
-    }
-
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
         private final WeakReference<CryptoBoxFragment> reference;
         private final WeakReference<ProgressBar>       bar;
@@ -216,6 +198,7 @@ public class CryptoBoxFragment extends CryptoFragment {
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
+        
         @Override
         protected void onPreExecute() {
             CryptoBoxFragment fragment = this.reference.get();

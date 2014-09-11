@@ -17,6 +17,7 @@ public class Lozenge extends Shape {
     private final boolean reversed;
     private final double  angle  = ANGLE;
     private final Paint   border = new Paint();
+    private final Paint   fill   = new Paint();
     
     private final PathEffect   effect;
     private final Path         path;  
@@ -28,6 +29,14 @@ public class Lozenge extends Shape {
         effect = new CornerPathEffect(5);
         path   = new Path();
 
+        fill.setColor      (0x40436eb4);
+        fill.setStyle      (Paint.Style.FILL);
+        fill.setAntiAlias  (true);
+        fill.setDither     (true);
+        fill.setPathEffect (effect);
+        fill.setStrokeJoin (Paint.Join.ROUND);  
+        fill.setStrokeCap  (Paint.Cap.ROUND);  
+
         border.setColor      (0xff436eb4);
         border.setStyle      (Paint.Style.STROKE);
         border.setStrokeWidth(2);
@@ -35,7 +44,7 @@ public class Lozenge extends Shape {
         border.setDither     (true);
         border.setPathEffect (effect);
         border.setStrokeJoin (Paint.Join.ROUND);  
-        border.setStrokeCap  (Paint.Cap.BUTT);  
+        border.setStrokeCap  (Paint.Cap.ROUND);  
     }
 
     
@@ -70,6 +79,7 @@ public class Lozenge extends Shape {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
+        canvas.drawPath(path,fill);
         canvas.drawPath(path,border);
     }
 

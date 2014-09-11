@@ -28,6 +28,7 @@ public class SummaryFragment extends Fragment {
                                            R.string.crypto_core_hsalsa20,
                                            R.string.crypto_core_salsa20,
                                            R.string.crypto_hash,
+                                           R.string.crypto_hashblocks,
                                            R.string.crypto_onetimeauth,
                                            R.string.crypto_scalarmult,
                                            R.string.crypto_secretbox,
@@ -43,7 +44,9 @@ public class SummaryFragment extends Fragment {
     private static final TYPE[] ROW = { TYPE.CRYPTO_BOX,
                                         TYPE.CRYPTO_BOX_OPEN,
                                         TYPE.CRYPTO_CORE_HSALSA20,
-                                        TYPE.CRYPTO_CORE_SALSA20
+                                        TYPE.CRYPTO_CORE_SALSA20,
+                                        TYPE.CRYPTO_HASH,
+                                        TYPE.CRYPTO_HASHBLOCKS
                                       };
 
     // INSTANCE VARIABLES

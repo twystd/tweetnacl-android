@@ -8,7 +8,7 @@
            android:singleLine="true"
            android:ellipsize="end" 
            android:textColor="@color/menuitem_text" 
-           android:textSize="15sp" />
+           android:textSize="12sp" />
     
 </RelativeLayout>
 

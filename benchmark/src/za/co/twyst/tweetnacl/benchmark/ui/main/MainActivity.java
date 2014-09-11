@@ -19,6 +19,7 @@ import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoCoreFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoHashFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
 public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
@@ -140,8 +141,12 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
                 break;
                 
             case CRYPTO_CORE:
-               fragment = CryptoCoreFragment.newFragment();
-               break;
+                fragment = CryptoCoreFragment.newFragment();
+                break;
+               
+            case CRYPTO_HASH:
+                fragment = CryptoHashFragment.newFragment();
+                break;
         }
 
         // ... replace fragments

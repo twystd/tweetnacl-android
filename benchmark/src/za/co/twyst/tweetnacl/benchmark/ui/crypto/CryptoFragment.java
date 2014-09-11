@@ -76,4 +76,27 @@ public abstract class CryptoFragment extends Fragment {
     public interface Owner {
         public void measured(Benchmark... measurments);
     }
+    
+    protected static class Measured { 
+        public long mean;
+        public long throughput;
+        
+        protected long minimum = Long.MAX_VALUE;
+        protected long maximum = Long.MIN_VALUE;
+        protected long bytes   = 0;
+        protected long dt      = 0;
+        
+        protected void update(long bytes,long dt) {
+            if (dt > 0) {
+                this.bytes     += bytes;
+                this.dt        += dt;
+                this.throughput = 1000 * bytes/dt;
+                this.mean       = 1000 * this.bytes/this.dt;
+                this.minimum    = Math.min(minimum,throughput);
+                this.maximum    = Math.max(maximum,throughput);
+            }
+        }
+    }
+
+
 }

@@ -22,11 +22,12 @@ import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
-public class CryptoCoreFragment extends CryptoFragment {
+public class CryptoHashFragment extends CryptoFragment {
     // CONSTANTS
 
-    private static final String TAG   = CryptoCoreFragment.class.getSimpleName();
-    private static final int    LOOPS = 65536;
+    private static final String TAG          = CryptoHashFragment.class.getSimpleName();
+    private static final int    MESSAGE_SIZE = 16384;
+    private static final int    LOOPS        = 65536;
     
     private static final int[] ROWS    = { R.string.results_measured,
                                            R.string.results_average,
@@ -34,31 +35,32 @@ public class CryptoCoreFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_hsalsa20, 
-                                           R.string.column_salsa20 
+    private static final int[] COLUMNS = { R.string.column_hash, 
+                                           R.string.column_hashblocks
                                          };
     
-    private static final byte[] KEY = { (byte) 0x4a, (byte) 0x5d, (byte) 0x9d, (byte) 0x5b, 
-                                        (byte) 0xa4, (byte) 0xce, (byte) 0x2d, (byte) 0xe1,
-                                        (byte) 0x72, (byte) 0x8e, (byte) 0x3b, (byte) 0xf4,
-                                        (byte) 0x80, (byte) 0x35, (byte) 0x0f, (byte) 0x25,
-                                        (byte) 0xe0, (byte) 0x7e, (byte) 0x21, (byte) 0xc9,
-                                        (byte) 0x47, (byte) 0xd1, (byte) 0x9e, (byte) 0x33,
-                                        (byte) 0x76, (byte) 0xf0, (byte) 0x9b, (byte) 0x3c,
-                                        (byte) 0x1e, (byte) 0x16, (byte) 0x17, (byte) 0x42 
-                                      };
-
-    private static final byte[] CONSTANT = { (byte) 0x65, (byte) 0x78, (byte) 0x70, (byte) 0x61,
-                                             (byte) 0x6e, (byte) 0x64, (byte) 0x20, (byte) 0x33,
-                                             (byte) 0x32, (byte) 0x2d, (byte) 0x62, (byte) 0x79,
-                                             (byte) 0x74, (byte) 0x65, (byte) 0x20, (byte) 0x6b
-                                           };
-
+    private static final byte[] IV = { (byte) 0x6a, (byte) 0x09, (byte) 0xe6, (byte) 0x67,
+                                       (byte) 0xf3, (byte) 0xbc, (byte) 0xc9, (byte) 0x08,
+                                       (byte) 0xbb, (byte) 0x67, (byte) 0xae, (byte) 0x85,
+                                       (byte) 0x84, (byte) 0xca, (byte) 0xa7, (byte) 0x3b,
+                                       (byte) 0x3c, (byte) 0x6e, (byte) 0xf3, (byte) 0x72,
+                                       (byte) 0xfe, (byte) 0x94, (byte) 0xf8, (byte) 0x2b,
+                                       (byte) 0xa5, (byte) 0x4f, (byte) 0xf5, (byte) 0x3a,
+                                       (byte) 0x5f, (byte) 0x1d, (byte) 0x36, (byte) 0xf1,
+                                       (byte) 0x51, (byte) 0x0e, (byte) 0x52, (byte) 0x7f,
+                                       (byte) 0xad, (byte) 0xe6, (byte) 0x82, (byte) 0xd1,
+                                       (byte) 0x9b, (byte) 0x05, (byte) 0x68, (byte) 0x8c,
+                                       (byte) 0x2b, (byte) 0x3e, (byte) 0x6c, (byte) 0x1f,
+                                       (byte) 0x1f, (byte) 0x83, (byte) 0xd9, (byte) 0xab,
+                                       (byte) 0xfb, (byte) 0x41, (byte) 0xbd, (byte) 0x6b,
+                                       (byte) 0x5b, (byte) 0xe0, (byte) 0xcd, (byte) 0x19,
+                                       (byte) 0x13, (byte) 0x7e, (byte) 0x21, (byte) 0x79 
+                                     };
     
     // INSTANCE VARIABLES
     
-    private Measured hsalsa20 = new Measured();
-    private Measured salsa20  = new Measured();
+    private Measured hash       = new Measured();
+    private Measured hashblocks = new Measured();
     
     // CLASS METHODS
 
@@ -68,7 +70,7 @@ public class CryptoCoreFragment extends CryptoFragment {
      * @return Initialised CryptoBoxFragment or <code>null</code>.
      */
     public static Fragment newFragment() {
-        return new CryptoCoreFragment();
+        return new CryptoHashFragment();
     }
     
     /** Pretty formats a throughput value.
@@ -82,7 +84,8 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptocore,container,false);
+        final View        root  = inflater.inflate(R.layout.fragment_cryptohash,container,false);
+        final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
@@ -90,6 +93,7 @@ public class CryptoCoreFragment extends CryptoFragment {
 
         // ... initialise default setup
         
+        size.setText (Integer.toString(MESSAGE_SIZE));
         loops.setText(Integer.toString(LOOPS));
 
         // ... initialise grid
@@ -104,10 +108,11 @@ public class CryptoCoreFragment extends CryptoFragment {
                                    { @Override
                                      public void onClick(View view)
                                             { try
-                                                 { int _loops = Integer.parseInt(loops.getText().toString());
-                                                   
-                                                   hideKeyboard(loops);
-                                                   run         (_loops,bar);
+                                                 { int _size  = Integer.parseInt(size.getText ().toString());
+                                                   int _loops = Integer.parseInt(loops.getText().toString());
+                                                 
+                                                   hideKeyboard(size,loops);
+                                                   run         (_size,_loops,bar);
                                                  }
                                               catch(Throwable x)
                                                  { // TODO
@@ -120,8 +125,8 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     // INTERNAL
     
-    private void run(int loops,ProgressBar bar) {
-        new RunTask(this,bar,loops).execute();
+    private void run(int bytes,int loops,ProgressBar bar) {
+        new RunTask(this,bar,bytes,loops).execute();
     }
     
     private void busy() {
@@ -140,7 +145,7 @@ public class CryptoCoreFragment extends CryptoFragment {
         }
     }
 
-    private void done(Result hsalsa20,Result salsa20) {
+    private void done(Result hash,Result hashblocks) {
         View view = getView();
         View busy;
         View bar;
@@ -159,28 +164,28 @@ public class CryptoCoreFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        this.hsalsa20.update(hsalsa20.bytes,hsalsa20.dt);
-        this.salsa20.update (salsa20.bytes,salsa20.dt);
+        this.hash.update(hash.bytes,hash.dt);
+        this.hashblocks.update (hashblocks.bytes,hashblocks.dt);
 
 
         if (view != null) {
             Grid grid = (Grid) view.findViewById(R.id.grid);
             
-            grid.setValue(0,0,format(this.hsalsa20.throughput));
-            grid.setValue(1,0,format(this.hsalsa20.mean));
-            grid.setValue(2,0,format(this.hsalsa20.minimum));
-            grid.setValue(3,0,format(this.hsalsa20.maximum));
+            grid.setValue(0,0,format(this.hash.throughput));
+            grid.setValue(1,0,format(this.hash.mean));
+            grid.setValue(2,0,format(this.hash.minimum));
+            grid.setValue(3,0,format(this.hash.maximum));
             
-            grid.setValue(0,1,format(this.salsa20.throughput));
-            grid.setValue(1,1,format(this.salsa20.mean));
-            grid.setValue(2,1,format(this.salsa20.minimum));
-            grid.setValue(3,1,format(this.salsa20.maximum));
+            grid.setValue(0,1,format(this.hashblocks.throughput));
+            grid.setValue(1,1,format(this.hashblocks.mean));
+            grid.setValue(2,1,format(this.hashblocks.minimum));
+            grid.setValue(3,1,format(this.hashblocks.maximum));
         }
         
         // ... update global measurements
         
-        this.measured(new Benchmark(TYPE.CRYPTO_CORE_HSALSA20,format(this.hsalsa20.mean)),
-                      new Benchmark(TYPE.CRYPTO_CORE_SALSA20, format(this.salsa20.mean)));
+        this.measured(new Benchmark(TYPE.CRYPTO_HASH,      format(this.hash.mean)),
+                      new Benchmark(TYPE.CRYPTO_HASHBLOCKS,format(this.hashblocks.mean)));
     }
     
     // INNER CLASSES
@@ -196,20 +201,23 @@ public class CryptoCoreFragment extends CryptoFragment {
     }
 
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoCoreFragment> reference;
+        private final WeakReference<CryptoHashFragment> reference;
         private final WeakReference<ProgressBar>       bar;
+        private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoCoreFragment fragment,ProgressBar bar,int loops) {
-            this.reference = new WeakReference<CryptoCoreFragment>(fragment);
+        private RunTask(CryptoHashFragment fragment,ProgressBar bar,int bytes,int loops) {
+            this.reference = new WeakReference<CryptoHashFragment>(fragment);
             this.bar       = new WeakReference<ProgressBar>(bar);
+            this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
+
         @Override
         protected void onPreExecute() {
-            CryptoCoreFragment fragment = this.reference.get();
+            CryptoHashFragment fragment = this.reference.get();
             ProgressBar       bar      = this.bar.get();
 
             if (fragment != null) {
@@ -227,49 +235,43 @@ public class CryptoCoreFragment extends CryptoFragment {
                 // ... initialise
                 
                 Random  random  = new Random();
-                byte[]  message;
+                byte[]  message = new byte[bytes];
                 long    start;
                 long    total;
                 int     progress;
-                
-                // ... crypto_core_hsalsa20
 
-                message = new byte[TweetNaCl.HSALSA20_INPUTBYTES];
-                
                 random.nextBytes(message);
+
+                // ... crypto_hash
 
                 start    = System.currentTimeMillis();
                 total    = 0;
                 progress = 0;
 
                 for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoCoreHSalsa20(message,KEY,CONSTANT);
+                    { tweetnacl.cryptoHash(message);
                       total += message.length;
                       publishProgress(++progress);
                     }
                 
-                Result hsalsa20 = new Result(total,System.currentTimeMillis() - start);
+                Result hash = new Result(total,System.currentTimeMillis() - start);
                 
-                // ... crypto_core_salsa20
-
-                message = new byte[TweetNaCl.SALSA20_INPUTBYTES];
-                
-                random.nextBytes(message);
+                // ... crypto_hashblocks
 
                 start     = System.currentTimeMillis();
                 total     = 0;
                 
                 for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoCoreSalsa20(message,KEY,CONSTANT);
+                    { tweetnacl.cryptoHashBlocks(IV,message);
                       total += message.length;
                       publishProgress(++progress);
                     }
 
-                Result salsa20 = new Result(total,System.currentTimeMillis() - start);
+                Result hashblocks = new Result(total,System.currentTimeMillis() - start);
 
                 // ... done
                 
-                return new Result[] { hsalsa20,salsa20 };
+                return new Result[] { hash,hashblocks };
                 
             } catch(Throwable x) {
                 Log.e(TAG,"Error running crypto_core benchmark",x);
@@ -290,7 +292,7 @@ public class CryptoCoreFragment extends CryptoFragment {
 
         @Override
         protected void onPostExecute(Result[] result) {
-            CryptoCoreFragment fragment = reference.get();
+            CryptoHashFragment fragment = reference.get();
             
             if (fragment != null) {
                 fragment.done(result[0],result[1]);

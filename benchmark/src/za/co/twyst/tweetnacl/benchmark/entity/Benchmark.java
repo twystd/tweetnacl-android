@@ -14,7 +14,9 @@ public class Benchmark implements Parcelable {
         CRYPTO_BOX          (1),
         CRYPTO_BOX_OPEN     (2),
         CRYPTO_CORE_HSALSA20(3),
-        CRYPTO_CORE_SALSA20 (4);
+        CRYPTO_CORE_SALSA20 (4),
+        CRYPTO_HASH         (5),
+        CRYPTO_HASHBLOCKS   (6);
         
         private final int type;
         
