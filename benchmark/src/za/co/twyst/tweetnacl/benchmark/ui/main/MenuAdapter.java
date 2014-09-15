@@ -1,6 +1,7 @@
 package za.co.twyst.tweetnacl.benchmark.ui.main;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.support.v4.app.Fragment;
@@ -19,17 +20,22 @@ public class MenuAdapter extends BaseAdapter {
     @SuppressWarnings("unused")
     private static final String TAG = MenuAdapter.class.getSimpleName();
     
+    private static final String MAVEN_PRO  = "fonts/MavenProLight-300.otf";
+    private static final String MYRIAD_PRO = "fonts/MyriadPro-BlackIt.otf";
+    
     // INSTANCE VARIABLES
     
     private final Context        context;
     private final LayoutInflater inflater;
     private final Drawable[]     background;
+    private final Typeface       typeface;
     
     // CONSTRUCTOR
     
     public MenuAdapter(Fragment fragment) {
         this.context    = fragment.getActivity();
         this.inflater   = fragment.getActivity().getLayoutInflater();
+        this.typeface   = Typeface.createFromAsset(context.getAssets(),MYRIAD_PRO);
         this.background = new Drawable[] { new ShapeDrawable(new Lozenge(false)),
                                            new ShapeDrawable(new Lozenge(true))
                                          };
@@ -90,6 +96,8 @@ public class MenuAdapter extends BaseAdapter {
             
         private Holder(View view) {
             this.label = (TextView) view.findViewById(R.id.label);
+            
+            this.label.setTypeface(typeface);
         }
         
         private void initialise(MENUITEM item) {

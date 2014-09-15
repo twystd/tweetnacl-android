@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    
+ <!-- old -->
+ 
  <color name="background_page">#fff0f0f0</color>    
  <color name="background_header">#ff436eb4</color>    
  <color name="groupbox_label">#ff436eb4</color>    
@@ -12,10 +15,36 @@
  <color name="button_border">#ff436eb4</color>    
  <color name="button_text">#ffffffff</color>    
  
+<!--  
  <color name="menu">#ffffffff</color>    
  <color name="menu_border">#80436eb4</color>    
- 
+
  <color name="menuitem">#40436eb4</color>    
  <color name="menuitem_border">#00436eb4</color>    
- <color name="menuitem_text">#ff436eb4</color>    
+ <color name="menuitem_text">#ff436eb4</color>
+ 
+ -->
+  <!-- http://www.colourlovers.com/palette/444487/Curiosity_Killed -->
+
+ <color name="vichyssoise">#ffefffcd</color>    
+ <color name="hex">#ffdce9be</color>    
+ <color name="shadow_dirt">#ff555152</color>    
+ <color name="evening_cloud">#ff2e2633</color>    
+ <color name="heliotrope">#ff99173c</color>    
+ 
+ <!-- http://www.colourlovers.com/palette/3484590/Streetlight_Glow -->
+
+ <color name="nejro">#ff060604</color>    
+ <color name="acorn">#ff915523</color>    
+ <color name="sky_layer">#ffcf7340</color>    
+ <color name="light_orange">#ffeead77</color>    
+ <color name="tamara">#ffffdba9</color>    
+
+ <color name="menu">@color/tamara</color>    
+ <color name="menu_border">#80436eb4</color>    
+ 
+ <color name="menuitem">@color/hex</color>    
+ <color name="menuitem_border">#ff2e2633</color>    
+ <color name="menuitem_text">@color/acorn</color>    
+
 </resources>
