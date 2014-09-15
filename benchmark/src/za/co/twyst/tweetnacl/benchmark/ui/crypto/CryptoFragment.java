@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
+import za.co.twyst.tweetnacl.benchmark.util.Util;
 
 /** Abstract base class for crypto_xxx fragments. Defines the Owner interface
  *  used to update the summary result page.
@@ -24,6 +25,15 @@ public abstract class CryptoFragment extends Fragment {
     
     private WeakReference<Owner> owner = new WeakReference<Owner>(null);
     
+    // CLASS METHODS
+    
+    /** Pretty formats a throughput value.
+     * 
+     */
+    protected static String format(long throughput) {
+        return String.format("%s/s",Util.format(throughput,true));
+    }
+
     // *** Fragment ****
     
     @Override
@@ -77,6 +87,16 @@ public abstract class CryptoFragment extends Fragment {
         public void measured(Benchmark... measurments);
     }
     
+    protected static class Result { 
+        protected final long bytes;
+        protected final long dt;
+              
+        protected Result(long bytes,long dt) {
+            this.bytes = bytes;
+            this.dt    = dt;
+        }
+    }
+
     protected static class Measured { 
         public long mean;
         public long throughput;

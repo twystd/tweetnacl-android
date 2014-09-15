@@ -10,13 +10,15 @@ public class Benchmark implements Parcelable {
     // CONSTANTS
     
     public enum TYPE { 
-        UNKNOWN             (0),
-        CRYPTO_BOX          (1),
-        CRYPTO_BOX_OPEN     (2),
-        CRYPTO_CORE_HSALSA20(3),
-        CRYPTO_CORE_SALSA20 (4),
-        CRYPTO_HASH         (5),
-        CRYPTO_HASHBLOCKS   (6);
+        UNKNOWN                  (0),
+        CRYPTO_BOX               (1),
+        CRYPTO_BOX_OPEN          (2),
+        CRYPTO_CORE_HSALSA20     (3),
+        CRYPTO_CORE_SALSA20      (4),
+        CRYPTO_HASH              (5),
+        CRYPTO_HASHBLOCKS        (6),
+        CRYPTO_ONETIMEAUTH       (7),
+        CRYPTO_ONETIMEAUTH_VERIFY(7);
         
         private final int type;
         

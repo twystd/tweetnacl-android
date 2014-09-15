@@ -20,7 +20,6 @@ import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
-import za.co.twyst.tweetnacl.benchmark.util.Util;
 
 public class CryptoBoxFragment extends CryptoFragment {
     // CONSTANTS
@@ -57,13 +56,6 @@ public class CryptoBoxFragment extends CryptoFragment {
         return new CryptoBoxFragment();
     }
     
-    /** Pretty formats a throughput value.
-     * 
-     */
-    private static String format(long throughput) {
-        return String.format("%s/s",Util.format(throughput,true));
-    }
-
     // *** Fragment ***
     
     @Override
@@ -174,16 +166,6 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class Result { 
-        private final long bytes;
-        private final long dt;
-              
-        private Result(long bytes,long dt) {
-            this.bytes = bytes;
-            this.dt    = dt;
-        }
-    }
-
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
         private final WeakReference<CryptoBoxFragment> reference;
         private final WeakReference<ProgressBar>       bar;

@@ -6,7 +6,6 @@ import java.util.Random;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,12 +20,13 @@ import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
-public class CryptoHashFragment extends CryptoFragment {
+public class CryptoOneTimeAuthFragment extends CryptoFragment {
     // CONSTANTS
 
-    private static final String TAG          = CryptoHashFragment.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG          = CryptoOneTimeAuthFragment.class.getSimpleName();
     private static final int    MESSAGE_SIZE = 16384;
-    private static final int    LOOPS        = 65536;
+    private static final int    LOOPS        = 1024;
     
     private static final int[] ROWS    = { R.string.results_measured,
                                            R.string.results_average,
@@ -34,32 +34,14 @@ public class CryptoHashFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_hash, 
-                                           R.string.column_hashblocks
+    private static final int[] COLUMNS = { R.string.column_onetimeauth, 
+                                           R.string.column_onetimeauth_verify 
                                          };
-    
-    private static final byte[] IV = { (byte) 0x6a, (byte) 0x09, (byte) 0xe6, (byte) 0x67,
-                                       (byte) 0xf3, (byte) 0xbc, (byte) 0xc9, (byte) 0x08,
-                                       (byte) 0xbb, (byte) 0x67, (byte) 0xae, (byte) 0x85,
-                                       (byte) 0x84, (byte) 0xca, (byte) 0xa7, (byte) 0x3b,
-                                       (byte) 0x3c, (byte) 0x6e, (byte) 0xf3, (byte) 0x72,
-                                       (byte) 0xfe, (byte) 0x94, (byte) 0xf8, (byte) 0x2b,
-                                       (byte) 0xa5, (byte) 0x4f, (byte) 0xf5, (byte) 0x3a,
-                                       (byte) 0x5f, (byte) 0x1d, (byte) 0x36, (byte) 0xf1,
-                                       (byte) 0x51, (byte) 0x0e, (byte) 0x52, (byte) 0x7f,
-                                       (byte) 0xad, (byte) 0xe6, (byte) 0x82, (byte) 0xd1,
-                                       (byte) 0x9b, (byte) 0x05, (byte) 0x68, (byte) 0x8c,
-                                       (byte) 0x2b, (byte) 0x3e, (byte) 0x6c, (byte) 0x1f,
-                                       (byte) 0x1f, (byte) 0x83, (byte) 0xd9, (byte) 0xab,
-                                       (byte) 0xfb, (byte) 0x41, (byte) 0xbd, (byte) 0x6b,
-                                       (byte) 0x5b, (byte) 0xe0, (byte) 0xcd, (byte) 0x19,
-                                       (byte) 0x13, (byte) 0x7e, (byte) 0x21, (byte) 0x79 
-                                     };
-    
+
     // INSTANCE VARIABLES
     
-    private Measured hash       = new Measured();
-    private Measured hashblocks = new Measured();
+    private Measured auth   = new Measured();
+    private Measured verify = new Measured();
     
     // CLASS METHODS
 
@@ -69,14 +51,14 @@ public class CryptoHashFragment extends CryptoFragment {
      * @return Initialised CryptoBoxFragment or <code>null</code>.
      */
     public static Fragment newFragment() {
-        return new CryptoHashFragment();
+        return new CryptoOneTimeAuthFragment();
     }
 
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptohash,container,false);
+        final View        root  = inflater.inflate(R.layout.fragment_cryptobox,container,false);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
@@ -102,7 +84,7 @@ public class CryptoHashFragment extends CryptoFragment {
                                             { try
                                                  { int _size  = Integer.parseInt(size.getText ().toString());
                                                    int _loops = Integer.parseInt(loops.getText().toString());
-                                                 
+                                                   
                                                    hideKeyboard(size,loops);
                                                    run         (_size,_loops,bar);
                                                  }
@@ -137,7 +119,7 @@ public class CryptoHashFragment extends CryptoFragment {
         }
     }
 
-    private void done(Result hash,Result hashblocks) {
+    private void done(Result auth,Result verify) {
         View view = getView();
         View busy;
         View bar;
@@ -156,50 +138,49 @@ public class CryptoHashFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        this.hash.update(hash.bytes,hash.dt);
-        this.hashblocks.update (hashblocks.bytes,hashblocks.dt);
-
+        this.auth.update  (auth.bytes,auth.dt);
+        this.verify.update(verify.bytes,verify.dt);
 
         if (view != null) {
             Grid grid = (Grid) view.findViewById(R.id.grid);
             
-            grid.setValue(0,0,format(this.hash.throughput));
-            grid.setValue(1,0,format(this.hash.mean));
-            grid.setValue(2,0,format(this.hash.minimum));
-            grid.setValue(3,0,format(this.hash.maximum));
+            grid.setValue(0,0,format(this.auth.throughput));
+            grid.setValue(1,0,format(this.auth.mean));
+            grid.setValue(2,0,format(this.auth.minimum));
+            grid.setValue(3,0,format(this.auth.maximum));
             
-            grid.setValue(0,1,format(this.hashblocks.throughput));
-            grid.setValue(1,1,format(this.hashblocks.mean));
-            grid.setValue(2,1,format(this.hashblocks.minimum));
-            grid.setValue(3,1,format(this.hashblocks.maximum));
+            grid.setValue(0,1,format(this.verify.throughput));
+            grid.setValue(1,1,format(this.verify.mean));
+            grid.setValue(2,1,format(this.verify.minimum));
+            grid.setValue(3,1,format(this.verify.maximum));
         }
         
         // ... update global measurements
         
-        this.measured(new Benchmark(TYPE.CRYPTO_HASH,      format(this.hash.mean)),
-                      new Benchmark(TYPE.CRYPTO_HASHBLOCKS,format(this.hashblocks.mean)));
+        this.measured(new Benchmark(TYPE.CRYPTO_ONETIMEAUTH,       format(this.auth.mean)),
+                      new Benchmark(TYPE.CRYPTO_ONETIMEAUTH_VERIFY,format(this.verify.mean)));
     }
     
     // INNER CLASSES
     
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoHashFragment> reference;
+        private final WeakReference<CryptoOneTimeAuthFragment> reference;
         private final WeakReference<ProgressBar>       bar;
         private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoHashFragment fragment,ProgressBar bar,int bytes,int loops) {
-            this.reference = new WeakReference<CryptoHashFragment>(fragment);
+        private RunTask(CryptoOneTimeAuthFragment fragment,ProgressBar bar,int bytes,int loops) {
+            this.reference = new WeakReference<CryptoOneTimeAuthFragment>(fragment);
             this.bar       = new WeakReference<ProgressBar>(bar);
             this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
-
+        
         @Override
         protected void onPreExecute() {
-            CryptoHashFragment fragment = this.reference.get();
+            CryptoOneTimeAuthFragment fragment = this.reference.get();
             ProgressBar       bar      = this.bar.get();
 
             if (fragment != null) {
@@ -218,45 +199,54 @@ public class CryptoHashFragment extends CryptoFragment {
                 
                 Random  random  = new Random();
                 byte[]  message = new byte[bytes];
+                byte[]  key     = new byte[TweetNaCl.ONETIMEAUTH_KEYBYTES];
+                byte[]  auth;
                 long    start;
                 long    total;
                 int     progress;
-
+                
+                random.nextBytes(key);
                 random.nextBytes(message);
 
-                // ... crypto_hash
+                // ... crypto_onetimeauth
 
                 start    = System.currentTimeMillis();
                 total    = 0;
                 progress = 0;
 
-                for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoHash(message);
-                      total += message.length;
-                      publishProgress(++progress);
+                for (int i=0; i<loops; i++) { 
+                    if (tweetnacl.cryptoOneTimeAuth(message,key) == null) {
+                        throw new Exception("Invalid onetime_auth result");
                     }
+                    
+                    total += message.length;
+                    publishProgress(++progress);
+                }
                 
-                Result hash = new Result(total,System.currentTimeMillis() - start);
+                Result encrypt = new Result(total,System.currentTimeMillis() - start);
                 
-                // ... crypto_hashblocks
-
-                start     = System.currentTimeMillis();
-                total     = 0;
+                // ... crypto_onetimeauth_verify
                 
-                for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoHashBlocks(IV,message);
-                      total += message.length;
-                      publishProgress(++progress);
+                auth  = tweetnacl.cryptoOneTimeAuth(message, key);
+                start = System.currentTimeMillis();
+                total = 0;
+                
+                for (int i=0; i<loops; i++) { 
+                    if (!tweetnacl.cryptoOneTimeAuthVerify(auth,message,key)) {
+                        throw new Exception("onetimeauth_verify failed");
                     }
+                  
+                    total += message.length;
+                    publishProgress(++progress);
+                }
 
-                Result hashblocks = new Result(total,System.currentTimeMillis() - start);
+                Result decrypt = new Result(total,System.currentTimeMillis() - start);
 
                 // ... done
                 
-                return new Result[] { hash,hashblocks };
+                return new Result[] { encrypt,decrypt };
                 
             } catch(Throwable x) {
-                Log.e(TAG,"Error running crypto_core benchmark",x);
             }
 
             return null;
@@ -274,7 +264,7 @@ public class CryptoHashFragment extends CryptoFragment {
 
         @Override
         protected void onPostExecute(Result[] result) {
-            CryptoHashFragment fragment = reference.get();
+            CryptoOneTimeAuthFragment fragment = reference.get();
             
             if (fragment != null) {
                 fragment.done(result[0],result[1]);

@@ -23,18 +23,19 @@ public class SummaryFragment extends Fragment {
     private static final String TAG              = SummaryFragment.class.getSimpleName();
     private static final String TAG_MEASUREMENTS = "measurements";
     
-    private static final int[] ROWS    = { R.string.crypto_box,
-                                           R.string.crypto_box_open,
-                                           R.string.crypto_core_hsalsa20,
-                                           R.string.crypto_core_salsa20,
-                                           R.string.crypto_hash,
-                                           R.string.crypto_hashblocks,
-                                           R.string.crypto_onetimeauth,
-                                           R.string.crypto_scalarmult,
-                                           R.string.crypto_secretbox,
-                                           R.string.crypto_stream,
-                                           R.string.crypto_sign,
-                                           R.string.crypto_verify
+    private static final int[] ROWS    = { R.string.label_crypto_box,
+                                           R.string.label_crypto_box_open,
+                                           R.string.label_crypto_core_hsalsa20,
+                                           R.string.label_crypto_core_salsa20,
+                                           R.string.label_crypto_hash,
+                                           R.string.label_crypto_hashblocks,
+                                           R.string.label_crypto_onetimeauth,
+                                           R.string.label_crypto_onetimeauth_verify,
+                                           R.string.label_crypto_scalarmult,
+                                           R.string.label_crypto_secretbox,
+                                           R.string.label_crypto_stream,
+                                           R.string.label_crypto_sign,
+                                           R.string.label_crypto_verify
                                          };
     
     private static final int[] COLUMNS = { R.string.tweetnacl, 
@@ -46,7 +47,9 @@ public class SummaryFragment extends Fragment {
                                         TYPE.CRYPTO_CORE_HSALSA20,
                                         TYPE.CRYPTO_CORE_SALSA20,
                                         TYPE.CRYPTO_HASH,
-                                        TYPE.CRYPTO_HASHBLOCKS
+                                        TYPE.CRYPTO_HASHBLOCKS,
+                                        TYPE.CRYPTO_ONETIMEAUTH,
+                                        TYPE.CRYPTO_ONETIMEAUTH_VERIFY
                                       };
 
     // INSTANCE VARIABLES
