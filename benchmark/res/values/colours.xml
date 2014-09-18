@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    
- <!-- old -->
- 
- <color name="background_page">#fff0f0f0</color>    
- <color name="background_header">#ff436eb4</color>    
- <color name="groupbox_label">#ff436eb4</color>    
- <color name="groupbox_border">#ff436eb4</color> 
- <color name="grid_border">#ff436eb4</color>    
- <color name="grid">#40436eb4</color>    
- 
- <color name="button">#40436eb4</color>    
- <color name="button_border">#ff436eb4</color>    
- <color name="button_text">#ffffffff</color>    
- 
-<!--  
- <color name="menu">#ffffffff</color>    
- <color name="menu_border">#80436eb4</color>    
 
- <color name="menuitem">#40436eb4</color>    
- <color name="menuitem_border">#00436eb4</color>    
- <color name="menuitem_text">#ff436eb4</color>
- 
- -->
-  <!-- http://www.colourlovers.com/palette/444487/Curiosity_Killed -->
+ <!-- spy vs spy -->
+
+ <color name="black">#ff222222</color>    
+ <color name="white">#ffffffff</color>    
+ <color name="grey">#ff808080</color>    
+ <color name="light_grey">#ffcccccc</color>    
+ <color name="dark_gray">#ff666666</color>    
+    
+ <!-- http://www.colourlovers.com/palette/444487/Curiosity_Killed -->
 
  <color name="vichyssoise">#ffefffcd</color>    
  <color name="hex">#ffdce9be</color>    
@@ -39,12 +25,47 @@
  <color name="sky_layer">#ffcf7340</color>    
  <color name="light_orange">#ffeead77</color>    
  <color name="tamara">#ffffdba9</color>    
-
- <color name="menu">@color/tamara</color>    
- <color name="menu_border">#80436eb4</color>    
  
- <color name="menuitem">@color/hex</color>    
- <color name="menuitem_border">#ff2e2633</color>    
- <color name="menuitem_text">@color/acorn</color>    
+ <!-- widgets -->
+
+<!--
+ <color name="border">@color/sky_layer</color>
+ <color name="text">@color/nejro</color>
+ <color name="fill">@color/light_orange</color>
+
+ <color name="field">#ffffffff</color>    
+ <color name="groupbox_label">@color/text</color>    
+ -->
+ 
+ <color name="border">@color/black</color>
+ <color name="text">@color/white</color>
+ <color name="fill">@color/black</color>
+ 
+ <color name="button">@color/fill</color>    
+ <color name="button_border">@color/border</color>    
+ <color name="button_text">@color/text</color>    
+
+ <color name="field">@color/fill</color>    
+ <color name="field_border">@color/border</color>    
+ <color name="field_text">@color/text</color>    
+ <color name="field_label">@color/black</color>    
+ 
+ <color name="label_text">@color/text</color>    
+ 
+ <color name="groupbox_label">@color/black</color>    
+ <color name="groupbox_border">@color/border</color> 
+
+ <color name="grid_border">@color/border</color>    
+ <color name="grid">@color/fill</color>    
+
+ <color name="bar_background">@color/grey</color>    
+ <color name="bar">@color/black</color>    
+ 
+ <color name="menu">@color/tamara</color>    
+ <color name="menu_border">@color/border</color>    
+ 
+ <color name="menuitem">@color/fill</color>    
+ <color name="menuitem_border">@color/fill</color>    
+ <color name="menuitem_text">@color/text</color>    
 
 </resources>

@@ -10,6 +10,12 @@ import android.graphics.drawable.shapes.Shape;
 public class Lozenge extends Shape {
     // CONSTANTS
 
+    private static final int BLACK      = 0xff222222;    
+    private static final int WHITE      = 0xffffffff;    
+    private static final int GREY       = 0xff808080;    
+    private static final int LIGHT_GREY = 0xffcccccc;    
+    private static final int DARK_GRAY  = 0xff666666;    
+
     private static final int VICHYSSOISE = 0xffefffcd;    
     private static final int HEX         = 0xffdce9be;    
     private static final int SHADOW_DIRT = 0xff555152;    
@@ -24,8 +30,8 @@ public class Lozenge extends Shape {
 
     private static final float  STROKEWIDTH = 1.0f;
     private static final double ANGLE       = 10.0;
-    private static final int    FILL        = LIGHT_ORANGE;
-    private static final int    BORDER      = SKY_LAYER;
+    private static final int    FILL        = BLACK; // LIGHT_ORANGE;
+    private static final int    BORDER      = BLACK; // SKY_LAYER;
     
     // INSTANCE VARIABLES
     
