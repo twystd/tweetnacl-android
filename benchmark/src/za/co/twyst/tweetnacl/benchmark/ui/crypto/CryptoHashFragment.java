@@ -121,22 +121,6 @@ public class CryptoHashFragment extends CryptoFragment {
         new RunTask(this,bar,bytes,loops).execute();
     }
     
-    private void busy() {
-        View view;
-        View busy;
-        View bar;
-        
-        if ((view = getView()) != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.VISIBLE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
     private void done(Result hash,Result hashblocks) {
         View view = getView();
         View busy;

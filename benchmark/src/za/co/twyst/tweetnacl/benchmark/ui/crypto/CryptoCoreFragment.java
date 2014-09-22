@@ -116,22 +116,6 @@ public class CryptoCoreFragment extends CryptoFragment {
         new RunTask(this,bar,loops).execute();
     }
     
-    private void busy() {
-        View view;
-        View busy;
-        View bar;
-        
-        if ((view = getView()) != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.VISIBLE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
     private void done(Result hsalsa20,Result salsa20) {
         View view = getView();
         View busy;

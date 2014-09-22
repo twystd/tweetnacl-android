@@ -1,5 +1,8 @@
 package za.co.twyst.tweetnacl.benchmark.ui.widgets;
 
+import android.R;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
@@ -33,6 +36,10 @@ public class Lozenge extends Shape {
     private static final int    FILL        = BLACK; // LIGHT_ORANGE;
     private static final int    BORDER      = BLACK; // SKY_LAYER;
     
+    private static final int[] ATTRIBUTES = { 
+        
+                                            };
+    
     // INSTANCE VARIABLES
     
     private final boolean reversed;
@@ -43,13 +50,26 @@ public class Lozenge extends Shape {
     private final PathEffect   effect;
     private final Path         path;  
 
+    public Lozenge(Context context,int style,boolean reversed) {
+        this.reversed = reversed;
+        this.effect = new CornerPathEffect(5);
+        this.path   = new Path();
+
+        TypedArray appearance = context.obtainStyledAttributes(style,ATTRIBUTES);
+
+        initialise();
+    }
 
     public Lozenge(boolean reversed) {
         this.reversed = reversed;
+        this.effect = new CornerPathEffect(5);
+        this.path   = new Path();
+        
+        initialise();
+    }
+    
 
-        effect = new CornerPathEffect(5);
-        path   = new Path();
-
+    private void initialise() {
         fill.setColor      (FILL);
         fill.setStyle      (Paint.Style.FILL);
         fill.setAntiAlias  (true);
@@ -68,6 +88,7 @@ public class Lozenge extends Shape {
         border.setStrokeCap  (Paint.Cap.ROUND);  
     }
 
+    // *** Shape ***
     
     @Override
     protected void onResize(float width, float height) {

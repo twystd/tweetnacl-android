@@ -25,11 +25,10 @@
        
      <!-- MESSAGE SIZE -->
    
-     <TextView style="@style/Label"
+     <TextView style="@style/FieldLabel"
                android:id="@+id/label_size"
                android:layout_alignBaseline="@+id/size"
                android:layout_alignParentLeft="true"
-               android:textColor="@color/field_label"
                android:text="@string/label_size" /> 
 
      <EditText style="@style/Field"

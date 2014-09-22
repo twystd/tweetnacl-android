@@ -22,6 +22,7 @@ public class MenuAdapter extends BaseAdapter {
     
     private static final String MAVEN_PRO  = "fonts/MavenProLight-300.otf";
     private static final String MYRIAD_PRO = "fonts/MyriadPro-BlackIt.otf";
+    private static final String TAHOMA     = "fonts/Tahoma.ttf";
     
     // INSTANCE VARIABLES
     
@@ -35,8 +36,8 @@ public class MenuAdapter extends BaseAdapter {
     public MenuAdapter(Fragment fragment) {
         this.context    = fragment.getActivity();
         this.inflater   = fragment.getActivity().getLayoutInflater();
-        this.typeface   = Typeface.createFromAsset(context.getAssets(),MYRIAD_PRO);
-        this.background = new Drawable[] { new ShapeDrawable(new Lozenge(false)),
+        this.typeface   = Typeface.createFromAsset(context.getAssets(),TAHOMA);
+        this.background = new Drawable[] { new ShapeDrawable(new Lozenge(context,R.style.Lozenge,false)),
                                            new ShapeDrawable(new Lozenge(true))
                                          };
     }

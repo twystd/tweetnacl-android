@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
@@ -52,7 +54,7 @@ public abstract class CryptoFragment extends Fragment {
     /** Hides keyboard for an EditText field
      * 
      */
-    public void hideKeyboard(EditText... fields) { 
+    protected void hideKeyboard(EditText... fields) { 
         try { 
             Context            context = getActivity();
             InputMethodManager imm     = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -64,6 +66,23 @@ public abstract class CryptoFragment extends Fragment {
             Log.w(TAG,"Error hiding keyboard",x);
         }
     }
+
+    protected void busy() {
+        View view;
+        View busy;
+        View bar;
+        
+        if ((view = getView()) != null) {
+            if ((busy = view.findViewById(R.id.busy)) != null) {
+                busy.setVisibility(View.VISIBLE);
+            }
+            
+            if ((bar = view.findViewById(R.id.progressbar)) != null) {
+                bar.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 
     /** Updates the containing activity with the measurement.
      * 

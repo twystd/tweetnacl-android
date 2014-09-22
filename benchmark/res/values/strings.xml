@@ -14,12 +14,13 @@
  <string name="label_crypto_hashblocks">crypto_hashblocks</string>
  <string name="label_crypto_onetimeauth">crypto_onetimeauth</string>
  <string name="label_crypto_onetimeauth_verify">crypto_onetimeauth_verify</string>
+ <string name="label_crypto_scalarmultbase">crypto_scalarmultbase</string>
  <string name="label_crypto_scalarmult">crypto_scalarmult</string>
  <string name="label_crypto_secretbox">crypto_secretbox</string>
  <string name="label_crypto_stream">crypto_stream</string>
  <string name="label_crypto_sign">crypto_sign</string>
  <string name="label_crypto_verify">crypto_verify</string>
-
+ 
  <string name="label_size">Message size:</string>
  <string name="label_loops">Loops:</string>
  <string name="label_current">Current:</string>
@@ -44,6 +45,8 @@
  <string name="column_hashblocks">HashBlocks</string>
  <string name="column_onetimeauth">OneTimeAuth</string>
  <string name="column_onetimeauth_verify">OneTimeAuthVerify</string>
+ <string name="column_scalarmultbase">ScalarMultBase</string>
+ <string name="column_scalarmult">ScalarMult</string>
  
  <string name="navigation_drawer_open">Open navigation drawer</string>
  <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -53,5 +56,6 @@
  <string name="menuitem_crypto_core">CRYPTO CORE</string>
  <string name="menuitem_crypto_hash">CRYPTO HASH</string>
  <string name="menuitem_crypto_onetimeauth">CRYPTO ONE TIME AUTH</string>
+ <string name="menuitem_crypto_scalarmult">CRYPTO SCALAR MULT</string>
  
 </resources>

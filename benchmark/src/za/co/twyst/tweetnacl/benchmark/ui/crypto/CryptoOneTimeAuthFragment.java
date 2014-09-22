@@ -58,7 +58,7 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptobox,container,false);
+        final View        root  = inflater.inflate(R.layout.fragment_onetimeauth,container,false);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
@@ -103,22 +103,6 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
         new RunTask(this,bar,bytes,loops).execute();
     }
     
-    private void busy() {
-        View view;
-        View busy;
-        View bar;
-        
-        if ((view = getView()) != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.VISIBLE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
     private void done(Result auth,Result verify) {
         View view = getView();
         View busy;

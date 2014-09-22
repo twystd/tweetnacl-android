@@ -6,6 +6,7 @@ import java.util.Random;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,19 +16,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
-import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
-public class CryptoBoxFragment extends CryptoFragment {
+public class CryptoScalarMultFragment extends CryptoFragment {
     // CONSTANTS
 
-    @SuppressWarnings("unused")
-    private static final String TAG          = CryptoBoxFragment.class.getSimpleName();
-    private static final int    MESSAGE_SIZE = 16384;
-    private static final int    LOOPS        = 1024;
+    private static final String TAG   = CryptoScalarMultFragment.class.getSimpleName();
+    private static final int    LOOPS = 16384;
     
     private static final int[] ROWS    = { R.string.results_measured,
                                            R.string.results_average,
@@ -35,33 +33,31 @@ public class CryptoBoxFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_box, 
-                                           R.string.column_box_open 
+    private static final int[] COLUMNS = { R.string.column_scalarmultbase, 
+                                           R.string.column_scalarmult 
                                          };
-
     
     // INSTANCE VARIABLES
     
-    private Measured encryption = new Measured();
-    private Measured decryption = new Measured();
+    private Measured scalarmultbase = new Measured();
+    private Measured scalarmult     = new Measured();
     
     // CLASS METHODS
 
-    /** Factory constructor for CryptoBoxFragment that ensures correct fragment
+    /** Factory constructor for CryptoScalarMultFragment that ensures correct fragment
      *  initialisation.
      *  
-     * @return Initialised CryptoBoxFragment or <code>null</code>.
+     * @return Initialised CryptoScalarMultFragment or <code>null</code>.
      */
     public static Fragment newFragment() {
-        return new CryptoBoxFragment();
+        return new CryptoScalarMultFragment();
     }
-    
+
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptobox,container,false);
-        final EditText    size  = (EditText) root.findViewById(R.id.size); 
+        final View        root  = inflater.inflate(R.layout.fragment_scalarmult,container,false);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
@@ -69,7 +65,6 @@ public class CryptoBoxFragment extends CryptoFragment {
 
         // ... initialise default setup
         
-        size.setText (Integer.toString(MESSAGE_SIZE));
         loops.setText(Integer.toString(LOOPS));
 
         // ... initialise grid
@@ -84,11 +79,10 @@ public class CryptoBoxFragment extends CryptoFragment {
                                    { @Override
                                      public void onClick(View view)
                                             { try
-                                                 { int _size  = Integer.parseInt(size.getText ().toString());
-                                                   int _loops = Integer.parseInt(loops.getText().toString());
+                                                 { int _loops = Integer.parseInt(loops.getText().toString());
                                                    
-                                                   hideKeyboard(size,loops);
-                                                   run         (_size,_loops,bar);
+                                                   hideKeyboard(loops);
+                                                   run         (_loops,bar);
                                                  }
                                               catch(Throwable x)
                                                  { // TODO
@@ -101,11 +95,11 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     // INTERNAL
     
-    private void run(int bytes,int loops,ProgressBar bar) {
-        new RunTask(this,bar,bytes,loops).execute();
+    private void run(int loops,ProgressBar bar) {
+        new RunTask(this,bar,loops).execute();
     }
     
-    private void done(Result encrypt,Result decrypt) {
+    private void done(Result hsalsa20,Result salsa20) {
         View view = getView();
         View busy;
         View bar;
@@ -124,50 +118,47 @@ public class CryptoBoxFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        encryption.update(encrypt.bytes,encrypt.dt);
-        decryption.update(decrypt.bytes,decrypt.dt);
+        this.scalarmultbase.update(hsalsa20.bytes,hsalsa20.dt);
+        this.scalarmult.update    (salsa20.bytes,salsa20.dt);
 
 
         if (view != null) {
             Grid grid = (Grid) view.findViewById(R.id.grid);
             
-            grid.setValue(0,0,format(encryption.throughput));
-            grid.setValue(1,0,format(encryption.mean));
-            grid.setValue(2,0,format(encryption.minimum));
-            grid.setValue(3,0,format(encryption.maximum));
+            grid.setValue(0,0,format(this.scalarmultbase.throughput));
+            grid.setValue(1,0,format(this.scalarmultbase.mean));
+            grid.setValue(2,0,format(this.scalarmultbase.minimum));
+            grid.setValue(3,0,format(this.scalarmultbase.maximum));
             
-            grid.setValue(0,1,format(decryption.throughput));
-            grid.setValue(1,1,format(decryption.mean));
-            grid.setValue(2,1,format(decryption.minimum));
-            grid.setValue(3,1,format(decryption.maximum));
+            grid.setValue(0,1,format(this.scalarmult.throughput));
+            grid.setValue(1,1,format(this.scalarmult.mean));
+            grid.setValue(2,1,format(this.scalarmult.minimum));
+            grid.setValue(3,1,format(this.scalarmult.maximum));
         }
         
         // ... update global measurements
         
-        this.measured(new Benchmark(TYPE.CRYPTO_BOX,     format(encryption.mean)),
-                      new Benchmark(TYPE.CRYPTO_BOX_OPEN,format(decryption.mean)));
+        this.measured(new Benchmark(TYPE.CRYPTO_SCALARMULT_BASE,format(this.scalarmultbase.mean)),
+                      new Benchmark(TYPE.CRYPTO_SCALARMULT,     format(this.scalarmult.mean)));
     }
     
     // INNER CLASSES
     
     private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoBoxFragment> reference;
+        private final WeakReference<CryptoScalarMultFragment> reference;
         private final WeakReference<ProgressBar>       bar;
-        private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
-            this.reference = new WeakReference<CryptoBoxFragment>(fragment);
+        private RunTask(CryptoScalarMultFragment fragment,ProgressBar bar,int loops) {
+            this.reference = new WeakReference<CryptoScalarMultFragment>(fragment);
             this.bar       = new WeakReference<ProgressBar>(bar);
-            this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
-        
         @Override
         protected void onPreExecute() {
-            CryptoBoxFragment fragment = this.reference.get();
+            CryptoScalarMultFragment fragment = this.reference.get();
             ProgressBar       bar      = this.bar.get();
 
             if (fragment != null) {
@@ -185,52 +176,50 @@ public class CryptoBoxFragment extends CryptoFragment {
                 // ... initialise
                 
                 Random  random  = new Random();
-                KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
-                KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
-                byte[]  message = new byte[bytes];
-                byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
-                byte[]  crypttext;
+                byte[]  n       = new byte[TweetNaCl.SCALARMULT_SCALARBYTES];
+                byte[]  p       = new byte[TweetNaCl.SCALARMULT_BYTES];
                 long    start;
                 long    total;
                 int     progress;
                 
-                random.nextBytes(message);
-                
-                // ... crypto_box
+                // ... crypto_scalarmultbase
+
+                random.nextBytes(n);
 
                 start    = System.currentTimeMillis();
                 total    = 0;
                 progress = 0;
 
                 for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
-                    
-                      total += message.length;
+                    { tweetnacl.cryptoScalarMultBase(n);
+                      total += n.length;
                       publishProgress(++progress);
                     }
                 
-                Result encrypt = new Result(total,System.currentTimeMillis() - start);
+                Result scalarmultbase = new Result(total,System.currentTimeMillis() - start);
                 
-                // ... crypto_box_open
-                
-                crypttext = tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
+                // ... crypto_scalarmult
+
+                random.nextBytes(n);
+                random.nextBytes(p);
+
                 start     = System.currentTimeMillis();
                 total     = 0;
                 
                 for (int i=0; i<loops; i++)
-                    { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
-                  
-                      total += message.length;
+                    { tweetnacl.cryptoScalarMult(n,p);
+                      total += n.length;
                       publishProgress(++progress);
                     }
 
-                Result decrypt = new Result(total,System.currentTimeMillis() - start);
+                Result scalarmult = new Result(total,System.currentTimeMillis() - start);
 
                 // ... done
                 
-                return new Result[] { encrypt,decrypt };
+                return new Result[] { scalarmultbase,scalarmult };
                 
             } catch(Throwable x) {
+                Log.e(TAG,"Error running crypto_core benchmark",x);
             }
 
             return null;
@@ -248,7 +237,7 @@ public class CryptoBoxFragment extends CryptoFragment {
 
         @Override
         protected void onPostExecute(Result[] result) {
-            CryptoBoxFragment fragment = reference.get();
+            CryptoScalarMultFragment fragment = reference.get();
             
             if (fragment != null) {
                 fragment.done(result[0],result[1]);
