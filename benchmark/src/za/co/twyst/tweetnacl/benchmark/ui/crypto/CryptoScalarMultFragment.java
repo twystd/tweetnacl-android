@@ -1,9 +1,7 @@
 package za.co.twyst.tweetnacl.benchmark.ui.crypto;
 
-import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -96,10 +94,11 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     // INTERNAL
     
     private void run(int loops,ProgressBar bar) {
-        new RunTask(this,bar,loops).execute();
+        new CryptoScalarMultTask(this,bar,loops).execute();
     }
     
-    private void done(Result hsalsa20,Result salsa20) {
+    @Override
+    protected void done(Result...results) {
         View view = getView();
         View busy;
         View bar;
@@ -118,9 +117,8 @@ public class CryptoScalarMultFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        this.scalarmultbase.update(hsalsa20.bytes,hsalsa20.dt);
-        this.scalarmult.update    (salsa20.bytes,salsa20.dt);
-
+        this.scalarmultbase.update(results[0].bytes,results[0].dt);
+        this.scalarmult.update    (results[1].bytes,results[1].dt);
 
         if (view != null) {
             Grid grid = (Grid) view.findViewById(R.id.grid);
@@ -144,30 +142,15 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoScalarMultFragment> reference;
-        private final WeakReference<ProgressBar>       bar;
+    private static class CryptoScalarMultTask extends RunTask {
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoScalarMultFragment fragment,ProgressBar bar,int loops) {
-            this.reference = new WeakReference<CryptoScalarMultFragment>(fragment);
-            this.bar       = new WeakReference<ProgressBar>(bar);
+        private CryptoScalarMultTask(CryptoScalarMultFragment fragment,ProgressBar bar,int loops) {
+            super(fragment,bar);
+            
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
-        }
-        @Override
-        protected void onPreExecute() {
-            CryptoScalarMultFragment fragment = this.reference.get();
-            ProgressBar       bar      = this.bar.get();
-
-            if (fragment != null) {
-                fragment.busy();
-            }
-
-            if (bar != null) {
-                bar.setProgress(0);
-            }
         }
 
         @Override
@@ -193,7 +176,7 @@ public class CryptoScalarMultFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoScalarMultBase(n);
                       total += n.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
                 
                 Result scalarmultbase = new Result(total,System.currentTimeMillis() - start);
@@ -209,7 +192,7 @@ public class CryptoScalarMultFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoScalarMult(n,p);
                       total += n.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
 
                 Result scalarmult = new Result(total,System.currentTimeMillis() - start);
@@ -223,25 +206,6 @@ public class CryptoScalarMultFragment extends CryptoFragment {
             }
 
             return null;
-        }
-        
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            int         progress = values[0];
-            ProgressBar bar      = this.bar.get();
-            
-            if (bar != null) {
-                bar.setProgress(1000*progress/(2*loops));
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Result[] result) {
-            CryptoScalarMultFragment fragment = reference.get();
-            
-            if (fragment != null) {
-                fragment.done(result[0],result[1]);
-            }
         }
     }
 }

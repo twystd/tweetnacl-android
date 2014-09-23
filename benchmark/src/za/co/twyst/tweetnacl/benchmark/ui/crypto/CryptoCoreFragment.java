@@ -74,7 +74,7 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptocore,container,false);
+        final View        root  = inflater.inflate(R.layout.fragment_core,container,false);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
@@ -116,7 +116,8 @@ public class CryptoCoreFragment extends CryptoFragment {
         new RunTask(this,bar,loops).execute();
     }
     
-    private void done(Result hsalsa20,Result salsa20) {
+    @Override
+    protected void done(Result...results) {
         View view = getView();
         View busy;
         View bar;
@@ -135,8 +136,8 @@ public class CryptoCoreFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        this.hsalsa20.update(hsalsa20.bytes,hsalsa20.dt);
-        this.salsa20.update (salsa20.bytes,salsa20.dt);
+        this.hsalsa20.update(results[0].bytes,results[0].dt);
+        this.salsa20.update (results[1].bytes,results[1].dt);
 
 
         if (view != null) {
@@ -211,7 +212,7 @@ public class CryptoCoreFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoCoreHSalsa20(message,KEY,CONSTANT);
                       total += message.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
                 
                 Result hsalsa20 = new Result(total,System.currentTimeMillis() - start);
@@ -228,7 +229,7 @@ public class CryptoCoreFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoCoreSalsa20(message,KEY,CONSTANT);
                       total += message.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
 
                 Result salsa20 = new Result(total,System.currentTimeMillis() - start);

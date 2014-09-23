@@ -22,6 +22,7 @@ import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoHashFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoOneTimeAuthFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoScalarMultFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoSecretBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
 public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
@@ -157,6 +158,10 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
             case CRYPTO_SCALARMULT:
                   fragment = CryptoScalarMultFragment.newFragment();
                   break;
+                  
+             case CRYPTO_SECRETBOX:
+                   fragment = CryptoSecretBoxFragment.newFragment();
+                   break;
         }
 
         // ... replace fragments

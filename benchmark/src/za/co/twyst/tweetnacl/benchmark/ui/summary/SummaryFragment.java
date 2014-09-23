@@ -34,6 +34,7 @@ public class SummaryFragment extends Fragment {
                                            R.string.label_crypto_scalarmultbase,
                                            R.string.label_crypto_scalarmult,
                                            R.string.label_crypto_secretbox,
+                                           R.string.label_crypto_secretbox_open,
                                            R.string.label_crypto_stream,
                                            R.string.label_crypto_sign,
                                            R.string.label_crypto_verify
@@ -52,7 +53,9 @@ public class SummaryFragment extends Fragment {
                                         TYPE.CRYPTO_ONETIMEAUTH,
                                         TYPE.CRYPTO_ONETIMEAUTH_VERIFY,
                                         TYPE.CRYPTO_SCALARMULT_BASE,
-                                        TYPE.CRYPTO_SCALARMULT
+                                        TYPE.CRYPTO_SCALARMULT,
+                                        TYPE.CRYPTO_SECRETBOX,
+                                        TYPE.CRYPTO_SECRETBOX_OPEN
                                       };
 
     // INSTANCE VARIABLES

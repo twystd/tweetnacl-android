@@ -1,9 +1,7 @@
 package za.co.twyst.tweetnacl.benchmark.ui.crypto;
 
-import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -60,7 +58,7 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_cryptobox,container,false);
+        final View        root  = inflater.inflate(R.layout.fragment_box,container,false);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
@@ -102,10 +100,11 @@ public class CryptoBoxFragment extends CryptoFragment {
     // INTERNAL
     
     private void run(int bytes,int loops,ProgressBar bar) {
-        new RunTask(this,bar,bytes,loops).execute();
+        new CryptoBoxTask(this,bar,bytes,loops).execute();
     }
     
-    private void done(Result encrypt,Result decrypt) {
+    @Override
+    protected void done(Result...results) {
         View view = getView();
         View busy;
         View bar;
@@ -124,8 +123,8 @@ public class CryptoBoxFragment extends CryptoFragment {
         
         // ... update benchmarks
         
-        encryption.update(encrypt.bytes,encrypt.dt);
-        decryption.update(decrypt.bytes,decrypt.dt);
+        encryption.update(results[0].bytes,results[0].dt);
+        decryption.update(results[1].bytes,results[1].dt);
 
 
         if (view != null) {
@@ -150,35 +149,19 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoBoxFragment> reference;
-        private final WeakReference<ProgressBar>       bar;
+    private static class CryptoBoxTask extends RunTask {
         private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 
-        private RunTask(CryptoBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
-            this.reference = new WeakReference<CryptoBoxFragment>(fragment);
-            this.bar       = new WeakReference<ProgressBar>(bar);
+        private CryptoBoxTask(CryptoBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
+            super(fragment,bar);
+            
             this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
         
-        @Override
-        protected void onPreExecute() {
-            CryptoBoxFragment fragment = this.reference.get();
-            ProgressBar       bar      = this.bar.get();
-
-            if (fragment != null) {
-                fragment.busy();
-            }
-
-            if (bar != null) {
-                bar.setProgress(0);
-            }
-        }
-
         @Override
         protected Result[] doInBackground(Void... params) {
             try {
@@ -206,7 +189,7 @@ public class CryptoBoxFragment extends CryptoFragment {
                     { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
                     
                       total += message.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
                 
                 Result encrypt = new Result(total,System.currentTimeMillis() - start);
@@ -221,7 +204,7 @@ public class CryptoBoxFragment extends CryptoFragment {
                     { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
                   
                       total += message.length;
-                      publishProgress(++progress);
+                      publishProgress(++progress/(2*loops));
                     }
 
                 Result decrypt = new Result(total,System.currentTimeMillis() - start);
@@ -234,25 +217,6 @@ public class CryptoBoxFragment extends CryptoFragment {
             }
 
             return null;
-        }
-        
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            int         progress = values[0];
-            ProgressBar bar      = this.bar.get();
-            
-            if (bar != null) {
-                bar.setProgress(1000*progress/(2*loops));
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Result[] result) {
-            CryptoBoxFragment fragment = reference.get();
-            
-            if (fragment != null) {
-                fragment.done(result[0],result[1]);
-            }
         }
     }
 }

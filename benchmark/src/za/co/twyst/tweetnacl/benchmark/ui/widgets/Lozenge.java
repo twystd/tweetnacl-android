@@ -1,6 +1,5 @@
 package za.co.twyst.tweetnacl.benchmark.ui.widgets;
 
-import android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;

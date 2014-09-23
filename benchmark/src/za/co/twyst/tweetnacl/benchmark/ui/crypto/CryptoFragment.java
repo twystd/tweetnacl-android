@@ -4,11 +4,13 @@ import java.lang.ref.WeakReference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
@@ -83,7 +85,6 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
-
     /** Updates the containing activity with the measurement.
      * 
      * @param measurement 
@@ -99,6 +100,12 @@ public abstract class CryptoFragment extends Fragment {
            }
         }
     }
+    
+    /** Updates the displayed benchmark.
+     * 
+     */
+    protected abstract void done(Result...results);
+
     
     // INNER CLASSES
     
@@ -137,5 +144,48 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
+    protected static abstract class RunTask extends AsyncTask<Void,Integer,Result[]> {
+        private final WeakReference<CryptoFragment> reference;
+        private final WeakReference<ProgressBar>       bar;
+
+        protected RunTask(CryptoFragment fragment,ProgressBar bar) {
+            this.reference = new WeakReference<CryptoFragment>(fragment);
+            this.bar       = new WeakReference<ProgressBar>(bar);
+        }
+        
+        @Override
+        protected void onPreExecute() {
+            CryptoFragment fragment = this.reference.get();
+            ProgressBar    bar      = this.bar.get();
+
+            if (fragment != null) {
+                fragment.busy();
+            }
+
+            if (bar != null) {
+                bar.setProgress(0);
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            int         progress = values[0];
+            ProgressBar bar      = this.bar.get();
+            
+            if (bar != null) {
+//                bar.setProgress(1000*progress/(2*loops));
+                bar.setProgress(progress);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Result[] result) {
+            CryptoFragment fragment = reference.get();
+            
+            if (fragment != null) {
+                fragment.done(result);
+            }
+        }
+    }
 
 }

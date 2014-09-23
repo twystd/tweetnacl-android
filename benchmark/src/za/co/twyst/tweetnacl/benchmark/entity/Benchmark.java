@@ -20,7 +20,9 @@ public class Benchmark implements Parcelable {
         CRYPTO_ONETIMEAUTH       (7),
         CRYPTO_ONETIMEAUTH_VERIFY(8),
         CRYPTO_SCALARMULT_BASE   (9),
-        CRYPTO_SCALARMULT        (10);
+        CRYPTO_SCALARMULT        (10),
+        CRYPTO_SECRETBOX         (11),
+        CRYPTO_SECRETBOX_OPEN    (12);
         
         private final int type;
         
