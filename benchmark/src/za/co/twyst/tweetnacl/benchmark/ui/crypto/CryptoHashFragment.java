@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
@@ -53,12 +52,6 @@ public class CryptoHashFragment extends CryptoFragment {
                                        (byte) 0x5b, (byte) 0xe0, (byte) 0xcd, (byte) 0x19,
                                        (byte) 0x13, (byte) 0x7e, (byte) 0x21, (byte) 0x79 
                                      };
-    
-    // INSTANCE VARIABLES
-    
-    private Measured hash       = new Measured();
-    private Measured hashblocks = new Measured();
-    
     // CLASS METHODS
 
     /** Factory constructor for CryptoBoxFragment that ensures correct fragment
@@ -70,6 +63,12 @@ public class CryptoHashFragment extends CryptoFragment {
         return new CryptoHashFragment();
     }
 
+    // CONSTRUCTOR
+    
+    public CryptoHashFragment() {
+        super(new Measured(TYPE.CRYPTO_HASH),new Measured(TYPE.CRYPTO_HASHBLOCKS));
+    }
+    
     // *** Fragment ***
     
     @Override
@@ -117,50 +116,6 @@ public class CryptoHashFragment extends CryptoFragment {
     
     private void run(int bytes,int loops,ProgressBar bar) {
         new CryptoHashTask(this,bar,bytes,loops).execute();
-    }
-    
-    @Override
-    protected void done(Result...results) {
-        View view = getView();
-        View busy;
-        View bar;
-
-        // ... hide windmill
-        
-        if (view != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.GONE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-        
-        // ... update benchmarks
-        
-        this.hash.update      (results[0].bytes,results[0].dt);
-        this.hashblocks.update(results[1].bytes,results[1].dt);
-
-
-        if (view != null) {
-            Grid grid = (Grid) view.findViewById(R.id.grid);
-            
-            grid.setValue(0,0,format(this.hash.throughput));
-            grid.setValue(1,0,format(this.hash.mean));
-            grid.setValue(2,0,format(this.hash.minimum));
-            grid.setValue(3,0,format(this.hash.maximum));
-            
-            grid.setValue(0,1,format(this.hashblocks.throughput));
-            grid.setValue(1,1,format(this.hashblocks.mean));
-            grid.setValue(2,1,format(this.hashblocks.minimum));
-            grid.setValue(3,1,format(this.hashblocks.maximum));
-        }
-        
-        // ... update global measurements
-        
-        this.measured(new Benchmark(TYPE.CRYPTO_HASH,      format(this.hash.mean)),
-                      new Benchmark(TYPE.CRYPTO_HASHBLOCKS,format(this.hashblocks.mean)));
     }
     
     // INNER CLASSES

@@ -14,6 +14,8 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
+import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
 /** Abstract base class for crypto_xxx fragments. Defines the Owner interface
@@ -26,8 +28,9 @@ public abstract class CryptoFragment extends Fragment {
     private static final String TAG = CryptoFragment.class.getSimpleName();
 
     // INSTANCE VARIABLES
-    
-    private WeakReference<Owner> owner = new WeakReference<Owner>(null);
+
+    private final Measured[]           measurements;
+    private       WeakReference<Owner> owner = new WeakReference<Owner>(null);
     
     // CLASS METHODS
     
@@ -38,6 +41,12 @@ public abstract class CryptoFragment extends Fragment {
         return String.format("%s/s",Util.format(throughput,true));
     }
 
+    // CONSTRUCTOR
+    
+    protected CryptoFragment(Measured...measurements) {
+        this.measurements = measurements;
+    }
+    
     // *** Fragment ****
     
     @Override
@@ -87,6 +96,24 @@ public abstract class CryptoFragment extends Fragment {
 
     /** Updates the containing activity with the measurement.
      * 
+     * @param measurements 
+     *            New measurements to add to global results. Ignored if
+     *            <code>null</code>.        
+     */
+    protected void measured(Measured... measurements) {
+        Owner owner;
+
+        if (measurements != null) {
+           if ((owner = this.owner.get()) != null) {
+               for (Measured measurement: measurements) {
+                   owner.measured(new Benchmark(measurement));
+               }
+           }
+        }
+    }
+
+    /** Updates the containing activity with the measurement.
+     * 
      * @param measurement 
      *            New measurement to add to global results. Ignored if
      *            <code>null</code>.        
@@ -104,7 +131,44 @@ public abstract class CryptoFragment extends Fragment {
     /** Updates the displayed benchmark.
      * 
      */
-    protected abstract void done(Result...results);
+    protected void done(Result...results) {
+        View view = getView();
+        View busy;
+        View bar;
+
+        // ... hide windmill
+        
+        if (view != null) {
+            if ((busy = view.findViewById(R.id.busy)) != null) {
+                busy.setVisibility(View.GONE);
+            }
+            
+            if ((bar = view.findViewById(R.id.progressbar)) != null) {
+                bar.setVisibility(View.VISIBLE);
+            }
+        }
+        
+        // ... update benchmarks
+        
+        Grid grid = (Grid) view.findViewById(R.id.grid);
+        int  ix   = 0;
+        
+        for (Result result: results) {
+            int      column      = ix;
+            Measured measurement = measurements[ix];
+        
+            measurement.update(result.bytes,result.dt);
+            
+            grid.setValue(0,column,format(measurement.throughput));
+            grid.setValue(1,column,format(measurement.mean));
+            grid.setValue(2,column,format(measurement.minimum));
+            grid.setValue(3,column,format(measurement.maximum));
+        }
+        
+        // ... update global measurements
+        
+        this.measured(measurements);
+    }
 
     
     // INNER CLASSES
@@ -123,7 +187,8 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
-    protected static class Measured { 
+    public static class Measured { 
+        public final TYPE type;
         public long mean;
         public long throughput;
         
@@ -131,6 +196,10 @@ public abstract class CryptoFragment extends Fragment {
         protected long maximum = Long.MIN_VALUE;
         protected long bytes   = 0;
         protected long dt      = 0;
+        
+        protected Measured(TYPE type) {
+            this.type = type;
+        }
         
         protected void update(long bytes,long dt) {
             if (dt > 0) {

@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
@@ -35,12 +34,6 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
     private static final int[] COLUMNS = { R.string.column_onetimeauth, 
                                            R.string.column_onetimeauth_verify 
                                          };
-
-    // INSTANCE VARIABLES
-    
-    private Measured auth   = new Measured();
-    private Measured verify = new Measured();
-    
     // CLASS METHODS
 
     /** Factory constructor for CryptoBoxFragment that ensures correct fragment
@@ -52,6 +45,12 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
         return new CryptoOneTimeAuthFragment();
     }
 
+    // CONSTRUCTOR
+    
+    public CryptoOneTimeAuthFragment() {
+        super(new Measured(TYPE.CRYPTO_ONETIMEAUTH),new Measured(TYPE.CRYPTO_ONETIMEAUTH_VERIFY));
+    }
+    
     // *** Fragment ***
     
     @Override
@@ -99,49 +98,6 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
     
     private void run(int bytes,int loops,ProgressBar bar) {
         new CryptoOneTimeAuthTask(this,bar,bytes,loops).execute();
-    }
-    
-    @Override
-    protected void done(Result...results) {
-        View view = getView();
-        View busy;
-        View bar;
-
-        // ... hide windmill
-        
-        if (view != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.GONE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-        
-        // ... update benchmarks
-        
-        this.auth.update  (results[0].bytes,results[0].dt);
-        this.verify.update(results[1].bytes,results[1].dt);
-
-        if (view != null) {
-            Grid grid = (Grid) view.findViewById(R.id.grid);
-            
-            grid.setValue(0,0,format(this.auth.throughput));
-            grid.setValue(1,0,format(this.auth.mean));
-            grid.setValue(2,0,format(this.auth.minimum));
-            grid.setValue(3,0,format(this.auth.maximum));
-            
-            grid.setValue(0,1,format(this.verify.throughput));
-            grid.setValue(1,1,format(this.verify.mean));
-            grid.setValue(2,1,format(this.verify.minimum));
-            grid.setValue(3,1,format(this.verify.maximum));
-        }
-        
-        // ... update global measurements
-        
-        this.measured(new Benchmark(TYPE.CRYPTO_ONETIMEAUTH,       format(this.auth.mean)),
-                      new Benchmark(TYPE.CRYPTO_ONETIMEAUTH_VERIFY,format(this.verify.mean)));
     }
     
     // INNER CLASSES

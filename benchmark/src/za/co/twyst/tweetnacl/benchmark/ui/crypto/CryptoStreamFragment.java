@@ -17,21 +17,13 @@ import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
-public class CryptoSecretBoxFragment extends CryptoFragment {
+public class CryptoStreamFragment extends CryptoFragment {
     // CONSTANTS
 
     @SuppressWarnings("unused")
-    private static final String TAG          = CryptoSecretBoxFragment.class.getSimpleName();
+    private static final String TAG          = CryptoStreamFragment.class.getSimpleName();
     private static final int    MESSAGE_SIZE = 16384;
     private static final int    LOOPS        = 1024;
-    private static final byte[] KEY          = { (byte) 0x1b, (byte) 0x27, (byte) 0x55, (byte) 0x64,
-                                                 (byte) 0x73, (byte) 0xe9, (byte) 0x85, (byte) 0xd4,
-                                                 (byte) 0x62, (byte) 0xcd, (byte) 0x51, (byte) 0x19,
-                                                 (byte) 0x7a, (byte) 0x9a, (byte) 0x46, (byte) 0xc7,
-                                                 (byte) 0x60, (byte) 0x09, (byte) 0x54, (byte) 0x9e,
-                                                 (byte) 0xac, (byte) 0x64, (byte) 0x74, (byte) 0xf2,
-                                                 (byte) 0x06, (byte) 0xc4, (byte) 0xee, (byte) 0x08,
-                                                 (byte) 0x44, (byte) 0xf6, (byte) 0x83, (byte) 0x89 };
 
     private static final int[] ROWS    = { R.string.results_measured,
                                            R.string.results_average,
@@ -39,8 +31,8 @@ public class CryptoSecretBoxFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_secretbox, 
-                                           R.string.column_secretbox_open 
+    private static final int[] COLUMNS = { R.string.column_stream_xor, 
+                                           R.string.column_stream_salsa20_xor 
                                          };
     // CLASS METHODS
 
@@ -50,14 +42,15 @@ public class CryptoSecretBoxFragment extends CryptoFragment {
      * @return Initialised CryptoBoxFragment or <code>null</code>.
      */
     public static Fragment newFragment() {
-        return new CryptoSecretBoxFragment();
+        return new CryptoStreamFragment();
     }
 
-    // CONSTRUCTOR
+    // CONSTRUCTOR 
     
-    public CryptoSecretBoxFragment() {
-        super(new Measured(TYPE.CRYPTO_SECRETBOX),new Measured(TYPE.CRYPTO_SECRETBOX_OPEN));
+    public CryptoStreamFragment() {
+        super(new Measured(TYPE.CRYPTO_STREAM_XOR),new Measured(TYPE.CRYPTO_STREAM_SALSA20_XOR));
     }
+    
     
     // *** Fragment ***
     
@@ -115,7 +108,7 @@ public class CryptoSecretBoxFragment extends CryptoFragment {
         private final int       loops;
         private final TweetNaCl tweetnacl;
 
-        private CryptoSecretBoxTask(CryptoSecretBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
+        private CryptoSecretBoxTask(CryptoStreamFragment fragment,ProgressBar bar,int bytes,int loops) {
             super(fragment,bar);
             
             this.bytes     = bytes;
@@ -128,49 +121,60 @@ public class CryptoSecretBoxFragment extends CryptoFragment {
             try {
                 // ... initialise
                 
-                Random  random  = new Random();
-                byte[]  message = new byte[bytes];
-                byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
-                byte[]  crypttext;
-                long    start;
-                long    total;
-                int     progress;
-                
+                Random   random  = new Random();
+                Result[] results = new Result[2];
+                byte[]   message = new byte[bytes];
+                byte[]   crypttext;
+                byte[]   key;
+                byte[]   nonce;
+                long     start;
+                long     total;
+                int      progress;
+
+                // ... crypto_stream_xor
+
+                key  = new byte[TweetNaCl.STREAM_KEYBYTES];
+                nonce= new byte[TweetNaCl.STREAM_NONCEBYTES];
+
+                random.nextBytes(key);
                 random.nextBytes(message);
-                
-                // ... crypto_secretbox
 
                 start    = System.currentTimeMillis();
                 total    = 0;
                 progress = 0;
 
                 for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoSecretBox(message,nonce,KEY);
+                    { crypttext = tweetnacl.cryptoStreamXor(message,nonce,key);
                     
-                      total += message.length;
+                      total += crypttext.length;
                       publishProgress(++progress/(2*loops));
                     }
                 
-                Result encrypt = new Result(total,System.currentTimeMillis() - start);
+                results[0] = new Result(total,System.currentTimeMillis() - start);
                 
-                // ... crypto_secretbox_open
+                // ... crypto_stream_salsa20
                 
-                crypttext = tweetnacl.cryptoSecretBox(message,nonce,KEY);
+                key   = new byte[TweetNaCl.STREAM_SALSA20_KEYBYTES];
+                nonce = new byte[TweetNaCl.STREAM_SALSA20_NONCEBYTES];
+
+                random.nextBytes(key);
+                random.nextBytes(message);
+
                 start     = System.currentTimeMillis();
                 total     = 0;
                 
                 for (int i=0; i<loops; i++)
-                    { message = tweetnacl.cryptoSecretBoxOpen(crypttext,nonce,KEY);
+                    { crypttext = tweetnacl.cryptoStreamSalsa20Xor(message, nonce, key);
                   
-                      total += message.length;
+                      total += crypttext.length;
                       publishProgress(++progress/(2*loops));
                     }
 
-                Result decrypt = new Result(total,System.currentTimeMillis() - start);
+                results[1] = new Result(total,System.currentTimeMillis() - start);
 
                 // ... done
                 
-                return new Result[] { encrypt,decrypt };
+                return results;
                 
             } catch(Throwable x) {
             }

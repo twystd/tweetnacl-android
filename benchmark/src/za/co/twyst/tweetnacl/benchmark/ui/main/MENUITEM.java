@@ -9,7 +9,8 @@ public enum MENUITEM {
     CRYPTO_HASH          (R.string.menuitem_crypto_hash),
     CRYPTO_ONETIMEAUTH   (R.string.menuitem_crypto_onetimeauth),
     CRYPTO_SCALARMULT    (R.string.menuitem_crypto_scalarmult),
-    CRYPTO_SECRETBOX     (R.string.menuitem_crypto_secretbox);
+    CRYPTO_SECRETBOX     (R.string.menuitem_crypto_secretbox),
+    CRYPTO_STREAM        (R.string.menuitem_crypto_stream);
 
     final int label;
                         

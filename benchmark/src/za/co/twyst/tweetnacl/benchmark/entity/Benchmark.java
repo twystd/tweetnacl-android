@@ -3,6 +3,9 @@ package za.co.twyst.tweetnacl.benchmark.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment.Measured;
+import za.co.twyst.tweetnacl.benchmark.util.Util;
+
 /** Container class for a performance measurement.
  * 
  */
@@ -22,7 +25,9 @@ public class Benchmark implements Parcelable {
         CRYPTO_SCALARMULT_BASE   (9),
         CRYPTO_SCALARMULT        (10),
         CRYPTO_SECRETBOX         (11),
-        CRYPTO_SECRETBOX_OPEN    (12);
+        CRYPTO_SECRETBOX_OPEN    (12),
+        CRYPTO_STREAM_XOR        (13),
+        CRYPTO_STREAM_SALSA20_XOR(14);
         
         private final int type;
         
@@ -46,6 +51,15 @@ public class Benchmark implements Parcelable {
     public final TYPE   type;
     public final String value;
     
+    // CLASS METHODS
+    
+    /** Pretty formats a throughput value.
+     * 
+     */
+    private static String format(long throughput) {
+        return String.format("%s/s",Util.format(throughput,true));
+    }
+    
     // CONSTRUCTOR
     
     /** Initialises the measurement values.
@@ -62,6 +76,22 @@ public class Benchmark implements Parcelable {
         
         this.type  = type;
         this.value = value == null ? "" : value.trim();
+    }
+    
+    /** Initialises the measurement values.
+     * 
+     */
+    public Benchmark(Measured measurement) {
+        // ... validate
+        
+        if (measurement == null) {
+            throw new IllegalArgumentException("Invalid measurement");
+        }
+        
+        // ... initialise
+        
+        this.type  = measurement.type;
+        this.value = format(measurement.mean);
     }
 
     // *** Parcelable ***

@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
@@ -34,12 +33,6 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     private static final int[] COLUMNS = { R.string.column_scalarmultbase, 
                                            R.string.column_scalarmult 
                                          };
-    
-    // INSTANCE VARIABLES
-    
-    private Measured scalarmultbase = new Measured();
-    private Measured scalarmult     = new Measured();
-    
     // CLASS METHODS
 
     /** Factory constructor for CryptoScalarMultFragment that ensures correct fragment
@@ -51,6 +44,12 @@ public class CryptoScalarMultFragment extends CryptoFragment {
         return new CryptoScalarMultFragment();
     }
 
+    // CONSTRUCTOR
+    
+    public CryptoScalarMultFragment() {
+        super(new Measured(TYPE.CRYPTO_SCALARMULT_BASE),new Measured(TYPE.CRYPTO_SCALARMULT));
+    }
+    
     // *** Fragment ***
     
     @Override
@@ -95,49 +94,6 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     
     private void run(int loops,ProgressBar bar) {
         new CryptoScalarMultTask(this,bar,loops).execute();
-    }
-    
-    @Override
-    protected void done(Result...results) {
-        View view = getView();
-        View busy;
-        View bar;
-
-        // ... hide windmill
-        
-        if (view != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.GONE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-        
-        // ... update benchmarks
-        
-        this.scalarmultbase.update(results[0].bytes,results[0].dt);
-        this.scalarmult.update    (results[1].bytes,results[1].dt);
-
-        if (view != null) {
-            Grid grid = (Grid) view.findViewById(R.id.grid);
-            
-            grid.setValue(0,0,format(this.scalarmultbase.throughput));
-            grid.setValue(1,0,format(this.scalarmultbase.mean));
-            grid.setValue(2,0,format(this.scalarmultbase.minimum));
-            grid.setValue(3,0,format(this.scalarmultbase.maximum));
-            
-            grid.setValue(0,1,format(this.scalarmult.throughput));
-            grid.setValue(1,1,format(this.scalarmult.mean));
-            grid.setValue(2,1,format(this.scalarmult.minimum));
-            grid.setValue(3,1,format(this.scalarmult.maximum));
-        }
-        
-        // ... update global measurements
-        
-        this.measured(new Benchmark(TYPE.CRYPTO_SCALARMULT_BASE,format(this.scalarmultbase.mean)),
-                      new Benchmark(TYPE.CRYPTO_SCALARMULT,     format(this.scalarmult.mean)));
     }
     
     // INNER CLASSES

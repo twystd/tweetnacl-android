@@ -35,9 +35,8 @@ public class SummaryFragment extends Fragment {
                                            R.string.label_crypto_scalarmult,
                                            R.string.label_crypto_secretbox,
                                            R.string.label_crypto_secretbox_open,
-                                           R.string.label_crypto_stream,
-                                           R.string.label_crypto_sign,
-                                           R.string.label_crypto_verify
+                                           R.string.label_crypto_stream_xor,
+                                           R.string.label_crypto_stream_salsa20_xor
                                          };
     
     private static final int[] COLUMNS = { R.string.tweetnacl, 
@@ -55,7 +54,9 @@ public class SummaryFragment extends Fragment {
                                         TYPE.CRYPTO_SCALARMULT_BASE,
                                         TYPE.CRYPTO_SCALARMULT,
                                         TYPE.CRYPTO_SECRETBOX,
-                                        TYPE.CRYPTO_SECRETBOX_OPEN
+                                        TYPE.CRYPTO_SECRETBOX_OPEN,
+                                        TYPE.CRYPTO_STREAM_XOR,
+                                        TYPE.CRYPTO_STREAM_SALSA20_XOR
                                       };
 
     // INSTANCE VARIABLES

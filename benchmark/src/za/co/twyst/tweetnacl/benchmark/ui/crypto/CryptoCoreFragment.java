@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.benchmark.R;
-import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
@@ -52,13 +51,6 @@ public class CryptoCoreFragment extends CryptoFragment {
                                              (byte) 0x32, (byte) 0x2d, (byte) 0x62, (byte) 0x79,
                                              (byte) 0x74, (byte) 0x65, (byte) 0x20, (byte) 0x6b
                                            };
-
-    
-    // INSTANCE VARIABLES
-    
-    private Measured hsalsa20 = new Measured();
-    private Measured salsa20  = new Measured();
-    
     // CLASS METHODS
 
     /** Factory constructor for CryptoBoxFragment that ensures correct fragment
@@ -69,6 +61,13 @@ public class CryptoCoreFragment extends CryptoFragment {
     public static Fragment newFragment() {
         return new CryptoCoreFragment();
     }
+    
+    // CONSTRUCTOR
+    
+    public CryptoCoreFragment() {
+        super(new Measured(TYPE.CRYPTO_CORE_HSALSA20),new Measured(TYPE.CRYPTO_CORE_SALSA20));
+    }
+    
 
     // *** Fragment ***
     
@@ -114,50 +113,6 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     private void run(int loops,ProgressBar bar) {
         new RunTask(this,bar,loops).execute();
-    }
-    
-    @Override
-    protected void done(Result...results) {
-        View view = getView();
-        View busy;
-        View bar;
-
-        // ... hide windmill
-        
-        if (view != null) {
-            if ((busy = view.findViewById(R.id.busy)) != null) {
-                busy.setVisibility(View.GONE);
-            }
-            
-            if ((bar = view.findViewById(R.id.progressbar)) != null) {
-                bar.setVisibility(View.VISIBLE);
-            }
-        }
-        
-        // ... update benchmarks
-        
-        this.hsalsa20.update(results[0].bytes,results[0].dt);
-        this.salsa20.update (results[1].bytes,results[1].dt);
-
-
-        if (view != null) {
-            Grid grid = (Grid) view.findViewById(R.id.grid);
-            
-            grid.setValue(0,0,format(this.hsalsa20.throughput));
-            grid.setValue(1,0,format(this.hsalsa20.mean));
-            grid.setValue(2,0,format(this.hsalsa20.minimum));
-            grid.setValue(3,0,format(this.hsalsa20.maximum));
-            
-            grid.setValue(0,1,format(this.salsa20.throughput));
-            grid.setValue(1,1,format(this.salsa20.mean));
-            grid.setValue(2,1,format(this.salsa20.minimum));
-            grid.setValue(3,1,format(this.salsa20.maximum));
-        }
-        
-        // ... update global measurements
-        
-        this.measured(new Benchmark(TYPE.CRYPTO_CORE_HSALSA20,format(this.hsalsa20.mean)),
-                      new Benchmark(TYPE.CRYPTO_CORE_SALSA20, format(this.salsa20.mean)));
     }
     
     // INNER CLASSES
