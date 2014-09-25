@@ -144,7 +144,7 @@ public class CryptoBoxFragment extends CryptoFragment {
                     { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
                     
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
                 
                 Result encrypt = new Result(total,System.currentTimeMillis() - start);
@@ -159,7 +159,7 @@ public class CryptoBoxFragment extends CryptoFragment {
                     { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
                   
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
 
                 Result decrypt = new Result(total,System.currentTimeMillis() - start);

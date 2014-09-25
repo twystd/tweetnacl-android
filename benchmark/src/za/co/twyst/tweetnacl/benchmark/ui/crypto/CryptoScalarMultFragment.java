@@ -132,7 +132,7 @@ public class CryptoScalarMultFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoScalarMultBase(n);
                       total += n.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
                 
                 Result scalarmultbase = new Result(total,System.currentTimeMillis() - start);
@@ -148,7 +148,7 @@ public class CryptoScalarMultFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoScalarMult(n,p);
                       total += n.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
 
                 Result scalarmult = new Result(total,System.currentTimeMillis() - start);

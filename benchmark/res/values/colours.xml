@@ -28,15 +28,6 @@
  
  <!-- widgets -->
 
-<!--
- <color name="border">@color/sky_layer</color>
- <color name="text">@color/nejro</color>
- <color name="fill">@color/light_orange</color>
-
- <color name="field">#ffffffff</color>    
- <color name="groupbox_label">@color/text</color>    
- -->
- 
  <color name="border">@color/black</color>
  <color name="text">@color/white</color>
  <color name="fill">@color/black</color>

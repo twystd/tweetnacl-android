@@ -149,27 +149,36 @@ public abstract class CryptoFragment extends Fragment {
         }
         
         // ... update benchmarks
-        
-        Grid grid = (Grid) view.findViewById(R.id.grid);
+
         int  ix   = 0;
-        
+
         for (Result result: results) {
-            int      column      = ix;
-            Measured measurement = measurements[ix];
+            Measured measurement = measurements[ix++];
         
             measurement.update(result.bytes,result.dt);
+        }
+
+        // ... update page
+        
+        Grid grid;
+        
+        if ((view != null) && ((grid = (Grid) view.findViewById(R.id.grid)) != null)) {
+            ix = 0;
             
-            grid.setValue(0,column,format(measurement.throughput));
-            grid.setValue(1,column,format(measurement.mean));
-            grid.setValue(2,column,format(measurement.minimum));
-            grid.setValue(3,column,format(measurement.maximum));
+            for (int column=0; column<results.length; column++) {
+                Measured measurement = measurements[column];
+                
+                grid.setValue(0,column,format(measurement.throughput));
+                grid.setValue(1,column,format(measurement.mean));
+                grid.setValue(2,column,format(measurement.minimum));
+                grid.setValue(3,column,format(measurement.maximum));
+            }
         }
         
         // ... update global measurements
         
         this.measured(measurements);
     }
-
     
     // INNER CLASSES
     
@@ -222,6 +231,12 @@ public abstract class CryptoFragment extends Fragment {
             this.bar       = new WeakReference<ProgressBar>(bar);
         }
         
+        protected void progress(int progress,int max) {
+            publishProgress(progress*1000/max);
+        }
+
+        // *** AsyncTask ***
+        
         @Override
         protected void onPreExecute() {
             CryptoFragment fragment = this.reference.get();
@@ -242,7 +257,6 @@ public abstract class CryptoFragment extends Fragment {
             ProgressBar bar      = this.bar.get();
             
             if (bar != null) {
-//                bar.setProgress(1000*progress/(2*loops));
                 bar.setProgress(progress);
             }
         }

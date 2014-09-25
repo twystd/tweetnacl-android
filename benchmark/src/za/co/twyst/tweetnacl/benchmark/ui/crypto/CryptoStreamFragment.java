@@ -147,7 +147,7 @@ public class CryptoStreamFragment extends CryptoFragment {
                     { crypttext = tweetnacl.cryptoStreamXor(message,nonce,key);
                     
                       total += crypttext.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
                 
                 results[0] = new Result(total,System.currentTimeMillis() - start);
@@ -167,7 +167,7 @@ public class CryptoStreamFragment extends CryptoFragment {
                     { crypttext = tweetnacl.cryptoStreamSalsa20Xor(message, nonce, key);
                   
                       total += crypttext.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
 
                 results[1] = new Result(total,System.currentTimeMillis() - start);

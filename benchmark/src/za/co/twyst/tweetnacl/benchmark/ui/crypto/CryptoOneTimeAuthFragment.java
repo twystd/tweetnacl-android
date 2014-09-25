@@ -143,7 +143,7 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
                     }
                     
                     total += message.length;
-                    publishProgress(++progress/(2*loops));
+                    progress(++progress,2*loops);
                 }
                 
                 Result encrypt = new Result(total,System.currentTimeMillis() - start);
@@ -160,7 +160,7 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
                     }
                   
                     total += message.length;
-                    publishProgress(++progress/(2*loops));
+                    progress(++progress,2*loops);
                 }
 
                 Result decrypt = new Result(total,System.currentTimeMillis() - start);

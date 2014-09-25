@@ -1,9 +1,7 @@
 package za.co.twyst.tweetnacl.benchmark.ui.crypto;
 
-import java.lang.ref.WeakReference;
 import java.util.Random;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -112,35 +110,20 @@ public class CryptoCoreFragment extends CryptoFragment {
     // INTERNAL
     
     private void run(int loops,ProgressBar bar) {
-        new RunTask(this,bar,loops).execute();
+        new CryptoCoreTask(this,bar,loops).execute();
     }
     
     // INNER CLASSES
     
-    private static class RunTask extends AsyncTask<Void,Integer,Result[]> {
-        private final WeakReference<CryptoCoreFragment> reference;
-        private final WeakReference<ProgressBar>       bar;
-        private final int                              loops;
-        private final TweetNaCl                        tweetnacl;
+    private static class CryptoCoreTask extends RunTask  {
+        private final int       loops;
+        private final TweetNaCl tweetnacl;
 
-        private RunTask(CryptoCoreFragment fragment,ProgressBar bar,int loops) {
-            this.reference = new WeakReference<CryptoCoreFragment>(fragment);
-            this.bar       = new WeakReference<ProgressBar>(bar);
+        private CryptoCoreTask(CryptoCoreFragment fragment,ProgressBar bar,int loops) {
+            super(fragment,bar);
+
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
-        }
-        @Override
-        protected void onPreExecute() {
-            CryptoCoreFragment fragment = this.reference.get();
-            ProgressBar       bar      = this.bar.get();
-
-            if (fragment != null) {
-                fragment.busy();
-            }
-
-            if (bar != null) {
-                bar.setProgress(0);
-            }
         }
 
         @Override
@@ -167,7 +150,7 @@ public class CryptoCoreFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoCoreHSalsa20(message,KEY,CONSTANT);
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
                 
                 Result hsalsa20 = new Result(total,System.currentTimeMillis() - start);
@@ -184,7 +167,7 @@ public class CryptoCoreFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoCoreSalsa20(message,KEY,CONSTANT);
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
 
                 Result salsa20 = new Result(total,System.currentTimeMillis() - start);
@@ -198,25 +181,6 @@ public class CryptoCoreFragment extends CryptoFragment {
             }
 
             return null;
-        }
-        
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            int         progress = values[0];
-            ProgressBar bar      = this.bar.get();
-            
-            if (bar != null) {
-                bar.setProgress(1000*progress/(2*loops));
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Result[] result) {
-            CryptoCoreFragment fragment = reference.get();
-            
-            if (fragment != null) {
-                fragment.done(result[0],result[1]);
-            }
         }
     }
 }

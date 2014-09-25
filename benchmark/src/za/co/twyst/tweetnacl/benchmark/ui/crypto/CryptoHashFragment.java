@@ -155,7 +155,7 @@ public class CryptoHashFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoHash(message);
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
                 
                 Result hash = new Result(total,System.currentTimeMillis() - start);
@@ -168,7 +168,7 @@ public class CryptoHashFragment extends CryptoFragment {
                 for (int i=0; i<loops; i++)
                     { tweetnacl.cryptoHashBlocks(IV,message);
                       total += message.length;
-                      publishProgress(++progress/(2*loops));
+                      progress(++progress,2*loops);
                     }
 
                 Result hashblocks = new Result(total,System.currentTimeMillis() - start);
