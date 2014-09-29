@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
 import za.co.twyst.tweetnacl.benchmark.R;
+import za.co.twyst.tweetnacl.benchmark.entity.Measured;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 

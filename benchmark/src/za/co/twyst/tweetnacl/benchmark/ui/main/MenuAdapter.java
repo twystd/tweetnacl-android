@@ -20,8 +20,8 @@ public class MenuAdapter extends BaseAdapter {
     @SuppressWarnings("unused")
     private static final String TAG = MenuAdapter.class.getSimpleName();
     
-    private static final String MAVEN_PRO  = "fonts/MavenProLight-300.otf";
-    private static final String MYRIAD_PRO = "fonts/MyriadPro-BlackIt.otf";
+//  private static final String MAVEN_PRO  = "fonts/MavenProLight-300.otf";
+//  private static final String MYRIAD_PRO = "fonts/MyriadPro-BlackIt.otf";
     private static final String TAHOMA     = "fonts/Tahoma.ttf";
     
     // INSTANCE VARIABLES

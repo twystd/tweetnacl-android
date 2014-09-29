@@ -13,9 +13,8 @@ import android.view.ViewGroup;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
-
-import static za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 
 public class SummaryFragment extends Fragment {
     // CONSTANTS
@@ -23,21 +22,23 @@ public class SummaryFragment extends Fragment {
     private static final String TAG              = SummaryFragment.class.getSimpleName();
     private static final String TAG_MEASUREMENTS = "measurements";
     
-    private static final int[] ROWS    = { R.string.label_crypto_box,
-                                           R.string.label_crypto_box_open,
-                                           R.string.label_crypto_core_hsalsa20,
-                                           R.string.label_crypto_core_salsa20,
-                                           R.string.label_crypto_hash,
-                                           R.string.label_crypto_hashblocks,
-                                           R.string.label_crypto_onetimeauth,
-                                           R.string.label_crypto_onetimeauth_verify,
-                                           R.string.label_crypto_scalarmultbase,
-                                           R.string.label_crypto_scalarmult,
-                                           R.string.label_crypto_secretbox,
-                                           R.string.label_crypto_secretbox_open,
-                                           R.string.label_crypto_stream_xor,
-                                           R.string.label_crypto_stream_salsa20_xor
-                                         };
+//    private static final int[] ROWS    = { R.string.label_crypto_box,
+//                                           R.string.label_crypto_box_open,
+//                                           R.string.label_crypto_core_hsalsa20,
+//                                           R.string.label_crypto_core_salsa20,
+//                                           R.string.label_crypto_hash,
+//                                           R.string.label_crypto_hashblocks,
+//                                           R.string.label_crypto_onetimeauth,
+//                                           R.string.label_crypto_onetimeauth_verify,
+//                                           R.string.label_crypto_scalarmultbase,
+//                                           R.string.label_crypto_scalarmult,
+//                                           R.string.label_crypto_secretbox,
+//                                           R.string.label_crypto_secretbox_open,
+//                                           R.string.label_crypto_stream_xor,
+//                                           R.string.label_crypto_stream_salsa20_xor,
+//                                           R.string.label_crypto_sign,
+//                                           R.string.label_crypto_verify
+//                                         };
     
     private static final int[] COLUMNS = { R.string.tweetnacl, 
                                            // R.string.tweetnaclz 
@@ -56,7 +57,9 @@ public class SummaryFragment extends Fragment {
                                         TYPE.CRYPTO_SECRETBOX,
                                         TYPE.CRYPTO_SECRETBOX_OPEN,
                                         TYPE.CRYPTO_STREAM_XOR,
-                                        TYPE.CRYPTO_STREAM_SALSA20_XOR
+                                        TYPE.CRYPTO_STREAM_SALSA20_XOR,
+                                        TYPE.CRYPTO_SIGN,
+                                        TYPE.CRYPTO_SIGN_OPEN
                                       };
 
     // INSTANCE VARIABLES
@@ -108,9 +111,18 @@ public class SummaryFragment extends Fragment {
         
         // ... initialise grid
         
-        grid.setRowLabels   (ROWS,   inflater,R.layout.label,R.id.textview);
+        int[] labels = new int[TYPE.values().length - 1];
+        int   ix     = 0;
+            
+        for (TYPE type: TYPE.values()) {
+             if (type != TYPE.UNKNOWN) {
+                    labels[ix++] = type.label;
+                }
+            }
+            
+        grid.setRowLabels   (labels, inflater,R.layout.label,R.id.textview);
         grid.setColumnLabels(COLUMNS,inflater,R.layout.value,R.id.textview);
-        grid.setValues      (ROWS.length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
+        grid.setValues      (TYPE.values().length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
         
         // ... displays measured values
         

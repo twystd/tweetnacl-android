@@ -1,7 +1,6 @@
 package za.co.twyst.tweetnacl.benchmark.ui.widgets;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
@@ -13,31 +12,31 @@ public class Lozenge extends Shape {
     // CONSTANTS
 
     private static final int BLACK      = 0xff222222;    
-    private static final int WHITE      = 0xffffffff;    
-    private static final int GREY       = 0xff808080;    
-    private static final int LIGHT_GREY = 0xffcccccc;    
-    private static final int DARK_GRAY  = 0xff666666;    
+//    private static final int WHITE      = 0xffffffff;    
+//    private static final int GREY       = 0xff808080;    
+//    private static final int LIGHT_GREY = 0xffcccccc;    
+//    private static final int DARK_GRAY  = 0xff666666;    
 
-    private static final int VICHYSSOISE = 0xffefffcd;    
-    private static final int HEX         = 0xffdce9be;    
-    private static final int SHADOW_DIRT = 0xff555152;    
-    private static final int EVENING_CLOUD = 0xff2e2633;
-    private static final int HELIOTROPE    = 0xff99173c;
+//    private static final int VICHYSSOISE = 0xffefffcd;    
+//    private static final int HEX         = 0xffdce9be;    
+//    private static final int SHADOW_DIRT = 0xff555152;    
+//    private static final int EVENING_CLOUD = 0xff2e2633;
+//    private static final int HELIOTROPE    = 0xff99173c;
 
-    private static final int NEJRO        = 0xff060604;    
-    private static final int ACORN        = 0xff915523;    
-    private static final int SKY_LAYER    = 0xffcf7340;    
-    private static final int LIGHT_ORANGE = 0xffeead77;    
-    private static final int TAMARA       = 0xffffdba9;    
+//    private static final int NEJRO        = 0xff060604;    
+//    private static final int ACORN        = 0xff915523;    
+//    private static final int SKY_LAYER    = 0xffcf7340;    
+//    private static final int LIGHT_ORANGE = 0xffeead77;    
+//    private static final int TAMARA       = 0xffffdba9;    
 
     private static final float  STROKEWIDTH = 1.0f;
     private static final double ANGLE       = 10.0;
     private static final int    FILL        = BLACK; // LIGHT_ORANGE;
     private static final int    BORDER      = BLACK; // SKY_LAYER;
     
-    private static final int[] ATTRIBUTES = { 
-        
-                                            };
+//    private static final int[] ATTRIBUTES = { 
+//        
+//                                            };
     
     // INSTANCE VARIABLES
     
@@ -54,7 +53,7 @@ public class Lozenge extends Shape {
         this.effect = new CornerPathEffect(5);
         this.path   = new Path();
 
-        TypedArray appearance = context.obtainStyledAttributes(style,ATTRIBUTES);
+//        TypedArray appearance = context.obtainStyledAttributes(style,ATTRIBUTES);
 
         initialise();
     }

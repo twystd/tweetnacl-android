@@ -3,7 +3,7 @@ package za.co.twyst.tweetnacl.benchmark.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment.Measured;
+import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
 /** Container class for a performance measurement.
@@ -13,26 +13,30 @@ public class Benchmark implements Parcelable {
     // CONSTANTS
     
     public enum TYPE { 
-        UNKNOWN                  (0),
-        CRYPTO_BOX               (1),
-        CRYPTO_BOX_OPEN          (2),
-        CRYPTO_CORE_HSALSA20     (3),
-        CRYPTO_CORE_SALSA20      (4),
-        CRYPTO_HASH              (5),
-        CRYPTO_HASHBLOCKS        (6),
-        CRYPTO_ONETIMEAUTH       (7),
-        CRYPTO_ONETIMEAUTH_VERIFY(8),
-        CRYPTO_SCALARMULT_BASE   (9),
-        CRYPTO_SCALARMULT        (10),
-        CRYPTO_SECRETBOX         (11),
-        CRYPTO_SECRETBOX_OPEN    (12),
-        CRYPTO_STREAM_XOR        (13),
-        CRYPTO_STREAM_SALSA20_XOR(14);
+        UNKNOWN                  (0, R.string.label_unknown),
+        CRYPTO_BOX               (1, R.string.label_crypto_box),
+        CRYPTO_BOX_OPEN          (2, R.string.label_crypto_box_open),
+        CRYPTO_CORE_HSALSA20     (3, R.string.label_crypto_core_hsalsa20),
+        CRYPTO_CORE_SALSA20      (4, R.string.label_crypto_core_salsa20),
+        CRYPTO_HASH              (5, R.string.label_crypto_hash),
+        CRYPTO_HASHBLOCKS        (6, R.string.label_crypto_hashblocks),
+        CRYPTO_ONETIMEAUTH       (7, R.string.label_crypto_onetimeauth),
+        CRYPTO_ONETIMEAUTH_VERIFY(8, R.string.label_crypto_onetimeauth_verify),
+        CRYPTO_SCALARMULT_BASE   (9, R.string.label_crypto_scalarmult),
+        CRYPTO_SCALARMULT        (10,R.string.label_crypto_scalarmultbase),
+        CRYPTO_SECRETBOX         (11,R.string.label_crypto_secretbox),
+        CRYPTO_SECRETBOX_OPEN    (12,R.string.label_crypto_secretbox_open),
+        CRYPTO_STREAM_XOR        (13,R.string.label_crypto_stream_xor),
+        CRYPTO_STREAM_SALSA20_XOR(14,R.string.label_crypto_stream_salsa20_xor),
+        CRYPTO_SIGN              (15,R.string.label_crypto_sign),
+        CRYPTO_SIGN_OPEN         (16,R.string.label_crypto_sign_open);
         
         private final int type;
+        public  final int label;
         
-        private TYPE(int type) {
-            this.type = type;
+        private TYPE(int type,int label) {
+            this.type  = type;
+            this.label = label;
         }
         
         private static TYPE parse(int type) {
@@ -44,6 +48,7 @@ public class Benchmark implements Parcelable {
             
             return UNKNOWN;
         }
+
     };
     
     // INSTANCE VARIABLES

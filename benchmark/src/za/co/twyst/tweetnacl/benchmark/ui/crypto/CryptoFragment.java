@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
-import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
+import za.co.twyst.tweetnacl.benchmark.entity.Measured;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
@@ -193,32 +193,6 @@ public abstract class CryptoFragment extends Fragment {
         protected Result(long bytes,long dt) {
             this.bytes = bytes;
             this.dt    = dt;
-        }
-    }
-
-    public static class Measured { 
-        public final TYPE type;
-        public long mean;
-        public long throughput;
-        
-        protected long minimum = Long.MAX_VALUE;
-        protected long maximum = Long.MIN_VALUE;
-        protected long bytes   = 0;
-        protected long dt      = 0;
-        
-        protected Measured(TYPE type) {
-            this.type = type;
-        }
-        
-        protected void update(long bytes,long dt) {
-            if (dt > 0) {
-                this.bytes     += bytes;
-                this.dt        += dt;
-                this.throughput = 1000 * bytes/dt;
-                this.mean       = 1000 * this.bytes/this.dt;
-                this.minimum    = Math.min(minimum,throughput);
-                this.maximum    = Math.max(maximum,throughput);
-            }
         }
     }
 

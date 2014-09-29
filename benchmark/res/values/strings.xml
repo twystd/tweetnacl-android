@@ -6,6 +6,7 @@
  <string name="run">Run</string>
  <string name="setup">Setup</string>
  
+ <string name="label_unknown"></string>
  <string name="label_crypto_box">crypto_box</string>
  <string name="label_crypto_box_open">crypto_box_open</string>
  <string name="label_crypto_core_hsalsa20">crypto_core_hsalsa20</string>
@@ -21,7 +22,7 @@
  <string name="label_crypto_stream_xor">crypto_stream_xor</string>
  <string name="label_crypto_stream_salsa20_xor">crypto_stream_salsa20_xor</string>
  <string name="label_crypto_sign">crypto_sign</string>
- <string name="label_crypto_verify">crypto_verify</string>
+ <string name="label_crypto_sign_open">crypto_sign_open</string>
  
  <string name="label_size">Message size:</string>
  <string name="label_loops">Loops:</string>
@@ -39,20 +40,22 @@
  <string name="results_min">Min:</string>
  <string name="results_max">Max:</string>
 
- <string name="column_box">Box</string>
- <string name="column_box_open">BoxOpen</string>
- <string name="column_hsalsa20">HSalsa20</string>
- <string name="column_salsa20">Salsa20t</string>
- <string name="column_hash">Hash</string>
- <string name="column_hashblocks">HashBlocks</string>
- <string name="column_onetimeauth">OneTimeAuth</string>
- <string name="column_onetimeauth_verify">OneTimeAuthVerify</string>
- <string name="column_scalarmultbase">ScalarMultBase</string>
- <string name="column_scalarmult">ScalarMult</string>
- <string name="column_secretbox">SecretBox</string>
- <string name="column_secretbox_open">SecretBoxOpen</string>
- <string name="column_stream_xor">StreamXor</string>
- <string name="column_stream_salsa20_xor">StreamSalsa20Xor</string>
+ <string name="column_box">BOX</string>
+ <string name="column_box_open">BOX-OPEN</string>
+ <string name="column_hsalsa20">HSALSA20</string>
+ <string name="column_salsa20">SALSA20</string>
+ <string name="column_hash">HASH</string>
+ <string name="column_hashblocks">HASH-BLOCKS</string>
+ <string name="column_onetimeauth">AUTH</string>
+ <string name="column_onetimeauth_verify">AUTH VERIFY</string>
+ <string name="column_scalarmultbase">SCALARMULT BASE</string>
+ <string name="column_scalarmult">SCALARMULT</string>
+ <string name="column_secretbox">SECRET BOX</string>
+ <string name="column_secretbox_open">SECRET BOX OPEN</string>
+ <string name="column_stream_xor">XOR</string>
+ <string name="column_stream_salsa20_xor">SALSA20-XOR</string>
+ <string name="column_sign">SIGN</string>
+ <string name="column_sign_open">SIGN-OPEN</string>
  
  <string name="navigation_drawer_open">Open navigation drawer</string>
  <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -65,5 +68,6 @@
  <string name="menuitem_crypto_scalarmult">CRYPTO SCALAR MULT</string>
  <string name="menuitem_crypto_secretbox">CRYPTO SECRET BOX</string>
  <string name="menuitem_crypto_stream">CRYPTO STREAM</string>
+ <string name="menuitem_crypto_sign">CRYPTO SIGN</string>
  
 </resources>

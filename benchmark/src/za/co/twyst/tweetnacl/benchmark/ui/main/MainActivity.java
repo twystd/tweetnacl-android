@@ -11,19 +11,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoBoxFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoCoreFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoHashFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoOneTimeAuthFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoScalarMultFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoSecretBoxFragment;
-import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoStreamFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
 public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
@@ -31,13 +25,12 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
                                                                CryptoFragment.Owner { 
     // CONSTANTS
     
-    @SuppressWarnings("unused")
     private static final String TAG = MainActivity.class.getSimpleName();
          
     // INSTANCE VARIABLES
          
-    private DrawerLayout                      drawer;
-    private ActionBarDrawerToggle             toggle;
+    private DrawerLayout                  drawer;
+    private ActionBarDrawerToggle         toggle;
     private Map<Benchmark.TYPE,Benchmark> measurements = new HashMap<Benchmark.TYPE,Benchmark>();
         
     // *** ActionBarActivity ***
@@ -133,40 +126,11 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
     @Override
     public void clicked(MENUITEM item) {
         Fragment fragment = null;
-        
-        switch(item) {
-        
-            case SUMMARY:
-                fragment = SummaryFragment.newFragment(measurements.values());
-                break;
-                 
-            case CRYPTO_BOX:
-                fragment = CryptoBoxFragment.newFragment();
-                break;
-                
-            case CRYPTO_CORE:
-                fragment = CryptoCoreFragment.newFragment();
-                break;
-               
-            case CRYPTO_HASH:
-                fragment = CryptoHashFragment.newFragment();
-                break;
-                
-            case CRYPTO_ONETIMEAUTH:
-                 fragment = CryptoOneTimeAuthFragment.newFragment();
-                 break;
-                 
-            case CRYPTO_SCALARMULT:
-                  fragment = CryptoScalarMultFragment.newFragment();
-                  break;
-                  
-             case CRYPTO_SECRETBOX:
-                   fragment = CryptoSecretBoxFragment.newFragment();
-                   break;
-                   
-              case CRYPTO_STREAM:
-                    fragment = CryptoStreamFragment.newFragment();
-                    break;
+
+        try {
+            fragment = item.clazz.newInstance();
+        } catch(Throwable x) {
+            Log.wtf(TAG,"Error instantiating fragment",x);
         }
 
         // ... replace fragments
