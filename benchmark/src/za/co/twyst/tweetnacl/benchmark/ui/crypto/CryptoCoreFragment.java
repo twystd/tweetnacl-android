@@ -116,7 +116,7 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class CryptoCoreTask extends RunTask  {
+    private static class CryptoCoreTask extends CryptoTask  {
         private final int       loops;
         private final TweetNaCl tweetnacl;
 

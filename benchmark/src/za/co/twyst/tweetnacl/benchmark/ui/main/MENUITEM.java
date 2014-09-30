@@ -11,6 +11,7 @@ import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoScalarMultFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoSecretBoxFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoSignFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoStreamFragment;
+import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoVerifyFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
 public enum MENUITEM { 
@@ -22,7 +23,8 @@ public enum MENUITEM {
     CRYPTO_SCALARMULT    (R.string.menuitem_crypto_scalarmult, CryptoScalarMultFragment.class),
     CRYPTO_SECRETBOX     (R.string.menuitem_crypto_secretbox,  CryptoSecretBoxFragment.class),
     CRYPTO_STREAM        (R.string.menuitem_crypto_stream,     CryptoStreamFragment.class),
-    CRYPTO_SIGN          (R.string.menuitem_crypto_sign,       CryptoSignFragment.class);
+    CRYPTO_SIGN          (R.string.menuitem_crypto_sign,       CryptoSignFragment.class),
+    CRYPTO_VERIFY        (R.string.menuitem_crypto_verify,     CryptoVerifyFragment.class);
 
     public final int                             label;
     public final Class<? extends Fragment> clazz;

@@ -13,19 +13,17 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import za.co.twyst.tweetnacl.TweetNaCl;
-import za.co.twyst.tweetnacl.TweetNaCl.KeyPair;
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.entity.Measured;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
-public class CryptoBoxFragment extends CryptoFragment {
+public class CryptoVerifyFragment extends CryptoFragment {
     // CONSTANTS
 
     @SuppressWarnings("unused")
-    private static final String TAG          = CryptoBoxFragment.class.getSimpleName();
-    private static final int    MESSAGE_SIZE = 16384;
-    private static final int    LOOPS        = 1024;
+    private static final String TAG   = CryptoVerifyFragment.class.getSimpleName();
+    private static final int    LOOPS = 65536;
     
     private static final int[] ROWS    = { R.string.results_measured,
                                            R.string.results_average,
@@ -33,8 +31,8 @@ public class CryptoBoxFragment extends CryptoFragment {
                                            R.string.results_max
                                          };
 
-    private static final int[] COLUMNS = { R.string.column_box, 
-                                           R.string.column_box_open 
+    private static final int[] COLUMNS = { R.string.column_verify16, 
+                                           R.string.column_verify32 
                                          };
 
     // CLASS METHODS
@@ -45,21 +43,20 @@ public class CryptoBoxFragment extends CryptoFragment {
      * @return Initialised CryptoBoxFragment or <code>null</code>.
      */
     public static Fragment newFragment() {
-        return new CryptoBoxFragment();
+        return new CryptoVerifyFragment();
     }
     
     // CONSTRUCTOR
     
-    public CryptoBoxFragment() {
-        super(new Measured(TYPE.CRYPTO_BOX),new Measured(TYPE.CRYPTO_BOX_OPEN));
+    public CryptoVerifyFragment() {
+        super(new Measured(TYPE.CRYPTO_VERIFY16),new Measured(TYPE.CRYPTO_VERIFY32));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_box,container,false);
-        final EditText    size  = (EditText) root.findViewById(R.id.size); 
+        final View        root  = inflater.inflate(R.layout.fragment_verify,container,false);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
@@ -67,7 +64,6 @@ public class CryptoBoxFragment extends CryptoFragment {
 
         // ... initialise default setup
         
-        size.setText (Integer.toString(MESSAGE_SIZE));
         loops.setText(Integer.toString(LOOPS));
 
         // ... initialise grid
@@ -82,11 +78,10 @@ public class CryptoBoxFragment extends CryptoFragment {
                                    { @Override
                                      public void onClick(View view)
                                             { try
-                                                 { int _size  = Integer.parseInt(size.getText ().toString());
-                                                   int _loops = Integer.parseInt(loops.getText().toString());
+                                                 { int _loops = Integer.parseInt(loops.getText().toString());
                                                    
-                                                   hideKeyboard(size,loops);
-                                                   run         (_size,_loops,bar);
+                                                   hideKeyboard(loops);
+                                                   run         (_loops,bar);
                                                  }
                                               catch(Throwable x)
                                                  { // TODO
@@ -99,21 +94,19 @@ public class CryptoBoxFragment extends CryptoFragment {
     
     // INTERNAL
     
-    private void run(int bytes,int loops,ProgressBar bar) {
-        new CryptoBoxTask(this,bar,bytes,loops).execute();
+    private void run(int loops,ProgressBar bar) {
+        new CryptoVerifyTask(this,bar,loops).execute();
     }
     
     // INNER CLASSES
     
-    private static class CryptoBoxTask extends CryptoTask {
-        private final int                              bytes;
-        private final int                              loops;
-        private final TweetNaCl                        tweetnacl;
+    private static class CryptoVerifyTask extends CryptoTask {
+        private final int       loops;
+        private final TweetNaCl tweetnacl;
 
-        private CryptoBoxTask(CryptoBoxFragment fragment,ProgressBar bar,int bytes,int loops) {
+        private CryptoVerifyTask(CryptoVerifyFragment fragment,ProgressBar bar,int loops) {
             super(fragment,bar);
             
-            this.bytes     = bytes;
             this.loops     = loops;
             this.tweetnacl = new TweetNaCl();
         }
@@ -123,51 +116,52 @@ public class CryptoBoxFragment extends CryptoFragment {
             try {
                 // ... initialise
                 
-                Random  random  = new Random();
-                KeyPair alice   = tweetnacl.cryptoBoxKeyPair();
-                KeyPair bob     = tweetnacl.cryptoBoxKeyPair();
-                byte[]  message = new byte[bytes];
-                byte[]  nonce   = new byte[TweetNaCl.BOX_NONCEBYTES];
-                byte[]  crypttext;
-                long    start;
-                long    total;
-                int     progress;
-                
-                random.nextBytes(message);
-                
-                // ... crypto_box
+                Random   random  = new Random();
+                Result[] results = new Result[2];
+                byte[]   x16     = new byte[16];
+                byte[]   x32     = new byte[32];
+                byte[]   y;
+                long     start;
+                long     total;
+                int      progress;
 
+                random.nextBytes(x16);
+                random.nextBytes(x32);
+
+                // ... crypto_verify16
+
+                y        = x16.clone();
                 start    = System.currentTimeMillis();
                 total    = 0;
                 progress = 0;
 
                 for (int i=0; i<loops; i++)
-                    { tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
+                    { tweetnacl.cryptoVerify16(x16,y);
                     
-                      total += message.length;
+                      total += x16.length;
                       progress(++progress,2*loops);
                     }
                 
-                Result encrypt = new Result(total,System.currentTimeMillis() - start);
+                results[0] = new Result(total,System.currentTimeMillis() - start);
                 
-                // ... crypto_box_open
+                // ... crypto_verify32
                 
-                crypttext = tweetnacl.cryptoBox(message,nonce,bob.publicKey,alice.secretKey);
-                start     = System.currentTimeMillis();
-                total     = 0;
+                y      = x32.clone();
+                start  = System.currentTimeMillis();
+                total  = 0;
                 
                 for (int i=0; i<loops; i++)
-                    { message = tweetnacl.cryptoBoxOpen(crypttext,nonce,alice.publicKey,bob.secretKey);
+                    { tweetnacl.cryptoVerify32(x32,y);
                   
-                      total += message.length;
+                      total += x32.length;
                       progress(++progress,2*loops);
                     }
 
-                Result decrypt = new Result(total,System.currentTimeMillis() - start);
+                results[1] = new Result(total,System.currentTimeMillis() - start);
 
                 // ... done
                 
-                return new Result[] { encrypt,decrypt };
+                return results;
                 
             } catch(Throwable x) {
             }

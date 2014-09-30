@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
 		
         setContentView(R.layout.activity_main);
 	                 
-        final Fragment  summary = SummaryFragment.newFragment (measurements.values());
+        final Fragment  summary = SummaryFragment.newFragment ();
         final Fragment  menu    = MainMenuFragment.newFragment();
         final ActionBar bar     = getSupportActionBar();
 

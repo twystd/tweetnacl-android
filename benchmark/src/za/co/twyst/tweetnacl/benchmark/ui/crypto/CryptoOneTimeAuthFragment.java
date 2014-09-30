@@ -103,7 +103,7 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class CryptoOneTimeAuthTask extends RunTask {
+    private static class CryptoOneTimeAuthTask extends CryptoTask {
         private final int       bytes;
         private final int       loops;
         private final TweetNaCl tweetnacl;

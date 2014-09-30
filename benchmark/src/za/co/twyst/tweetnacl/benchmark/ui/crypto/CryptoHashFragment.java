@@ -121,7 +121,7 @@ public class CryptoHashFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class CryptoHashTask extends RunTask {
+    private static class CryptoHashTask extends CryptoTask {
         private final int                              bytes;
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;

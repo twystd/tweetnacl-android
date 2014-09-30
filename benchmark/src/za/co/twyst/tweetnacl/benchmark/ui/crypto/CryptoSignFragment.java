@@ -100,17 +100,17 @@ public class CryptoSignFragment extends CryptoFragment {
     // INTERNAL
     
     private void run(int bytes,int loops,ProgressBar bar) {
-        new CryptoBoxTask(this,bar,bytes,loops).execute();
+        new CryptoSignTask(this,bar,bytes,loops).execute();
     }
     
     // INNER CLASSES
     
-    private static class CryptoBoxTask extends RunTask {
-        private final int                              bytes;
-        private final int                              loops;
-        private final TweetNaCl                        tweetnacl;
+    private static class CryptoSignTask extends CryptoTask {
+        private final int       bytes;
+        private final int       loops;
+        private final TweetNaCl tweetnacl;
 
-        private CryptoBoxTask(CryptoSignFragment fragment,ProgressBar bar,int bytes,int loops) {
+        private CryptoSignTask(CryptoSignFragment fragment,ProgressBar bar,int bytes,int loops) {
             super(fragment,bar);
             
             this.bytes     = bytes;

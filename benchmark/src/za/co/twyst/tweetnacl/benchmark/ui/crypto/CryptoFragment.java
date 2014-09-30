@@ -196,11 +196,11 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
-    protected static abstract class RunTask extends AsyncTask<Void,Integer,Result[]> {
+    protected static abstract class CryptoTask extends AsyncTask<Void,Integer,Result[]> {
         private final WeakReference<CryptoFragment> reference;
         private final WeakReference<ProgressBar>       bar;
 
-        protected RunTask(CryptoFragment fragment,ProgressBar bar) {
+        protected CryptoTask(CryptoFragment fragment,ProgressBar bar) {
             this.reference = new WeakReference<CryptoFragment>(fragment);
             this.bar       = new WeakReference<ProgressBar>(bar);
         }

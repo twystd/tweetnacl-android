@@ -1,7 +1,6 @@
 package za.co.twyst.tweetnacl.benchmark.ui.summary;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,48 +18,30 @@ import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 public class SummaryFragment extends Fragment {
     // CONSTANTS
     
-    private static final String TAG              = SummaryFragment.class.getSimpleName();
-    private static final String TAG_MEASUREMENTS = "measurements";
-    
-//    private static final int[] ROWS    = { R.string.label_crypto_box,
-//                                           R.string.label_crypto_box_open,
-//                                           R.string.label_crypto_core_hsalsa20,
-//                                           R.string.label_crypto_core_salsa20,
-//                                           R.string.label_crypto_hash,
-//                                           R.string.label_crypto_hashblocks,
-//                                           R.string.label_crypto_onetimeauth,
-//                                           R.string.label_crypto_onetimeauth_verify,
-//                                           R.string.label_crypto_scalarmultbase,
-//                                           R.string.label_crypto_scalarmult,
-//                                           R.string.label_crypto_secretbox,
-//                                           R.string.label_crypto_secretbox_open,
-//                                           R.string.label_crypto_stream_xor,
-//                                           R.string.label_crypto_stream_salsa20_xor,
-//                                           R.string.label_crypto_sign,
-//                                           R.string.label_crypto_verify
-//                                         };
+    private static final String TAG = SummaryFragment.class.getSimpleName();
     
     private static final int[] COLUMNS = { R.string.tweetnacl, 
-                                           // R.string.tweetnaclz 
                                          };
 
-    private static final TYPE[] ROW = { TYPE.CRYPTO_BOX,
-                                        TYPE.CRYPTO_BOX_OPEN,
-                                        TYPE.CRYPTO_CORE_HSALSA20,
-                                        TYPE.CRYPTO_CORE_SALSA20,
-                                        TYPE.CRYPTO_HASH,
-                                        TYPE.CRYPTO_HASHBLOCKS,
-                                        TYPE.CRYPTO_ONETIMEAUTH,
-                                        TYPE.CRYPTO_ONETIMEAUTH_VERIFY,
-                                        TYPE.CRYPTO_SCALARMULT_BASE,
-                                        TYPE.CRYPTO_SCALARMULT,
-                                        TYPE.CRYPTO_SECRETBOX,
-                                        TYPE.CRYPTO_SECRETBOX_OPEN,
-                                        TYPE.CRYPTO_STREAM_XOR,
-                                        TYPE.CRYPTO_STREAM_SALSA20_XOR,
-                                        TYPE.CRYPTO_SIGN,
-                                        TYPE.CRYPTO_SIGN_OPEN
-                                      };
+    private static final TYPE[] ROWS = { TYPE.CRYPTO_BOX,
+                                         TYPE.CRYPTO_BOX_OPEN,
+                                         TYPE.CRYPTO_CORE_HSALSA20,
+                                         TYPE.CRYPTO_CORE_SALSA20,
+                                         TYPE.CRYPTO_HASH,
+                                         TYPE.CRYPTO_HASHBLOCKS,
+                                         TYPE.CRYPTO_ONETIMEAUTH,
+                                         TYPE.CRYPTO_ONETIMEAUTH_VERIFY,
+                                         TYPE.CRYPTO_SCALARMULT_BASE,
+                                         TYPE.CRYPTO_SCALARMULT,
+                                         TYPE.CRYPTO_SECRETBOX,
+                                         TYPE.CRYPTO_SECRETBOX_OPEN,
+                                         TYPE.CRYPTO_STREAM_XOR,
+                                         TYPE.CRYPTO_STREAM_SALSA20_XOR,
+                                         TYPE.CRYPTO_SIGN,
+                                         TYPE.CRYPTO_SIGN_OPEN,
+                                         TYPE.CRYPTO_VERIFY16,
+                                         TYPE.CRYPTO_VERIFY32
+                                       };
 
     // INSTANCE VARIABLES
     
@@ -73,18 +54,13 @@ public class SummaryFragment extends Fragment {
      *  
      * @return Initialised SummaryFragment or <code>null</code>.
      */
-    public static Fragment newFragment(Collection<Benchmark> measurements) {
-        if (measurements != null) {
-            Fragment fragment = new SummaryFragment();
-            Bundle   bundle   = new Bundle();
+    public static Fragment newFragment() {
+        Fragment fragment = new SummaryFragment();
+        Bundle   bundle   = new Bundle();
             
-            bundle.putParcelableArray(TAG_MEASUREMENTS,measurements.toArray(new Benchmark[0]));
-            fragment.setArguments    (bundle);
-            
-            return fragment;
-        }
+        fragment.setArguments(bundle);
         
-        return null;
+        return fragment;
     }
 
     // *** Fragment ***
@@ -103,9 +79,6 @@ public class SummaryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        Bundle      bundle       = getArguments();
-        Benchmark[] measurements = (Benchmark[]) bundle.getParcelableArray(TAG_MEASUREMENTS);
-        
         View root = inflater.inflate(R.layout.fragment_summary,container,false);
         Grid grid = (Grid) root.findViewById(R.id.grid);
         
@@ -124,16 +97,6 @@ public class SummaryFragment extends Fragment {
         grid.setColumnLabels(COLUMNS,inflater,R.layout.value,R.id.textview);
         grid.setValues      (TYPE.values().length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
         
-        // ... displays measured values
-        
-        for(Benchmark measurement: measurements) {
-            for (int row=0; row<ROW.length; row++) {
-                if (measurement.type == ROW[row]) {
-                    grid.setValue(row,0,measurement.value);
-                }
-            }
-        }
-        
         return root;
     }
 
@@ -149,15 +112,14 @@ public class SummaryFragment extends Fragment {
             Grid        grid         = (Grid) root.findViewById(R.id.grid);
             
             for(Benchmark measurement: measurements) {
-                for (int row=0; row<ROW.length; row++) {
-                    if (measurement.type == ROW[row]) {
+                for (int row=0; row<ROWS.length; row++) {
+                    if (measurement.type.row == ROWS[row].row) {
                         grid.setValue(row,0,measurement.value);
                     }
                 }
             }
         }
     }
-    
     
     // INNER CLASSES
 

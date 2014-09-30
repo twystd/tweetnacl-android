@@ -38,6 +38,14 @@ public class Grid extends FrameLayout
 	             { return Math.round(dp * (context.getResources().getDisplayMetrics().xdpi/DisplayMetrics.DENSITY_DEFAULT));
 	             }
 
+	     private static int UNSPECIFIED() {
+	         return MeasureSpec.makeMeasureSpec(0,MeasureSpec.UNSPECIFIED);
+	     }
+
+	     private static int EXACTLY(int size) {
+             return MeasureSpec.makeMeasureSpec(size,MeasureSpec.EXACTLY);
+	     }
+
 	     // CONSTRUCTORS
 
 	 	 public Grid(Context context) 
@@ -163,74 +171,78 @@ public class Grid extends FrameLayout
 	 	 protected void onMeasure(int widthMeasureSpec,int heightMeasureSpec) 
 	 	           { super.onMeasure(widthMeasureSpec,heightMeasureSpec);
 	 	           
-	 	             int width  = getMeasuredWidth();
-	 	             
-	 	             if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY)
-	 	                { int h      = 0;
-	 	            	  int insetx = 0;
-	 	                  int insety = 0;
+	 	             // ... measure widgets
+	 	                  
+	 	             for (View label: columnLabels)
+	 	                 { label.measure(UNSPECIFIED(),UNSPECIFIED());
+	 	                 }
+	 	                  
+	 	             for (View label: rowLabels)
+	 	                 { label.measure(UNSPECIFIED(),UNSPECIFIED());
+	 	                 }
 
-	 	                  // ... measure column label row height
-	 	                  
-	 	                  for (View label: columnLabels)
- 	                          { label.measure(MeasureSpec.makeMeasureSpec(0,MeasureSpec.UNSPECIFIED),
- 	                    		              MeasureSpec.makeMeasureSpec(0,MeasureSpec.UNSPECIFIED));
- 	                      
- 	                	         insety = Math.max(insety,label.getMeasuredHeight());
- 	                          }
-	 	                  
-	 	                  insety += verticalSpacing;
-	 	                  
-	 	                  // ... measure row label column width
-	 	                  
-	 	                  LayoutParams params;
-	 	                  
-	 	                  for (View label: rowLabels)
-	 	                      { label.measure(MeasureSpec.makeMeasureSpec(width,MeasureSpec.UNSPECIFIED),
-	 	                    		          MeasureSpec.makeMeasureSpec(0,    MeasureSpec.UNSPECIFIED));
-	 	                  
-	 	                        params = (LayoutParams) label.getLayoutParams();
-	 	                	    insetx  = Math.max(insetx,label.getMeasuredWidth() + params.leftMargin + params.rightMargin);
-	 	                	    h      += label.getMeasuredHeight();
-	 	                      }
+	 	             for (int i=0; i<values.length; i++)
+	 	                 { for (int j=0; j<values[i].length; j++)
+	 	                       { values[i][j].measure(UNSPECIFIED(),UNSPECIFIED());
+	 	                       }
+	 	                 }
 
-	 	                  // ... re-measure column labels
-	 	                  
-	 	                  int rowHeight = values.length == 0 ? 0 : h/values.length;
-	 	                  int gridWidth = (width - getPaddingLeft() - getPaddingRight() - insetx);
-	 	                  int colwidth  = columns == 0 ? 0 : (gridWidth - (columns - 1)*horizontalSpacing)/columns;
-	 	                  
-	 	                  for (View label: columnLabels)
-	                          { label.measure(MeasureSpec.makeMeasureSpec(colwidth,                 MeasureSpec.EXACTLY),
-	                    		              MeasureSpec.makeMeasureSpec(label.getMeasuredHeight(),MeasureSpec.EXACTLY));
-	                          }
+	 	             // ... calculate layout
 
-	 	                  // ... re-measure values
-	 	                  
-	 	 		          for (int i=0; i<values.length; i++)
-     	 		              { View[] row = values[i];
-	 		                    View   value;
-	 		              
-	 		                    for (int j=0; j<row.length; j++)
-	 		                        { value = values[i][j];
-	 		                        
-	 		                          value.measure(MeasureSpec.makeMeasureSpec(colwidth, MeasureSpec.EXACTLY),
-	 		                        		        MeasureSpec.makeMeasureSpec(rowHeight,MeasureSpec.EXACTLY));
-	 		                        }
-     	 		             }
+                     int          titleHeight = 0;
+                     int          labelWidth  = 0;
+                     int          rowHeight   = 0;
+                     LayoutParams params;
 
-	 	                  // ... update measured size
-	 	                  
-	 	                  h += getPaddingTop();
-	 	                  h += getPaddingBottom();
-	 	 		          h += insety;
-	 	 		          h += (rows-1) * verticalSpacing;
+	 	             for (View label: columnLabels)
+	 	                 { titleHeight = Math.max(titleHeight,label.getMeasuredHeight());
+	 	                 }
+                               
+	 	             titleHeight += verticalSpacing;
+                          
+                     for (View label: rowLabels)
+                         { params     = (LayoutParams) label.getLayoutParams();
+                           labelWidth = Math.max(labelWidth,label.getMeasuredWidth() + params.leftMargin + params.rightMargin);
+                           rowHeight  = Math.max(rowHeight,label.getMeasuredHeight());                         
+                         }
 
-	 	                  if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST)
-		 	                 setMeasuredDimension(width,Math.min(h,MeasureSpec.getSize(heightMeasureSpec)));
-	 	                     else
-	 	                     setMeasuredDimension(width,h);
-	 	                }
+                     for (int i=0; i<values.length; i++)
+                         { for (int j=0; j<values[i].length; j++)
+                               { rowHeight = Math.max(rowHeight,values[i][j].getMeasuredHeight());
+                               }
+                         }
+
+                     int width     = getMeasuredWidth();
+                     int gridWidth = (width - getPaddingLeft() - getPaddingRight() - labelWidth);
+                     int colwidth  = columns == 0 ? 0 : (gridWidth - (columns - 1)*horizontalSpacing)/columns;
+
+                     // ... re-measure
+	 	                  
+                     for (View label: columnLabels)
+                         { label.measure(EXACTLY(colwidth),EXACTLY(rowHeight));
+                         }
+
+                     for (View label: rowLabels)
+                         { label.measure(EXACTLY(labelWidth),EXACTLY(rowHeight));
+                         }
+
+                     for (int i=0; i<values.length; i++)
+                         { for (int j=0; j<values[i].length; j++)
+	 		                   { values[i][j].measure(EXACTLY(colwidth),EXACTLY(rowHeight));
+	 		                   }
+                         }
+
+                     // ... update measured size
+	 	                  
+                     int h = getPaddingTop()
+                           + getPaddingBottom()
+                           + (rows * rowHeight)
+                           + ((rows-1) * verticalSpacing);
+
+                     if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST)
+                         setMeasuredDimension(width,Math.min(h,MeasureSpec.getSize(heightMeasureSpec)));
+                         else if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED)
+                         setMeasuredDimension(width,h);
 	 	           }
 
 	 	 @Override
@@ -238,12 +250,14 @@ public class Grid extends FrameLayout
 	 	           { int insetx = 0;
 	 	             int insety = 0;
 
-	 	             for (View label: rowLabels)
-	 	                 { LayoutParams params = (LayoutParams) label.getLayoutParams();
-	 	                 
-	 	                   insetx = Math.max(insetx,label.getMeasuredWidth() + params.leftMargin + params.rightMargin);
-	 	                 }
-
+                     // ... calculate column width
+                     
+                     for (View label: rowLabels)
+                         { LayoutParams params = (LayoutParams) label.getLayoutParams();
+                     
+                           insetx    = Math.max(insetx,label.getMeasuredWidth() + params.leftMargin + params.rightMargin);
+                         }
+                     
 	 	             for (View label: columnLabels)
  	                     { insety = Math.max(insety,label.getMeasuredHeight());
  	                     }
@@ -293,7 +307,7 @@ public class Grid extends FrameLayout
 	 		                     x += value.getMeasuredWidth() + horizontalSpacing;
 	 		                   }
 	 		               
-	 		               y += h + verticalSpacing;
+                           y += h + verticalSpacing;
 	 		             }
 	 	           }
        }

@@ -99,7 +99,7 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class CryptoScalarMultTask extends RunTask {
+    private static class CryptoScalarMultTask extends CryptoTask {
         private final int                              loops;
         private final TweetNaCl                        tweetnacl;
 

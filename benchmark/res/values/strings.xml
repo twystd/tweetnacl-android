@@ -23,6 +23,8 @@
  <string name="label_crypto_stream_salsa20_xor">crypto_stream_salsa20_xor</string>
  <string name="label_crypto_sign">crypto_sign</string>
  <string name="label_crypto_sign_open">crypto_sign_open</string>
+ <string name="label_crypto_verify16">crypto_verify16</string>
+ <string name="label_crypto_verify32">crypto_verify16</string>
  
  <string name="label_size">Message size:</string>
  <string name="label_loops">Loops:</string>
@@ -56,6 +58,8 @@
  <string name="column_stream_salsa20_xor">SALSA20-XOR</string>
  <string name="column_sign">SIGN</string>
  <string name="column_sign_open">SIGN-OPEN</string>
+ <string name="column_verify16">VERIFY-16</string>
+ <string name="column_verify32">VERIFY-32</string>
  
  <string name="navigation_drawer_open">Open navigation drawer</string>
  <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -69,5 +73,6 @@
  <string name="menuitem_crypto_secretbox">CRYPTO SECRET BOX</string>
  <string name="menuitem_crypto_stream">CRYPTO STREAM</string>
  <string name="menuitem_crypto_sign">CRYPTO SIGN</string>
+ <string name="menuitem_crypto_verify">CRYPTO VERIFY</string>
  
 </resources>

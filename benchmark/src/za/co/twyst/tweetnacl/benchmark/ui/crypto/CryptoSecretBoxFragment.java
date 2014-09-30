@@ -111,7 +111,7 @@ public class CryptoSecretBoxFragment extends CryptoFragment {
     
     // INNER CLASSES
     
-    private static class CryptoSecretBoxTask extends RunTask {
+    private static class CryptoSecretBoxTask extends CryptoTask {
         private final int       bytes;
         private final int       loops;
         private final TweetNaCl tweetnacl;
