@@ -105,19 +105,21 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        int N = getSupportFragmentManager().getBackStackEntryCount();
-
-        if (N == 0) {
-//            if (!drawer.isDrawerOpen(GravityCompat.START)) {
+//    @Override
+//    public void onBackPressed() {
+//        int N = getSupportFragmentManager().getBackStackEntryCount();
+//        
+//        if (N == 0) {
+//            if (drawer.isDrawerOpen(GravityCompat.START)) {
+//                finish();
+//            } else {
 //                drawer.openDrawer(GravityCompat.START);
 //                return;
 //            }
-        }
-        
-        super.onBackPressed();
-    }   
+//        }
+//        
+//        super.onBackPressed();
+//    }   
 
     // EVENT HANDLERS
 
@@ -136,10 +138,18 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         // ... replace fragments
         
         if (fragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                                       .replace(R.id.content,fragment)
-                                       .addToBackStack(null)
-                                       .commit();
+            int N = getSupportFragmentManager().getBackStackEntryCount();
+            
+            if ((N == 0) && (item != MENUITEM.SUMMARY)) {
+                getSupportFragmentManager().beginTransaction()
+                                           .replace(R.id.content,fragment)
+                                           .addToBackStack(null)
+                                           .commit();
+            } else  {
+                getSupportFragmentManager().beginTransaction()
+                                           .replace(R.id.content,fragment)
+                                           .commit();
+            }
              
             drawer.closeDrawer(GravityCompat.START);
         }

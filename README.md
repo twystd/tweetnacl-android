@@ -1,4 +1,4 @@
-tweetnacl-android: version 0.5
+tweetnacl-android: version 0.8 
 
 # TweetNaCl - Android NDK port
 
@@ -7,7 +7,7 @@ the Android NDK.
 
 Status
 ------
-Tidying up .....
+Tidying up
 
 Version Info
 ------------
@@ -54,6 +54,7 @@ Notes
 -----
 1. There is a barely measureable (5%) but seemingly consistent performance improvement using 
    GetByteArrayElements rather than GetByteArrayRegion.
+2. And pre-emptive apologies are probably in order for the fairly bleak spy-vs-spy themed benchmark app.
 
 References
 ----------
