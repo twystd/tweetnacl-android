@@ -20,6 +20,11 @@ import za.co.twyst.tweetnacl.benchmark.entity.Benchmark;
 import za.co.twyst.tweetnacl.benchmark.ui.crypto.CryptoFragment;
 import za.co.twyst.tweetnacl.benchmark.ui.summary.SummaryFragment;
 
+/** Container UI for the menu and summary/crypto fragments. 
+ *  <p>
+ *  Dispatches menu events and maintains the benchmark list. 
+ *
+ */
 public class MainActivity extends ActionBarActivity implements MainMenuFragment.Owner,
                                                                SummaryFragment.Owner,
                                                                CryptoFragment.Owner { 
@@ -35,6 +40,9 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         
     // *** ActionBarActivity ***
 
+    /** Initialises the UI and attaches handlers to the menu drawer.
+     * 
+     */
     @Override
     protected void onCreate(Bundle state) { 
         super.onCreate(state);
@@ -81,7 +89,10 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
                                    .commit();
 
     }
-	     
+	   
+    /** Updates the menu drawer state.
+     * 
+     */
     @Override
     protected void onPostCreate(Bundle state) { 
         super.onPostCreate(state);
@@ -89,6 +100,9 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         toggle.syncState();
     }
 	     
+    /** Updates the menu drawer state.
+     * 
+     */
     @Override
     public void onConfigurationChanged(Configuration config) { 
         super.onConfigurationChanged(config);
@@ -96,6 +110,9 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         toggle.onConfigurationChanged(config);
     }
 
+    /** Updates the menu drawer state.
+     * 
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
@@ -105,26 +122,14 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        int N = getSupportFragmentManager().getBackStackEntryCount();
-//        
-//        if (N == 0) {
-//            if (drawer.isDrawerOpen(GravityCompat.START)) {
-//                finish();
-//            } else {
-//                drawer.openDrawer(GravityCompat.START);
-//                return;
-//            }
-//        }
-//        
-//        super.onBackPressed();
-//    }   
-
     // EVENT HANDLERS
 
     // *** MainMenuFragment.Owner ***
     
+    /** Displays the summary/crypto Fragment associated with the selected
+     *  menu item.
+     * 
+     */
     @Override
     public void clicked(MENUITEM item) {
         Fragment fragment = null;
@@ -157,6 +162,9 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
 
     // *** SummaryFragment.Owner ***
     
+    /** Returns a copy of the list of benchmarks.
+     * 
+     */
     @Override
     public Benchmark[] benchmarks() {
         return measurements.values().toArray(new Benchmark[0]);
@@ -164,6 +172,9 @@ public class MainActivity extends ActionBarActivity implements MainMenuFragment.
 
     // *** CryptoFragment.Owner ***
     
+    /** Merges the supplied measurements with the internal benchmarks.
+     * 
+     */
     @Override
     public void measured(Benchmark... measurments) {
         if (measurements != null) {
