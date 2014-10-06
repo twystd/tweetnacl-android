@@ -3,12 +3,13 @@ package za.co.twyst.tweetnacl.benchmark.entity;
 import za.co.twyst.tweetnacl.benchmark.R;
 import za.co.twyst.tweetnacl.benchmark.util.Util;
 
-/** Container class for a performance measurement.
+/** Container class for a cumulative performance measurement.
  * 
  */
 public class Benchmark {
     // CONSTANTS
     
+    /** Measurement type */
     public enum TYPE { 
         UNKNOWN                 (-1, R.string.label_unknown),
         CRYPTO_BOX               (0, R.string.label_crypto_box),
@@ -30,7 +31,10 @@ public class Benchmark {
         CRYPTO_VERIFY16          (16,R.string.label_crypto_verify16),
         CRYPTO_VERIFY32          (17,R.string.label_crypto_verify32);
         
+        /** Display row in summary table. Yes, I know this is crossing boundaries. */
         public  final int row;
+
+        /** Display label in summary table. See remark above. */
         public  final int label;
         
         private TYPE(int row,int label) {
@@ -41,7 +45,10 @@ public class Benchmark {
     
     // INSTANCE VARIABLES
     
+    /** Benchmark item identifier. */
     public final TYPE   type;
+
+    /** Formatted item value. */
     public final String value;
     
     // CLASS METHODS
@@ -71,8 +78,10 @@ public class Benchmark {
         this.value = value == null ? "" : value.trim();
     }
     
-    /** Initialises the measurement values.
+    /** Initialises the internal measurement values.
      * 
+     * @param measurement 
+     *            Measured performance to use for initialisation.
      */
     public Benchmark(Measured measurement) {
         // ... validate

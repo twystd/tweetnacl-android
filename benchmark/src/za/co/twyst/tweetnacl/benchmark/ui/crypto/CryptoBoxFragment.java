@@ -19,6 +19,10 @@ import za.co.twyst.tweetnacl.benchmark.entity.Measured;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 import za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid;
 
+/** Performance evaluation CryptoFragment implementation for the crypto_box 
+ *  and crypto_box_open functions.
+ *  
+ */
 public class CryptoBoxFragment extends CryptoFragment {
     // CONSTANTS
 
@@ -51,14 +55,15 @@ public class CryptoBoxFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoBoxFragment() {
-        super(new Measured(TYPE.CRYPTO_BOX),new Measured(TYPE.CRYPTO_BOX_OPEN));
+        super(R.layout.fragment_box,
+              new Measured(TYPE.CRYPTO_BOX),new Measured(TYPE.CRYPTO_BOX_OPEN));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_box,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);

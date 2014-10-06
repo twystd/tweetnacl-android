@@ -48,14 +48,15 @@ public class CryptoScalarMultFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoScalarMultFragment() {
-        super(new Measured(TYPE.CRYPTO_SCALARMULT_BASE),new Measured(TYPE.CRYPTO_SCALARMULT));
+        super(R.layout.fragment_scalarmult,
+              new Measured(TYPE.CRYPTO_SCALARMULT_BASE),new Measured(TYPE.CRYPTO_SCALARMULT));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_scalarmult,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);

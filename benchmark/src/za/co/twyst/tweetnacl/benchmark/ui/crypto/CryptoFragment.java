@@ -5,9 +5,12 @@ import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -29,6 +32,7 @@ public abstract class CryptoFragment extends Fragment {
 
     // INSTANCE VARIABLES
 
+    private final int                  layout;
     private final Measured[]           measurements;
     private       WeakReference<Owner> owner = new WeakReference<Owner>(null);
     
@@ -36,6 +40,10 @@ public abstract class CryptoFragment extends Fragment {
     
     /** Pretty formats a throughput value.
      * 
+     * @param throughput 
+     *            Measured throughput value in bytes/s.
+     *            
+     * @return Throughput formatted as a human-readable value.           
      */
     protected static String format(long throughput) {
         return String.format("%s/s",Util.format(throughput,true));
@@ -43,12 +51,16 @@ public abstract class CryptoFragment extends Fragment {
 
     // CONSTRUCTOR
     
-    protected CryptoFragment(Measured...measurements) {
+    protected CryptoFragment(int layout,Measured...measurements) {
+        this.layout       = layout;
         this.measurements = measurements;
     }
     
     // *** Fragment ****
     
+    /** Stores the reference to the 'owning' Activity.
+     * 
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -60,10 +72,54 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
     
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
+        final View        root  = inflater.inflate(layout,container,false);
+        
+//        final EditText    size  = (EditText) root.findViewById(R.id.size); 
+//        final EditText    loops = (EditText) root.findViewById(R.id.loops); 
+//        final Button      run   = (Button) root.findViewById(R.id.run);
+//        final Grid        grid  = (Grid) root.findViewById(R.id.grid);
+//        final ProgressBar bar   = (ProgressBar) root.findViewById(R.id.progressbar);
+//
+//        // ... initialise default setup
+//        
+//        size.setText (Integer.toString(MESSAGE_SIZE));
+//        loops.setText(Integer.toString(LOOPS));
+//
+//        // ... initialise grid
+//        
+//        grid.setRowLabels   (ROWS,   inflater,R.layout.label,R.id.textview);
+//        grid.setColumnLabels(COLUMNS,inflater,R.layout.value,R.id.textview);
+//        grid.setValues      (ROWS.length,COLUMNS.length,inflater,R.layout.value,R.id.textview);
+//        
+//        // ... attach handlers
+//        
+//        run.setOnClickListener(new OnClickListener()
+//                                   { @Override
+//                                     public void onClick(View view)
+//                                            { try
+//                                                 { int _size  = Integer.parseInt(size.getText ().toString());
+//                                                   int _loops = Integer.parseInt(loops.getText().toString());
+//                                                   
+//                                                   hideKeyboard(size,loops);
+//                                                   run         (_size,_loops,bar);
+//                                                 }
+//                                              catch(Throwable x)
+//                                                 { // TODO
+//                                                 }
+//                                            }
+//                                   });
+        
+        return root;
+    }
+
     // UTILITY METHODS
     
     /** Hides keyboard for an EditText field
      * 
+     * @param fields 
+     *            List of EditText fields for which to hide the keyboard.
      */
     protected void hideKeyboard(EditText... fields) { 
         try { 
@@ -78,6 +134,9 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
+    /** Displays the 'busy' windmill and overlay.
+     * 
+     */
     protected void busy() {
         View view;
         View busy;
@@ -114,9 +173,8 @@ public abstract class CryptoFragment extends Fragment {
 
     /** Updates the containing activity with the measurement.
      * 
-     * @param measurement 
-     *            New measurement to add to global results. Ignored if
-     *            <code>null</code>.        
+     * @param measurements 
+     *            List of measurements to add to global performance statistics.
      */
     protected void measured(Benchmark... measurements) {
         Owner owner;
@@ -130,6 +188,8 @@ public abstract class CryptoFragment extends Fragment {
     
     /** Updates the displayed benchmark.
      * 
+     * @param results 
+     *            List of measured performance results.
      */
     protected void done(Result...results) {
         View view = getView();
@@ -182,10 +242,17 @@ public abstract class CryptoFragment extends Fragment {
     
     // INNER CLASSES
     
+    /** Interface definition for the 'owning' Activity to update the global performance
+     *  statistics.
+     *
+     */
     public interface Owner {
         public void measured(Benchmark... measurments);
     }
     
+    /** Container class for the results of a single run.
+     * 
+     */
     protected static class Result { 
         protected final long bytes;
         protected final long dt;
@@ -196,6 +263,10 @@ public abstract class CryptoFragment extends Fragment {
         }
     }
 
+    /** Base class for the a crypto_xxx specific performance test. Implements the common
+     *  pre-, post and progress update functionality.
+     * 
+     */
     protected static abstract class CryptoTask extends AsyncTask<Void,Integer,Result[]> {
         private final WeakReference<CryptoFragment> reference;
         private final WeakReference<ProgressBar>       bar;

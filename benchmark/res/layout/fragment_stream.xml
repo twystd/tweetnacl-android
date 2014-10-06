@@ -1,0 +1,89 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:groupbox="http://schemas.android.com/apk/res/za.co.twyst.tweetnacl.benchmark"
+                style="@style/Page">
+ 
+ <!-- CONTENT -->
+ 
+ <ScrollView android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_alignParentTop="true"
+             android:layout_above="@+id/run"
+             android:paddingTop="@dimen/activity_vertical_margin"
+             android:paddingBottom="@dimen/activity_vertical_margin"
+             android:paddingLeft="@dimen/activity_horizontal_margin"
+             android:paddingRight="@dimen/activity_horizontal_margin">
+  <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+      
+   <!-- SETUP -->
+
+   <za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox
+       style="@style/GroupBox"
+       android:id="@+id/setup"
+       android:layout_alignParentTop="true"
+       groupbox:label="@string/setup">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+       
+     <!-- MESSAGE SIZE -->
+   
+     <TextView style="@style/FieldLabel"
+               android:id="@+id/label_size"
+               android:layout_alignBaseline="@+id/size"
+               android:layout_alignParentLeft="true"
+               android:text="@string/label_size" /> 
+
+     <EditText style="@style/Field"
+               android:id="@+id/size"
+               android:layout_alignParentTop="true"
+               android:layout_toRightOf="@+id/label_size"
+               android:inputType="number"
+               android:digits="0123456789"
+               android:text="" /> 
+   
+     <!-- LOOPS -->
+   
+     <TextView style="@style/LoopsLabel" 
+               android:id="@+id/label_loops" 
+               android:textColor="@color/field_label" />
+      
+     <EditText style="@style/Loops"      
+               android:id="@+id/loops" />
+     
+    </RelativeLayout>
+   </za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox> 
+
+   <!-- RESULTS -->
+   
+  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid style="@style/Grid" android:id="@+id/grid" />
+   
+  </RelativeLayout>            
+ </ScrollView>
+
+ <ProgressBar style="@android:style/Widget.ProgressBar.Horizontal"
+              android:id="@+id/progressbar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/activity_horizontal_margin"
+              android:layout_marginRight="@dimen/activity_horizontal_margin"
+              android:layout_marginBottom="4dp"
+              android:layout_above="@+id/run"
+              android:layout_centerInParent="true"
+              android:progressDrawable="@drawable/bar"
+              android:max="1000" 
+              android:minHeight="8dp"
+              android:maxHeight="12dp"
+              android:visibility="invisible" />
+ 
+ <Button style="@style/RunButton"
+         android:id="@+id/run"
+         android:layout_marginLeft="@dimen/activity_horizontal_margin"
+         android:layout_marginRight="@dimen/activity_horizontal_margin"
+         android:layout_marginBottom="@dimen/activity_vertical_margin"
+         android:layout_alignParentBottom="true"
+         android:layout_centerHorizontal="true" 
+         android:text="@string/run" />
+ 
+ <!--  WINDMILL -->
+ 
+ <include layout="@layout/windmill" android:id="@+id/busy" />
+ 
+</RelativeLayout>

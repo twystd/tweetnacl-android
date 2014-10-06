@@ -49,14 +49,15 @@ public class CryptoOneTimeAuthFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoOneTimeAuthFragment() {
-        super(new Measured(TYPE.CRYPTO_ONETIMEAUTH),new Measured(TYPE.CRYPTO_ONETIMEAUTH_VERIFY));
+        super(R.layout.fragment_onetimeauth,
+              new Measured(TYPE.CRYPTO_ONETIMEAUTH),new Measured(TYPE.CRYPTO_ONETIMEAUTH_VERIFY));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_onetimeauth,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);

@@ -2,7 +2,7 @@ package za.co.twyst.tweetnacl.benchmark.entity;
 
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 
-/** Container class for the results of 'run'.
+/** Container class for the results of single 'run'.
  * 
  */
 // TODO merge into Benchmark

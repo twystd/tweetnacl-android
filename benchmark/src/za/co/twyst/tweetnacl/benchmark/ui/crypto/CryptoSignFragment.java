@@ -51,14 +51,15 @@ public class CryptoSignFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoSignFragment() {
-        super(new Measured(TYPE.CRYPTO_SIGN),new Measured(TYPE.CRYPTO_SIGN_OPEN));
+        super(R.layout.fragment_sign,
+              new Measured(TYPE.CRYPTO_SIGN),new Measured(TYPE.CRYPTO_SIGN_OPEN));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_box,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);

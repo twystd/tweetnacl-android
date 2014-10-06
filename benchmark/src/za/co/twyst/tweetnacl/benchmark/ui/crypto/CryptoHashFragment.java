@@ -67,14 +67,15 @@ public class CryptoHashFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoHashFragment() {
-        super(new Measured(TYPE.CRYPTO_HASH),new Measured(TYPE.CRYPTO_HASHBLOCKS));
+        super(R.layout.fragment_hash,
+              new Measured(TYPE.CRYPTO_HASH),new Measured(TYPE.CRYPTO_HASHBLOCKS));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_hash,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);

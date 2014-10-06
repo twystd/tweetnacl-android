@@ -64,7 +64,8 @@ public class CryptoCoreFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoCoreFragment() {
-        super(new Measured(TYPE.CRYPTO_CORE_HSALSA20),new Measured(TYPE.CRYPTO_CORE_SALSA20));
+        super(R.layout.fragment_core,
+              new Measured(TYPE.CRYPTO_CORE_HSALSA20),new Measured(TYPE.CRYPTO_CORE_SALSA20));
     }
     
 
@@ -72,7 +73,7 @@ public class CryptoCoreFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_core,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);

@@ -49,7 +49,8 @@ public class CryptoStreamFragment extends CryptoFragment {
     // CONSTRUCTOR 
     
     public CryptoStreamFragment() {
-        super(new Measured(TYPE.CRYPTO_STREAM_XOR),new Measured(TYPE.CRYPTO_STREAM_SALSA20_XOR));
+        super(R.layout.fragment_stream,
+              new Measured(TYPE.CRYPTO_STREAM_XOR),new Measured(TYPE.CRYPTO_STREAM_SALSA20_XOR));
     }
     
     
@@ -57,7 +58,7 @@ public class CryptoStreamFragment extends CryptoFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_box,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    size  = (EditText) root.findViewById(R.id.size); 
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);

@@ -49,14 +49,15 @@ public class CryptoVerifyFragment extends CryptoFragment {
     // CONSTRUCTOR
     
     public CryptoVerifyFragment() {
-        super(new Measured(TYPE.CRYPTO_VERIFY16),new Measured(TYPE.CRYPTO_VERIFY32));
+        super(R.layout.fragment_verify,
+             new Measured(TYPE.CRYPTO_VERIFY16),new Measured(TYPE.CRYPTO_VERIFY32));
     }
     
     // *** Fragment ***
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        final View        root  = inflater.inflate(R.layout.fragment_verify,container,false);
+        final View        root  = super.onCreateView(inflater,container,state);
         final EditText    loops = (EditText) root.findViewById(R.id.loops); 
         final Button      run   = (Button) root.findViewById(R.id.run);
         final Grid        grid  = (Grid) root.findViewById(R.id.grid);
