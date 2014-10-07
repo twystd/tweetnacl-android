@@ -64,6 +64,11 @@ public class Benchmark {
     
     /** Initialises the measurement values.
      * 
+     * @param type 
+     *            Benchmark ID.
+     * 
+     * @param value 
+     *            Benchmark performance value expressed as a formatted string.
      */
     public Benchmark(TYPE type,String value) {
         // ... validate

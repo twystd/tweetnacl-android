@@ -1,0 +1,33 @@
+<project name="tweetnacl" default="doc">
+
+ <property file="local.properties"/>
+
+ <path id="app.source">
+  <pathelement path="src" />
+ </path>
+ 
+ <path id="android.classpath">
+  <pathelement path="${sdk.dir}/platforms/android-19/android.jar" />
+  <pathelement path="${sdk.dir}/extras/android/support/v4/android-support-v4.jar" />
+  <pathelement path="${sdk.dir}/extras/android/support/v7/appcompat/libs/android-support-v7-appcompat.jar" />
+  <pathelement path="${basedir}/../native-lib/bin/tweetnacl.jar" />
+ </path>
+ 
+ <!-- JAVADOC -->
+ 
+ <target name="doc" description="Generate Benchmark APP documentation">
+  <javadoc packagenames="za.co.twyst.tweetnacl.benchmark.*"
+           sourcepathref="app.source"
+           bootclasspathref="android.classpath"
+           defaultexcludes="yes"
+           destdir="docs/api"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="TweetNaCl for Android - Benchmark APP">
+   <doctitle><![CDATA[<h1>TweetNaCl for Android - Benchmark APP</h1>]]></doctitle>
+   <bottom><![CDATA[<i>Public Domain (Unlicense)</i>]]></bottom>
+  </javadoc>  
+ </target>
+ 
+</project>
