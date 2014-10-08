@@ -1,13 +1,9 @@
-tweetnacl-android: version 0.8 
+tweetnacl-android: version 1.00.0 
 
 # TweetNaCl - Android NDK port
 
 *tweetnacl-android* is a port of Dan Bernstein's [TweetNaCl][tweetnacl] "crypto library in a 100 tweets" code to 
 the Android NDK.
-
-Status
-------
-Tidying up
 
 Version Info
 ------------
@@ -55,6 +51,12 @@ Notes
 1. There is a barely measureable (5%) but seemingly consistent performance improvement using 
    GetByteArrayElements rather than GetByteArrayRegion.
 2. And pre-emptive apologies are probably in order for the fairly bleak spy-vs-spy themed benchmark app.
+
+TODO
+----
+1. tweetnacl/z: optional implementation with external buffer management
+2. See if ByteBuffer perform better for transferring data to/from native lib.
+3. (Cryptol ?)
 
 References
 ----------
