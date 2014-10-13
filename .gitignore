@@ -3,6 +3,7 @@ eclipse
 bin
 gen
 obj
+dist
 native-lib/.settings/org.eclipse.jdt.ui.prefs
 native-lib/.settings/org.eclipse.jdt.ui.prefs
 native-lib/.settings/org.eclipse.jdt.core.prefs

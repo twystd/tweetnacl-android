@@ -1,5 +1,5 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
 
-    <string name="app_name">TweetNaCl</string>
-
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+ <string name="app_name">TweetNaCl</string>
 </resources>
