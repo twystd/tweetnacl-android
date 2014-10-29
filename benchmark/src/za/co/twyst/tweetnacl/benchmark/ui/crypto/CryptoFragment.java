@@ -33,9 +33,10 @@ public abstract class CryptoFragment extends Fragment {
     // INSTANCE VARIABLES
 
     private final int                  layout;
-    private final Measured[]           measurements;
     private       WeakReference<Owner> owner = new WeakReference<Owner>(null);
-    
+
+    protected final Measured[] measurements;
+
     // CLASS METHODS
     
     /** Pretty formats a throughput value.

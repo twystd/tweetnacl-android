@@ -42,7 +42,12 @@ public class Benchmark {
             this.label = label;
         }
     };
-    
+
+    /** Library */
+    public enum LIBRARY { TWEETNACL,
+                           TWEETNACLZ
+                        };
+
     // INSTANCE VARIABLES
     
     /** Benchmark item identifier. */

@@ -8,6 +8,14 @@ native-lib/.settings/org.eclipse.jdt.ui.prefs
 native-lib/.settings/org.eclipse.jdt.ui.prefs
 native-lib/.settings/org.eclipse.jdt.core.prefs
 native-lib/local.properties
+native-lib/libs/armeabi/libtweetnacl.so
+native-lib/libs/armeabi/libtweetnaclz.so
+native-lib/libs/armeabi-v7a/libtweetnacl.so
+native-lib/libs/armeabi-v7a/libtweetnaclz.so
+native-lib/libs/mips/libtweetnacl.so
+native-lib/libs/mips/libtweetnaclz.so
+native-lib/libs/x86/libtweetnacl.so
+native-lib/libs/x86/libtweetnaclz.so
 benchmark/.settings/org.eclipse.jdt.core.prefs
 benchmark/.settings/org.eclipse.jdt.ui.prefs
 benchmark/build.xml

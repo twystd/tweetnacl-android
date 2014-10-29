@@ -1,5 +1,6 @@
 package za.co.twyst.tweetnacl.benchmark.entity;
 
+import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.LIBRARY;
 import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 
 /** Container class for the results of single 'run'.
@@ -9,9 +10,10 @@ import za.co.twyst.tweetnacl.benchmark.entity.Benchmark.TYPE;
 public class Measured {
     // INSTANCE VARIABLES
     
-    public final TYPE type;
-    public long mean;
-    public long throughput;
+    public final TYPE    type;
+    public final LIBRARY library;
+    public long          mean;
+    public long          throughput;
     
     public long minimum = Long.MAX_VALUE;
     public long maximum = Long.MIN_VALUE;
@@ -21,7 +23,13 @@ public class Measured {
     // CONSTRUCTOR
     
     public Measured(TYPE type) {
-        this.type = type;
+        this.type    = type;
+        this.library = LIBRARY.TWEETNACL;
+    }
+    
+    public Measured(TYPE type,LIBRARY library) {
+        this.type    = type;
+        this.library = library;
     }
     
     // INSTANCE METHODS
