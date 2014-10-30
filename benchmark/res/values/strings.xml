@@ -42,6 +42,12 @@
  <string name="results_min">Min:</string>
  <string name="results_max">Max:</string>
 
+ <string name="column_tweetnacl">tweetnacl</string>
+ <string name="column_tweetnaclz">tweetnacl/z</string>
+
+ <string name="title_crypto_box">crypto_box</string>
+ <string name="title_crypto_box_open">crypto_box_open</string>
+ 
  <string name="column_box">BOX</string>
  <string name="column_box_open">BOX-OPEN</string>
  <string name="column_hsalsa20">HSALSA20</string>

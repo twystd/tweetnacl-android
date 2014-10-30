@@ -52,9 +52,29 @@
    </za.co.twyst.tweetnacl.benchmark.ui.widgets.GroupBox> 
 
    <!-- RESULTS -->
+
+   <TextView style="@style/GridTitle"
+             android:id="@+id/title_crypto_box"
+             android:layout_below="@+id/setup"
+             android:layout_alignLeft="@+id/crypto_box"
+             android:text="@string/title_crypto_box" /> 
    
-  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid style="@style/Grid" android:id="@+id/grid" />
-   
+  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid style="@style/Grid" 
+      android:id="@+id/crypto_box" 
+      android:layout_below="@+id/title_crypto_box"
+      android:layout_marginTop="4dp" />
+
+   <TextView style="@style/GridTitle"
+             android:id="@+id/title_crypto_box_open"
+             android:layout_below="@+id/crypto_box"
+             android:layout_alignLeft="@+id/crypto_box_open"
+             android:text="@string/title_crypto_box_open" /> 
+  
+  <za.co.twyst.tweetnacl.benchmark.ui.widgets.Grid style="@style/Grid" 
+      android:id="@+id/crypto_box_open" 
+      android:layout_below="@+id/title_crypto_box_open"
+      android:layout_marginTop="4dp" />
+  
   </RelativeLayout>            
  </ScrollView>
 

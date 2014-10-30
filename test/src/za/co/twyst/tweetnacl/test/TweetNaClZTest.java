@@ -4,33 +4,34 @@ import java.util.Random;
 
 import android.test.AndroidTestCase;
 
-import za.co.twyst.tweetnacl.TweetNaCl;
+import za.co.twyst.tweetnacl.TweetNaClZ;
 
-public abstract class TweetNaClTest extends AndroidTestCase {
+public abstract class TweetNaClZTest extends AndroidTestCase {
     // CONSTANTS
 
-    protected static final String TAG    = "TweetNaCl";
+    protected static final String TAG = "TweetNaCl";
     protected static final int    ROUNDS = 100; // TODO change to 10000 when done
-    private static final char[]   HEX    = { '0', '1', '2', '3', '4', '5', '6', '7',
-                                             '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' 
-                                           };
+    
+    private static final char[]   HEX = { '0', '1', '2', '3', '4', '5', '6', '7',
+                                          '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' 
+                                        };
 
     // TEST VARIABLES
 
-    protected TweetNaCl tweetnacl;
-    protected Random    random;
+    protected TweetNaClZ tweetnaclz;
+    protected Random     random;
 
     // SETUP/TEARDOWN
 
     @Override
     protected void setUp() throws Exception {
-        tweetnacl = new TweetNaCl();
-        random    = new Random();
+        tweetnaclz = new TweetNaClZ();
+        random     = new Random();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        tweetnacl.release();
+        tweetnaclz.release();
     }
 
     // UTILITY FUNCTIONS

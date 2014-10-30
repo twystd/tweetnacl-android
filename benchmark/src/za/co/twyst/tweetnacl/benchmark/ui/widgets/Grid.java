@@ -21,8 +21,8 @@ public class Grid extends FrameLayout  {
 
     // INSTANCE VARIABLES
 	     
-    private int rows    = 0;
-    private int columns = 0;
+    private int    rows     = 0;
+    private int    columns  = 0;
 	     
     private View[]       rowLabels    = new View[0];
     private View[]       columnLabels = new View[0];
@@ -172,7 +172,7 @@ public class Grid extends FrameLayout  {
         super.onMeasure(widthMeasureSpec,heightMeasureSpec);
 	 	           
         // ... measure widgets
-	 	                  
+
         for (View label: columnLabels) {
             label.measure(UNSPECIFIED(),UNSPECIFIED());
         }
@@ -217,7 +217,7 @@ public class Grid extends FrameLayout  {
         int colwidth  = columns == 0 ? 0 : (gridWidth - (columns - 1)*horizontalSpacing)/columns;
 
         // ... re-measure
-	 	                  
+
         for (View label: columnLabels) {
             label.measure(EXACTLY(colwidth),EXACTLY(rowHeight));
         }
@@ -260,6 +260,8 @@ public class Grid extends FrameLayout  {
             insety = Math.max(insety,label.getMeasuredHeight());
         }
 
+        // ... layout labels
+        
         int x = getPaddingLeft() + insetx;
         int y = getPaddingTop () + insety + verticalSpacing;
         int h;
@@ -281,7 +283,7 @@ public class Grid extends FrameLayout  {
                          
             y += label.getMeasuredHeight() + verticalSpacing;
         }
-	 		         
+        
         // ... layout value grid
 	 		         
         y = getPaddingTop () + insety + verticalSpacing;
